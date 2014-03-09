@@ -596,7 +596,7 @@ function DOM(){
 		bs.fn( 'css', function(v){v.substr( v.length - 4 ) == '.css' ? bs.get( parser, v ) : parser(v);} );
 	} ),
 	bs.cls( 'Dom', function( fn, bs ){
-		var query, html, dom, t = trim, x, y, ds, ds0, nodes, drill, childNodes, ev, win, wine, hash, sizer;
+		var query, html, dom, t = trim, x, y, ds, ds0, nodes, drill, childNodes, ev;
 		query = (function(doc){
 			var c;
 			if( doc.querySelectorAll ) return function(sel){return doc.querySelectorAll(sel);};
@@ -924,8 +924,7 @@ function DOM(){
 							if( type < 3 ){
 								t0 = e.changedTouches, self.length = i = t0.length;
 								while( i-- ) self[i] = t1 = t0[i], self['id'+i] = t1.identifier,
-									self['x'+i] = X = t1[pageX], self['y'+i] = Y = t1[pageY],
-									self['lx'+i] = t1[layerX], self['ly'+i] = t1[layerY],
+									self['x'+i] = X = t1[pageX], self['y'+i] = Y = t1[pageY], self['lx'+i] = t1[layerX], self['ly'+i] = t1[layerY],
 									self['cx'+i] = t1.clientX, self['cy'+i] = t1.clientY,
 									type == 2 ?
 										( self['$x'+i] = self['_x'+i] = X, self['$y'+i] = self['_y'+i] = Y ) :
@@ -934,9 +933,7 @@ function DOM(){
 								self.id = self.id0, self.mx = self.mx0, self.my = self.my0, self.x = self.x0, self.y = self.y0, self.lx = self.lx0, self.ly = self.ly0, self.dx = self.dx0, self.dy = self.dy0, self.cx = self.cx0, self.cy = self.cy0;
 							}else{
 								self.length = 0,
-								self.x = X = e[pageX], self.y = Y = e[pageY],
-								self.lx = e[layerX], self.ly = e[layerY],
-								self.cx = e.clientX, self.cy = e.clientY,
+								self.x = X = e[pageX], self.y = Y = e[pageY], self.lx = e[layerX], self.ly = e[layerY], self.cx = e.clientX, self.cy = e.clientY,
 								type == 4 ?
 									( self.$x = self._x = X, self.$y = self._y = Y ) :
 									( self.dx = X - self._x, self.dy = Y - self._y );
@@ -1003,90 +1000,93 @@ function DOM(){
 			} )( EV, x, y, isChild );
 			return EV;
 		})(),
-		hash = function( v ){
-			var t0, old, w, h;
-			ev( W ), t0 = hash.listener;
-			if( v ){
-				t0[t0.length] = typeof v == 'function' ? {f:v, c:W, a:[W.bsE]} :
-					v.splice ? {f:v[1], c:v[0], a:( t1 = v.slice(1), t1[0] = W.bsE, t1 )} :
-					v[e] ? {f:v[e], c:v, a:[W.bsE]} : bs.err(11);
-				if( !hash.id ){
-					old = location.hash;
-					hash.id = setInterval( function(){
-						var e, t1, i, j;
-						if( old != location.hash ){
-							e = W.bsE, e.type = 'hashchange', old = location.hash, i = 0, j = t0.length;
-							while( i < j ){
-								e.stop = 0, t1 = t0[i++];
-								if( !t1.disable ) t1.f.apply( t1.c, t1.a );
-								if( e.stop ) break;
+		bs.obj( 'WIN', (function(){
+			var win, hash;
+			hash = function(v){
+				var t0, old, w, h;
+				ev( W ), t0 = hash.listener;
+				if( v ){
+					t0[t0.length] = typeof v == 'function' ? {f:v, c:W, a:[W.bsE]} :
+						v.splice ? {f:v[1], c:v[0], a:( t1 = v.slice(1), t1[0] = W.bsE, t1 )} :
+						v[e] ? {f:v[e], c:v, a:[W.bsE]} : bs.err(11);
+					if( !hash.id ){
+						old = location.hash;
+						hash.id = setInterval( function(){
+							var e, t1, i, j;
+							if( old != location.hash ){
+								e = W.bsE, e.type = 'hashchange', old = location.hash, i = 0, j = t0.length;
+								while( i < j ){
+									e.stop = 0, t1 = t0[i++];
+									if( !t1.disable ) t1.f.apply( t1.c, t1.a );
+									if( e.stop ) break;
+								}
 							}
-						}
-					}, 1 );
-				}
-			}else{
-				t0.length = 0;
-				clearInterval(hash.id), hash.id = null;
-			}
-		},
-		hash.listener = [],
-		sizer = function(wh){
-			win.on( 'resize', wh );
-			if( bs.DETECT.eventRotate ) win.on( 'orientationchange', 'wh', wh );
-			wh();
-		},
-		bs.obj( 'WIN', win = {
-			x:0, y:0,
-			_pos:function(e){e.prevent(), win.x = e.x, win.y = e.y;},
-			pos:function(){doc.isCapture = true, win.on( 'move', win._pos, 1 );},
-			unpos:function(){doc.isCapture = false, win.on( 'move', null, 1 );},
-			prevent:function(e){e.preventDefault();},
-			lock:doc['addEventListener'] ? function( isCapture ){
-				var i, j;
-				for( i = 1, j = arguments.length ; i < j ; i++ ) doc.addEventListener( arguments[i], win.prevent, isCapture );
-			} : none,
-			unlock:doc['removeEventListener'] ? function( isCapture ){
-				var i, j;
-				for( i = 1, j = arguments.length ; i < j ; i++ ) doc.removeEventListener( arguments[i], win.prevent, isCapture );
-			} : none,
-			on:function( k, v, isDoc ){
-				if( k == 'hashchange' && !'onhashchange' in W ) return hash(v);
-				if( k == 'orientationchange' && !'onorientationchange' in W ) k = 'resize';
-				return ev( isDoc || k.substr(0,3) == 'key' ? doc : W, k, v );
-			},
-			is:function(sel){
-				var t0 = query(sel);
-				return t0 && t0.length;
-			},
-			dblselect:function(v){
-				doc.ondblclick = v ? null : function(){ 
-					if( W.getSelection ) W.getSelection().removeAllRanges(); 
-					else if( doc.selection) doc.selection.empty();
-				};
-			},
-			scroll:(function( W, doc, root ){
-				return function scroll(){
-					switch( arguments[0] ){
-					case'w': return Math.max( root.scrollWidth, root.clientWidth );
-					case'h': return Math.max( root.scrollHeight, root.clientHeight );
-					case'l': return doc.documentElement.scrollLeft || W.pageXOffset || 0;
-					case't': return doc.documentElement.scrollTop || W.pageYOffset || 0;
+						}, 1 );
 					}
-					W.scrollTo( arguments[0], arguments[1] );
-				};
-			})( W, doc, bs.DETECT.root ),
-			w:0, h:0,
-			sizer:(function( W, doc ){
-				return function(end){
-					var wh, r, s;
-					sizer( W.innerHeight === undefined ? function(){
-							end( win.w = doc.documentElement.clientWidth || doc.body.clientWidth,
-								win.h = doc.documentElement.clientHeight || doc.body.clientHeight );
-						} : function(){end( win.w = W.innerWidth, win.h = W.innerHeight );}
-					);
+				}else{
+					t0.length = 0;
+					clearInterval(hash.id), hash.id = null;
 				}
-			})( W, doc )
-		} );
+			},
+			hash.listener = [],
+			win = {
+				x:0, y:0, e:null,
+				_pos:function(e){e.prevent(), win.x = e.x, win.y = e.y, win.e = e;},
+				pos:function(){doc.isCapture = true, win.on( 'move', win._pos, 1 );},
+				unpos:function(){doc.isCapture = false, win.on( 'move', null, 1 );},
+				prevent:function(e){e.preventDefault();e.stopPropagation();},
+				lock:doc['addEventListener'] ? function( isCapture ){
+					var i, j;
+					for( i = 1, j = arguments.length ; i < j ; i++ ) doc.addEventListener( arguments[i], win.prevent, isCapture );
+				} : none,
+				unlock:doc['removeEventListener'] ? function( isCapture ){
+					var i, j;
+					for( i = 1, j = arguments.length ; i < j ; i++ ) doc.removeEventListener( arguments[i], win.prevent, isCapture );
+				} : none,
+				on:function( k, v, isDoc ){
+					if( k == 'hashchange' && !'onhashchange' in W ) return hash(v);
+					if( k == 'orientationchange' && !'onorientationchange' in W ) k = 'resize';
+					return ev( isDoc || k.substr(0,3) == 'key' ? doc : W, k, v );
+				},
+				is:function(sel){
+					var t0 = query(sel);
+					return t0 && t0.length;
+				},
+				dblselect:function(v){
+					doc.ondblclick = v ? null : function(){ 
+						if( W.getSelection ) W.getSelection().removeAllRanges(); 
+						else if( doc.selection) doc.selection.empty();
+					};
+				},
+				scroll:(function( W, doc, root ){
+					return function scroll(){
+						switch( arguments[0] ){
+						case'w': return Math.max( root.scrollWidth, root.clientWidth );
+						case'h': return Math.max( root.scrollHeight, root.clientHeight );
+						case'l': return doc.documentElement.scrollLeft || W.pageXOffset || 0;
+						case't': return doc.documentElement.scrollTop || W.pageYOffset || 0;
+						}
+						W.scrollTo( arguments[0], arguments[1] );
+					};
+				})( W, doc, bs.DETECT.root )
+			},
+			win.sizer = (function( W, doc ){
+				var t0 = {w:0, h:0}, t1, size, docEl, docBody;
+				win.size = size = W['innerHeight'] === undefined ? (
+					docEl = doc.documentElement, docBody = doc.body, t1 = {w:'clientWidth', h:'clientHeight'}, t1.width = t1.w, t1.height = t1.h,
+					function(k){return k = t1[k] ? docEl[k] || docBody[k] : ( t0.w = docEl[t1.w] || docBody[t1.w], t0.h = docEl[t1.h] || docBody[t1.h], t0 );}
+				) : ( t1 = {w:'innerWidth', h:'innerHeight'}, t1.width = t1.w, t1.height = t1.h,
+					function(k){return k = t1[k] ? W[k] : ( t0.w = W[t1.w], t0.h = W[t1.h], t0 );}
+				);
+				return function(end){
+					var f = function(){win.size(), end( t0.w, t0.h );};
+					win.on( 'resize', f );
+					if( bs.DETECT.eventRotate ) win.on( 'orientationchange', f );
+					f();
+				};
+			})( W, doc );
+			return win;
+		})() );
 	} ),
 	bs.obj( 'KEY', (function(){
 		var buffer, keycode;
