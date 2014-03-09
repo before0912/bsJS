@@ -103,7 +103,7 @@ h=r(a),k=[],l=[];k[15]=l[15]=void 0;16<h.length&&(h=q(h,8*a.length));for(b=0;16>
 			for( i = 0, j = r.length ; i < j ; i++) console.log(r[i]);
 			console.log(t0);
 		}else{
-			printer( r = r + '</ol><div id="bsTestStat'+id+'"></div></div>'+
+			printer( r = r + '</ol><div id="bsTestStat'+id+'">Loading...</div></div>'+
 				'<div style="padding:5px;float:right;border:1px dashed #999;text-align:center"><b style="font-size:30px;color:#' + ( fail ? 'a00">FAIL' : '0a0">OK' ) + '</b><br>ok:<b style="color:#0a0">' + ok + '</b> fail:<b style="color:#a00">' + fail + '</b></div><br clear="both"></div>'+
 				'<div id="bsTestOff'+id+'" style="display:block;cursor:pointer" onclick="bsTest.off(this)"><b>'+title+'</b> : <b style="color:#' + ( fail ? 'a00">FAIL' : '0a0">OK' ) + '</b></div></div>'
 			),
