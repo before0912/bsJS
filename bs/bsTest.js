@@ -1,17 +1,7 @@
 var bsTest = (function(){
-	var md5, f2s, compare, js,
-		printer, result, id, md52id, test, 
+	var f2s, compare, js,
+		printer, result, id, title2id, test, 
 		isNode, con, conStyles;
-		
-	md5 = (function(){function p(a,g){var b=(a&65535)+(g&65535);return(a>>16)+(g>>16)+(b>>16)<<16|b&65535}function k(a,g,b,n,k,h){a=p(p(g,a),p(n,h));return p(a<<k|a>>>32-k,b)}function h(a,g,b,n,h,l,m){return k(g&b|~g&n,a,g,h,l,m)}function l(a,g,b,n,h,l,m){return k(g&n|b&~n,a,g,h,l,m)}function m(a,g,b,n,h,l,m){return k(b^(g|~n),a,g,h,l,m)}function q(a,g){a[g>>5]|=128<<g%32;a[(g+64>>>9<<4)+14]=g;var b,n,s,t,q,c=1732584193,d=-271733879,e=-1732584194,f=271733878;for(b=0;b<a.length;b+=16)n=c,s=d,t=e,q=f,c=h(c,d,
-e,f,a[b],7,-680876936),f=h(f,c,d,e,a[b+1],12,-389564586),e=h(e,f,c,d,a[b+2],17,606105819),d=h(d,e,f,c,a[b+3],22,-1044525330),c=h(c,d,e,f,a[b+4],7,-176418897),f=h(f,c,d,e,a[b+5],12,1200080426),e=h(e,f,c,d,a[b+6],17,-1473231341),d=h(d,e,f,c,a[b+7],22,-45705983),c=h(c,d,e,f,a[b+8],7,1770035416),f=h(f,c,d,e,a[b+9],12,-1958414417),e=h(e,f,c,d,a[b+10],17,-42063),d=h(d,e,f,c,a[b+11],22,-1990404162),c=h(c,d,e,f,a[b+12],7,1804603682),f=h(f,c,d,e,a[b+13],12,-40341101),e=h(e,f,c,d,a[b+14],17,-1502002290),d=
-h(d,e,f,c,a[b+15],22,1236535329),c=l(c,d,e,f,a[b+1],5,-165796510),f=l(f,c,d,e,a[b+6],9,-1069501632),e=l(e,f,c,d,a[b+11],14,643717713),d=l(d,e,f,c,a[b],20,-373897302),c=l(c,d,e,f,a[b+5],5,-701558691),f=l(f,c,d,e,a[b+10],9,38016083),e=l(e,f,c,d,a[b+15],14,-660478335),d=l(d,e,f,c,a[b+4],20,-405537848),c=l(c,d,e,f,a[b+9],5,568446438),f=l(f,c,d,e,a[b+14],9,-1019803690),e=l(e,f,c,d,a[b+3],14,-187363961),d=l(d,e,f,c,a[b+8],20,1163531501),c=l(c,d,e,f,a[b+13],5,-1444681467),f=l(f,c,d,e,a[b+2],9,-51403784),
-e=l(e,f,c,d,a[b+7],14,1735328473),d=l(d,e,f,c,a[b+12],20,-1926607734),c=k(d^e^f,c,d,a[b+5],4,-378558),f=k(c^d^e,f,c,a[b+8],11,-2022574463),e=k(f^c^d,e,f,a[b+11],16,1839030562),d=k(e^f^c,d,e,a[b+14],23,-35309556),c=k(d^e^f,c,d,a[b+1],4,-1530992060),f=k(c^d^e,f,c,a[b+4],11,1272893353),e=k(f^c^d,e,f,a[b+7],16,-155497632),d=k(e^f^c,d,e,a[b+10],23,-1094730640),c=k(d^e^f,c,d,a[b+13],4,681279174),f=k(c^d^e,f,c,a[b],11,-358537222),e=k(f^c^d,e,f,a[b+3],16,-722521979),d=k(e^f^c,d,e,a[b+6],23,76029189),c=k(d^
-e^f,c,d,a[b+9],4,-640364487),f=k(c^d^e,f,c,a[b+12],11,-421815835),e=k(f^c^d,e,f,a[b+15],16,530742520),d=k(e^f^c,d,e,a[b+2],23,-995338651),c=m(c,d,e,f,a[b],6,-198630844),f=m(f,c,d,e,a[b+7],10,1126891415),e=m(e,f,c,d,a[b+14],15,-1416354905),d=m(d,e,f,c,a[b+5],21,-57434055),c=m(c,d,e,f,a[b+12],6,1700485571),f=m(f,c,d,e,a[b+3],10,-1894986606),e=m(e,f,c,d,a[b+10],15,-1051523),d=m(d,e,f,c,a[b+1],21,-2054922799),c=m(c,d,e,f,a[b+8],6,1873313359),f=m(f,c,d,e,a[b+15],10,-30611744),e=m(e,f,c,d,a[b+6],15,-1560198380),
-d=m(d,e,f,c,a[b+13],21,1309151649),c=m(c,d,e,f,a[b+4],6,-145523070),f=m(f,c,d,e,a[b+11],10,-1120210379),e=m(e,f,c,d,a[b+2],15,718787259),d=m(d,e,f,c,a[b+9],21,-343485551),c=p(c,n),d=p(d,s),e=p(e,t),f=p(f,q);return[c,d,e,f]}function u(a){var g,b="";for(g=0;g<32*a.length;g+=8)b+=String.fromCharCode(a[g>>5]>>>g%32&255);return b}function r(a){var g,b=[];b[(a.length>>2)-1]=void 0;for(g=0;g<b.length;g+=1)b[g]=0;for(g=0;g<8*a.length;g+=8)b[g>>5]|=(a.charCodeAt(g/8)&255)<<g%32;return b}function v(a,g){var b,
-h=r(a),k=[],l=[];k[15]=l[15]=void 0;16<h.length&&(h=q(h,8*a.length));for(b=0;16>b;b+=1)k[b]=h[b]^909522486,l[b]=h[b]^1549556828;b=q(k.concat(r(g)),512+8*g.length);return u(q(l.concat(b),640))}function w(a){var g="",b,h;for(h=0;h<a.length;h+=1)b=a.charCodeAt(h),g+="0123456789abcdef".charAt(b>>>4&15)+"0123456789abcdef".charAt(b&15);return g}function x(a){a=unescape(encodeURIComponent(a));return u(q(r(a),8*a.length))}return function(a,g,b){g?b?a=v(unescape(encodeURIComponent(g)),unescape(encodeURIComponent(a))):
-(a=v(unescape(encodeURIComponent(g)),unescape(encodeURIComponent(a))),a=w(a)):a=b?x(a):w(x(a));return a}})(),
-	md52id = {},
 	f2s = (function(){
 		var r0 = /</g, r1 = /\t/g;
 		return function(f){
@@ -58,14 +48,16 @@ h=r(a),k=[],l=[];k[15]=l[15]=void 0;16<h.length&&(h=q(h,8*a.length));for(b=0;16>
 	})(),
 	js = (function(doc){
 		var h = doc.getElementsByTagName('head')[0];
-		return function( id, fail ){
+		return function( id, title, fail ){
 			var t0, i, c;
+			title2id[title] = id, 
 			c = test.__callback, t0 = doc.createElement('script'), t0.type = 'text/javascript', t0.charset = 'utf-8', h.appendChild(t0);
-			t0.src = 'http://www.bsplugin.com/test/index.php?f=' + encodeURI(location.href) + '&id=' + encodeURI(id) + '&r=' + (fail ? 0 : 1) + '&rand='+Math.random();
+			t0.src = 'http://www.bsplugin.com/test/index.php?f=' + encodeURIComponent(location.href) + '&id=' + encodeURIComponent(title) + '&r=' + (fail ? 0 : 1) + '&rand='+Math.random();
 		};
 	})(document),
+	title2id = {},
 	id = 0,
-	test = function( title ){
+	test = function(title){
 		var r, expected, val, txt, ok, fail, t0, i, j;
 		id++,
 		r = isNode ? [['[test#'+id+'] '+title+'\n========================', 'white']] :
@@ -104,38 +96,46 @@ h=r(a),k=[],l=[];k[15]=l[15]=void 0;16<h.length&&(h=q(h,8*a.length));for(b=0;16>
 			console.log(t0);
 		}else{
 			printer( r = r + '</ol><div id="bsTestStat'+id+'">Loading...</div></div>'+
-				'<div style="padding:5px;float:right;border:1px dashed #999;text-align:center"><b style="font-size:30px;color:#' + ( fail ? 'a00">FAIL' : '0a0">OK' ) + '</b><br>ok:<b style="color:#0a0">' + ok + '</b> fail:<b style="color:#a00">' + fail + '</b></div><br clear="both"></div>'+
+				'<div id="bsTestResult'+id+'" style="padding:5px;float:right;border:1px dashed #999;text-align:center"><b style="font-size:30px;color:#' + ( fail ? 'a00">FAIL' : '0a0">OK' ) + '</b><br>ok:<b style="color:#0a0">' + ok + '</b> fail:<b style="color:#a00">' + fail + '</b></div><br clear="both"></div>'+
 				'<div id="bsTestOff'+id+'" style="display:block;cursor:pointer" onclick="bsTest.off(this)"><b>'+title+'</b> : <b style="color:#' + ( fail ? 'a00">FAIL' : '0a0">OK' ) + '</b></div></div>'
-			),
-			t0 = window.top;
-			console.log(t0 != window.self, t0.bsTest?1:0, t0.bsTest.suite.urls, fail)
-			if( t0 != window.self && t0.bsTest && t0.bsTest.suite.urls && fail ){
-				r = window.location.pathname.split("/").pop(),
-				console.log(r);
-				t0.document.getElementById(r).innerHTML = '<b style="font-size:20px;color:#a00">FAIL</b>',
-				t0.bsTest.suiteResult( '<div style="font-weight:bold;font-size:30px;padding:10px;color:#a00">FAIL</div><hr>' );
-			}
+			);
+			if( ( t0 = window.top ) != window.self && t0.bsTest && t0.bsTest.suite.urls && fail ) t0.bsTest.suiteResult(location.pathname);
 			if( result ) result( '<hr><div style="font-weight:bold;font-size:30px;padding:10px;color:#' + ( fail ? 'a00">FAIL' : '0a0">OK' ) + '</div>' );
-			//i = md5(r)
-			md52id[id] = id,
-			js( id, fail );
+			js( id, title, fail );
 		}
 	},
 	test.callback = function(data){
 		var t0, t1, i, j, k;
 		if( t0 = data.rs ){
-			for( i = 0, j = t0.length ; i < j ; i++ ) if( t1 = document.getElementById( 'bsTestStat' + md52id[t0[i][0]] ) ) t1.innerHTML = '';
+			for( i = 0, j = t0.length ; i < j ; i++ ) if( t1 = document.getElementById( 'bsTestStat' + title2id[t0[i][0]] ) ) t1.innerHTML = '';
 			for( i = 0 ; i < j ; i++ ){
-				if( t1 = document.getElementById( 'bsTestStat' + md52id[t0[i][0]] ) ) t1.innerHTML += 
-					'<div style="width:30%;float:left;font-size:10px;margin-bottom:10px;background:#' + (t0[i][3]=='0'?'afa':'faa') + '">' + t0[i][1] + '</div>'+
+				if( t1 = document.getElementById( 'bsTestStat' + title2id[t0[i][0]] ) ){
+					t1.innerHTML += 
+					'<div style="float:left;font-size:10px;margin-bottom:10px;background:#' + (t0[i][3]=='0'?'dfd':'fdd') + '">' + t0[i][1].split(')').join(')<br>') + '</div>'+
 					'<div style="float:left;margin-left:5px;margin-bottom:10px">ok:<b style="color:#0a0">' + t0[i][2] + '</b> fail:<b style="color:#a00">' + t0[i][3] + '</b></div>'+
 					'<br style="clear:both">';
+					if( t0[i][3] !='0' ) document.getElementById( 'bsTestResult' + id ).style.background = '#fdd';
+				}
 			}
 		}
 	},
 	test.isOK = 1,
 	test.on = function(dom){dom.style.display = 'none', document.getElementById('bsTestOff'+dom.id.substr(8)).style.display = 'block';},
-	test.off = function(dom){dom.style.display = 'none', document.getElementById('bsTestOn'+dom.id.substr(9)).style.display = 'block';};
+	test.off = function(dom){dom.style.display = 'none', document.getElementById('bsTestOn'+dom.id.substr(9)).style.display = 'block';},
+	//callback
+	test.CALLBACK = function( f ){
+		test.callback = function(data){
+			var t0, t1, i, j, k;
+			if( t0 = data.rs ){
+				for( i = 0, j = t0.length ; i < j ; i++ ) if( t1 = document.getElementById( 'bsTestStat' + title2id[t0[i][0]] ) ) t1.innerHTML = '';
+				for( i = 0 ; i < j ; i++ ) if( t1 = document.getElementById( 'bsTestStat' + title2id[t0[i][0]] ) ){
+					if( t0[i][3] !='0' ) document.getElementById( 'bsTestResult' + id ).style.background = '#fdd';
+					f( t1, t0[i] );
+				}
+			}	
+		};
+	},
+	//assert option
 	test.NOT = function(){return arguments.bsTestType = 'not', arguments;},
 	test.ITEM = function(a){return a.bsTestType = 'item', a;},
 	test.IN = function(){
@@ -143,9 +143,10 @@ h=r(a),k=[],l=[];k[15]=l[15]=void 0;16<h.length&&(h=q(h,8*a.length));for(b=0;16>
 		return t0.bsTestType = 'in', t0;
 	},
 	test.RANGE = function( a, b ){
-		var t0 = [a,b];
+		var t0 = [a, b];
 		return t0.bsTestType = 'range', t0;
 	},
+	//tear
 	test.tear = function( title, func ){
 		id++, func();
 		if( isNode ) console.log( '[tear#'+id + '] '+ title + '\n======================' + f2s(func) + '\n' );
@@ -183,7 +184,10 @@ h=r(a),k=[],l=[];k[15]=l[15]=void 0;16<h.length&&(h=q(h,8*a.length));for(b=0;16>
 			);
 			result( '<div style="font-weight:bold;font-size:30px;padding:10px;color:#0a0">OK</div><hr>' );
 		},
-		test.suiteResult = function(v){result(v);};
+		test.suiteResult = function(v){
+			document.getElementById(v.split("/").pop()).innerHTML = '<b style="font-size:20px;color:#a00">FAIL</b>',
+			result('<div style="font-weight:bold;font-size:30px;padding:10px;color:#a00">FAIL</div><hr>');
+		};
 	}
 	return test;
 })();
