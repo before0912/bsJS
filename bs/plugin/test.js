@@ -11,6 +11,7 @@ bs['plugin+']( 'method', 'test', (function(){
 		ALPHA:parseRule('/^[A-Z]+$/'),
 		pass:parseRule('/^[\\w]+$/'),
 		num:parseRule('/^[0-9]+$/'),
+		float:parseRule('/^[0-9\\.]+$/'),
 		alphanum:parseRule('/^[a-z0-9]+$/'),
 		'1alpha':parseRule('/^[a-z]/'),
 		'1ALPHA':parseRule('/^[A-Z]/'),
