@@ -100,7 +100,7 @@ var bsTest = (function(){
 				'<div id="bsTestOff'+id+'" style="display:block;cursor:pointer" onclick="bsTest.off(this)"><b>'+title+'</b> : <b style="color:#' + ( fail ? 'a00">FAIL' : '0a0">OK' ) + '</b></div></div>'
 			);
 			if( ( t0 = window.top ) != window.self && t0.bsTest && t0.bsTest.suite.urls && fail ) t0.bsTest.suiteResult(location.pathname);
-			if( result ) result( '<hr><div style="font-weight:bold;font-size:30px;padding:10px;color:#' + ( fail ? 'a00">FAIL' : '0a0">OK' ) + '</div>' );
+			if( result && fail ) result( '<hr><div style="font-weight:bold;font-size:30px;padding:10px;color:#' + ( fail ? 'a00">FAIL' : '0a0">OK' ) + '</div>' );
 			js( id, title, fail );
 		}
 	},
@@ -114,7 +114,7 @@ var bsTest = (function(){
 					'<div style="float:left;font-size:10px;margin-bottom:10px;background:#' + (t0[i][3]=='0'?'dfd':'fdd') + '">' + t0[i][1].split(')').join(')<br>') + '</div>'+
 					'<div style="float:left;margin-left:5px;margin-bottom:10px">ok:<b style="color:#0a0">' + t0[i][2] + '</b> fail:<b style="color:#a00">' + t0[i][3] + '</b></div>'+
 					'<br style="clear:both">';
-					if( t0[i][3] !='0' ) document.getElementById( 'bsTestResult' + id ).style.background = '#fdd';
+					if( t0[i][3] !='0' ) document.getElementById( 'bsTestResult' + title2id[t0[i][0]] ).style.background = '#fdd';
 				}
 			}
 		}

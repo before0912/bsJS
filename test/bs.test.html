@@ -126,12 +126,12 @@ bs( function(){
 			'set1', 'userid, pw = Falpha AND alphanum'
 		);
 	} );
-	bsTest( 'test - SET & GROUP',
+	bsTest( 'test - SET & GROUP 0',
 		function(){
 			return bs.test( 'set1', '@group1' );
 		}, 1
 	);
-	bsTest( 'test - Runtime SET',
+	bsTest( 'test - Runtime SET 0',
 		function(){
 			return bs.test( 'userid, pw = Falpha AND alphanum AND len|6', 'userid', '#id|@value', 'pw', '#pw|@value' );
 		}, 1,
