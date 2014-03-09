@@ -127,7 +127,7 @@ h=r(a),k=[],l=[];k[15]=l[15]=void 0;16<h.length&&(h=q(h,8*a.length));for(b=0;16>
 			for( i = 0, j = t0.length ; i < j ; i++ ) if( t1 = document.getElementById( 'bsTestStat' + md52id[t0[i][0]] ) ) t1.innerHTML = '';
 			for( i = 0 ; i < j ; i++ ){
 				if( t1 = document.getElementById( 'bsTestStat' + md52id[t0[i][0]] ) ) t1.innerHTML += 
-					'<div style="width:30%;float:left;font-size:10px;margin-bottom:10px;background:#eee">' + t0[i][1] + '</div>'+
+					'<div style="width:30%;float:left;font-size:10px;margin-bottom:10px;background:#' + (t0[i][3]=='0'?'afa':'faa') + '">' + t0[i][1] + '</div>'+
 					'<div style="float:left;margin-left:5px;margin-bottom:10px">ok:<b style="color:#0a0">' + t0[i][2] + '</b> fail:<b style="color:#a00">' + t0[i][3] + '</b></div>'+
 					'<br style="clear:both">';
 			}
