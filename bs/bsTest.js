@@ -104,37 +104,36 @@ var bsTest = (function(){
 			js( id, title, fail );
 		}
 	},
-	test.callback = function(data){
-		var t0, t1, i, j, k;
-		if( t0 = data.rs ){
-			for( i = 0, j = t0.length ; i < j ; i++ ) if( t1 = document.getElementById( 'bsTestStat' + title2id[t0[i][0]] ) ) t1.innerHTML = '';
-			for( i = 0 ; i < j ; i++ ){
-				if( t1 = document.getElementById( 'bsTestStat' + title2id[t0[i][0]] ) ){
-					t1.innerHTML += 
-					'<div style="float:left;font-size:10px;margin-bottom:10px;background:#' + (t0[i][3]=='0'?'dfd':'fdd') + '">' + t0[i][1].split(')').join(')<br>') + '</div>'+
-					'<div style="float:left;margin-left:5px;margin-bottom:10px">ok:<b style="color:#0a0">' + t0[i][2] + '</b> fail:<b style="color:#a00">' + t0[i][3] + '</b></div>'+
-					'<br style="clear:both">';
-					if( t0[i][3] !='0' ) document.getElementById( 'bsTestResult' + title2id[t0[i][0]] ).style.background = '#fdd';
-				}
-			}
-		}
-	},
 	test.isOK = 1,
 	test.on = function(dom){dom.style.display = 'none', document.getElementById('bsTestOff'+dom.id.substr(8)).style.display = 'block';},
 	test.off = function(dom){dom.style.display = 'none', document.getElementById('bsTestOn'+dom.id.substr(9)).style.display = 'block';},
 	//callback
-	test.CALLBACK = function( f ){
+	( test.CALLBACK = function( f ){
+		console.log('bbb');
 		test.callback = function(data){
 			var t0, t1, i, j, k;
 			if( t0 = data.rs ){
-				for( i = 0, j = t0.length ; i < j ; i++ ) if( t1 = document.getElementById( 'bsTestStat' + title2id[t0[i][0]] ) ) t1.innerHTML = '';
-				for( i = 0 ; i < j ; i++ ) if( t1 = document.getElementById( 'bsTestStat' + title2id[t0[i][0]] ) ){
-					if( t0[i][3] !='0' ) document.getElementById( 'bsTestResult' + id ).style.background = '#fdd';
-					f( t1, t0[i] );
+				for( i = 0, j = t0.length ; i < j ; i++ ){
+					//[id, agent, sum(ok), sum(fail)] -> [dom, id, agent, sum(ok), sum(fail)]
+					t0[i].unshift( t1 = document.getElementById( 'bsTestStat' + ( t0[i][0] = title2id[t0[i][0]] ) ) );
+					if( t1 ) t1.innerHTML = '';
+					if( t0[i][4] !='0' && ( t1 = document.getElementById( 'bsTestResult' + t0[i][1] ) ) ) t1.style.background = '#fdd';
 				}
+				f(t0);
 			}	
 		};
-	},
+	} )( function(data){
+		var i, j;
+		for( i = 0, j = data.length ; i < j ; i++ ){
+			//[dom, id, agent, sum(ok), sum(fail)]
+			if( data[i][0] ){
+				data[i][0].innerHTML += 
+				'<div style="float:left;font-size:10px;margin-bottom:10px;background:#' + (data[i][4]=='0'?'dfd':'fdd') + '">' + data[i][2].split(')').join(')<br>') + '</div>'+
+				'<div style="float:left;margin-left:5px;margin-bottom:10px">ok:<b style="color:#0a0">' + data[i][3] + '</b> fail:<b style="color:#a00">' + data[i][4] + '</b></div>'+
+				'<br style="clear:both">';
+			}
+		}
+	} ),
 	//assert option
 	test.NOT = function(){return arguments.bsTestType = 'not', arguments;},
 	test.ITEM = function(a){return a.bsTestType = 'item', a;},
