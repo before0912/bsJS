@@ -1,6 +1,7 @@
 var bsTest = (function(){
 	var f2s, compare, js,
-		printer, result, id, title2id, test, 
+		id, isOK, title2id,
+		printer, result, test, 
 		isNode, con, conStyles;
 	f2s = (function(){
 		var r0 = /</g, r1 = /\t/g;
@@ -55,8 +56,7 @@ var bsTest = (function(){
 			t0.src = 'http://www.bsplugin.com/test/index.php?f=' + encodeURIComponent(location.href) + '&id=' + encodeURIComponent(title) + '&r=' + (fail ? 0 : 1) + '&rand='+Math.random();
 		};
 	})(document),
-	title2id = {},
-	id = 0,
+	title2id = {}, id = 0, isOK = 1,
 	test = function(title){
 		var r, expected, val, txt, ok, fail, t0, i, j;
 		id++,
@@ -88,7 +88,7 @@ var bsTest = (function(){
 			isNode ? r[r.length] = con( txt, t0[1] ? 'green' : 'red' ) : r += txt;
 		}
 		//total result
-		if( fail ) test.isOK = 0;
+		if( fail ) isOK = 0;
 		//print
 		if( isNode ){
 			console.log( t0 = 'RESULT[#' + id + '] : ' + ( fail ? con("FAIL", 'red') : con( 'OK', 'green') ) + '[' + con( "OK: " + s, 'green' ) + ' ' + con( "FAIL: " + f, 'red' ) + ']' );
@@ -100,16 +100,14 @@ var bsTest = (function(){
 				'<div id="bsTestOff'+id+'" style="display:block;cursor:pointer" onclick="bsTest.off(this)"><b>'+title+'</b> : <b style="color:#' + ( fail ? 'a00">FAIL' : '0a0">OK' ) + '</b></div></div>'
 			);
 			if( ( t0 = window.top ) != window.self && t0.bsTest && t0.bsTest.suite.urls && fail ) t0.bsTest.suiteResult(location.pathname);
-			if( result && fail ) result( '<hr><div style="font-weight:bold;font-size:30px;padding:10px;color:#' + ( fail ? 'a00">FAIL' : '0a0">OK' ) + '</div>' );
+			if( result ) result( '<hr><div style="font-weight:bold;font-size:30px;padding:10px;color:#' + ( isOK ? '0a0">OK' : 'a00">FAIL'  ) + '</div>' );
 			js( id, title, fail );
 		}
 	},
-	test.isOK = 1,
 	test.on = function(dom){dom.style.display = 'none', document.getElementById('bsTestOff'+dom.id.substr(8)).style.display = 'block';},
 	test.off = function(dom){dom.style.display = 'none', document.getElementById('bsTestOn'+dom.id.substr(9)).style.display = 'block';},
 	//callback
 	( test.CALLBACK = function( f ){
-		console.log('bbb');
 		test.callback = function(data){
 			var t0, t1, i, j, k;
 			if( t0 = data.rs ){

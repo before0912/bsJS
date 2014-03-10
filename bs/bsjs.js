@@ -409,6 +409,7 @@ function DETECT( W, doc ){
 		//css3
 		cssPrefix:cssPrefix, stylePrefix:stylePrefix, filterFix:browser == 'ie' && bVersion == 8 ? ';-ms-' : ';',
 		transition:stylePrefix + 'Transition' in bStyle || 'transition' in bStyle, transform3D:transform3D, keyframe:keyframe,
+		transform:stylePrefix + 'Transform' in bStyle || 'transform' in bStyle,
 		//html5
 		canvas:c, canvasText:c && c.getContext('2d').fillText,
 		audio:a,
