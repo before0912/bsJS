@@ -14,6 +14,35 @@
     <link rel="shortcut icon" href="http://blog.bsidesoft.com/favicon.ico" type="image/x-icon">
 </head>
 <body>
+<div>
+<pre>
+bs.linklist(추가할 대상 컨테이너, data, 가로, 세로, 0(네비 : 가로형이면0 세로형이면1), 0(컨텐츠 : 가로형이면0 세로형이면1))
+입력데이터는
+ var data={
+        navi: [
+            {
+                title: 'dp1 naver',
+                bgImage: 'testIMG/001.jpg'
+            },
+            {
+                title: 'dp1 daum',
+                bgImage: 'testIMG/002.jpg'
+            },
+            {
+                title: 'dp1 google',
+                bgImage: 'testIMG/003.jpg'
+            },
+            {
+                title: 'dp1 none',
+                bgImage: 'testIMG/004.jpg'
+            }
+        ]
+    };
+처럼 오브젝트로 생성하면됨
+
+ex) bs.linklist('body', data, 300, 400, 0, 0)
+</pre>
+</div>
 <a href="https://github.com/projectBS/bsJS"><img style="position: fixed; top: 0; right: 0; border: 0;"
                                                  src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"
                                                  alt="Fork me on GitHub"></a>
