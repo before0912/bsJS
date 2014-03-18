@@ -30,7 +30,7 @@ else throw new Error( 0, 'not supported platform' );
 	fn( 'obj', function( name, o ){bs[name.replace( trim, '' ).toUpperCase()] = o;} ),
 	fn( 'cls', function( name, f ){
 		var cls, pr, t0, t1, k;
-		pr = ( cls = function( sel, arg ){this.__k = sel, this.NEW.apply( this, arg );} ).prototype,
+		pr = ( cls = function( sel, arg ){return this.__k = sel, this.NEW.apply( this, arg );} ).prototype,
 		pr.NEW = none, pr.END = function(){delete cls[this.__k];},
 		t0 = name.replace( trim, '' ).toLowerCase(),
 		t0 = t0.charAt(0).toUpperCase() + t0.substr(1),
@@ -144,9 +144,13 @@ else throw new Error( 0, 'not supported platform' );
 		return f;
 	})(trim) ),
 	(function(){
-		var rc = 0, rand = function(){return rc = ( rc + 1 ) % 1000, rand[rc] || ( rand[rc] = Math.random() );};
+		var rc = 0, rand = function(){return rc = ( rc + 1 ) % 1000, rand[rc] || ( rand[rc] = Math.random() );}, sin = {}, cos = {}, tan = {}, atan = {};
 		fn( 'rand', function( a, b ){return parseInt( rand() * ( b - a + 1 ) ) + a;} ),
-		fn( 'randf', function( a, b ){return rand() * ( b - a ) + a;} );
+		fn( 'randf', function( a, b ){return rand() * ( b - a ) + a;} ),
+		fn( 'sin', function(r){return sin[r] || sin[r] == 0 ? 0 : Math.sin(r);} ),
+		fn( 'cos', function(r){return cos[r] || cos[r] == 0 ? 0 : Math.cos(r);} ),
+		fn( 'tan', function(r){return tan[r] || tan[r] == 0 ? 0 : Math.tan(r);} ),
+		fn( 'atan', function(r){return atan[r] || atan[r] == 0 ? 0 : Math.atan(r);} );
 	})(),		
 	fn( 'reverse', function(o){
 		var t0, i;
@@ -389,8 +393,8 @@ function DETECT( W, doc ){
 		if( bVersion == 6 ) doc.execCommand( 'BackgroundImageCache', false, true ), b.style.position = 'relative';
 		break;
 	case'firefox': cssPrefix = '-moz-', stylePrefix = 'Moz'; transform3D = 1; break;
-	case'opera': cssPrefix = '-o-', stylePrefix = 'O'; transform3D = 0; break;
-	default: cssPrefix = '-webkit-', stylePrefix = 'webkit'; transform3D = os == 'android' ? ( osVersion < 4 ? 0 : 1 ) : 0;
+	case'opera': cssPrefix = '-o-', stylePrefix = 'O'; transform3D = 1; break;
+	default: cssPrefix = '-webkit-', stylePrefix = 'webkit'; transform3D = os == 'android' ? ( osVersion < 4 ? 0 : 1 ) : 1;
 	}
 	if( keyframe = W['CSSRule'] ){
 		if( keyframe.WEBKIT_KEYFRAME_RULE ) keyframe = '-webkit-keyframes';
@@ -508,7 +512,24 @@ function DOM(){
 			style.gradientBegin = function( self, v ){return v === undefined ? self.grB:( gra( self.s, self.grD, self.grB = v, self.grE || b ), v);},
 			style.gradientEnd = function( self, v ){return v === undefined ? self.grE:( gra( self.s, self.grD, self.grB || b, self.grE = v ), v);},
 			style.gradientDirection = function( self, v ){return v === undefined ? self.grD:(gra( self.s, self.grD = v, self.grB || b, self.grE || b ), v);};
-		} )();
+		})(),
+		(function(){
+			var k = key('transform');
+			style.translateX = bs.DETECT.transform3D ? function( self, v ){
+				return v === undefined ? self.translateX : ( self.s[k] = 'translate3d(' + ( self.translateX = v ) + 'px,' + ( self.translateY || 0 ) + 'px,0)', v );
+			} : bs.DETECT.transform ? function( self, v ){
+				return v === undefined ? self.translateX : ( self.s[k] = 'translate(' + ( self.translateX = v ) + 'px,' + ( self.translateY || 0 ) + 'px)', v );
+			} : function( self, v ){
+				return v === undefined ? self.translateX : ( self.s.left = ( self.translateX = v ) + 'px', v );
+			};
+			style.translateY = bs.DETECT.transform3D ? function( self, v ){
+				return v === undefined ? self.translateY : ( self.s[k] = 'translate3d(' + ( self.translateX || 0 ) + 'px,' + ( self.translateY = v ) + 'px,0)', v );
+			} : bs.DETECT.transform ? function( self, v ){
+				return v === undefined ? self.translateY : ( self.s[k] = 'translate(' + ( self.translateX || 0 ) + 'px,' + ( self.translateY = v ) + 'px)', v );
+			} : function( self, v ){
+				return v === undefined ? self.translateY : ( self.s.top = ( self.translateY = v ) + 'px', v );
+			};
+		})();
 		if( !( 'opacity' in b ) ){
 			style.opacity = function( s, v ){
 				if( v === undefined ) return s.opacity;
@@ -625,8 +646,7 @@ function DOM(){
 				th:[2, '<table><tbody><tr>', '</tr></tbody></table>'],
 				option:[0, '<select>', '</select>']
 			},
-			tags.td = tags.th,
-			tags.optgroup = tags.option,
+			tags.td = tags.th, tags.optgroup = tags.option,
 			t0 = 'thead,tfoot,tbody,caption,colgroup'.split(','), i = t0.length;
 			while( i-- ) tags[t0[i]] = [0,'<table>','</table>'];
 			return function( str, target, mode ){
@@ -643,10 +663,7 @@ function DOM(){
 					div.innerHTML = tags[t1][1] + str + tags[t1][2], t2 = div.childNodes[0];
 					if( tags[t1][0] ) for( i = 0 ; i < tags[t1][0] ; i++ ) t2 = t2.childNodes[0];
 					parent = t2;
-				}else{
-					div.innerHTML = str;
-					parent = div;
-				}
+				}else div.innerHTML = str, parent = div;
 				i = parent.childNodes.length;
 				if( !target ) return parent.childNodes;
 				else if( mode == 'html' ){
@@ -689,7 +706,9 @@ function DOM(){
 		})( query, html ),
 		fn.NEW = function(sel){
 			var t0, i, j;
-			for( t0 = dom(sel), i = 0, this.length = j = t0.length ; i < j ; i++ ) this[i] = t0[i];
+			t0 = dom(sel);
+			if( t0['instanceOf'] == bs.Dom ) return t0;
+			for( i = 0, this.length = j = t0.length ; i < j ; i++ ) this[i] = t0[i];
 			t0 = dom(sel), this.length = i = j = t0.length;
 			while(i--) this[j - i - 1] = t0[i];
 		},
@@ -1098,30 +1117,45 @@ function DOM(){
 	})() );
 }
 function ANI(){
-	var style, timer, start, end, loop, ease, ANI, ani, len, time, isLive, isPause, tween, tweenPool;
-	style = bs.STYLE, ani = [], time = len = 0, timer = 'equestAnimationFrame';
+	var style, timer, start, end, loop, ease, ANI, ani, time, isLive, isPause, tween, pool, ex,
+		toRadian = Math.PI/180, cos = bs.cos, sin = bs.sin;
+	style = bs.STYLE, ani = [], time = 0, timer = 'equestAnimationFrame';
 	if( timer = W['r' + timer] || W[bs.DETECT.stylePrefix + 'R' + timer] ){
 		start = function(){if( !isLive ) isPause = 0, isLive = 1, loop();},
-		end = function(){len = ani.length = isLive = 0;},
+		end = function(){ani.length = isLive = 0;},
 		timer( function(T){time = Date.now() - T;} ),
 		loop = function(T){
-			var t, i, j;
+			var t, t0, i, j, k;
 			if( isPause ) return;
 			if( isLive ){
-				t = T + time, i = len;
-				while( i-- ) if( ani[i].ANI(t) ) len--, ani.splice( i, 1 );
+				t = T + time || 0, j = ( k = i = ani.length ) % 8;
+				while( j-- ) if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+				j = ( i * 0.125 ) ^ 0;
+				while(j--){
+					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+				}
 				ani.length ? timer(loop) : end();
 			}
 		};
 	}else{
-		start = function start(){if( !isLive ) isLive = setInterval( loop, 17 );},
+		start = function start(){if( !isLive ) isLive = setInterval( loop, 16 );},
 		end = function end(){if( isLive ) clearInterval(isLive), ani.length = isLive = 0;},
 		loop = function loop(){
-			var t, i;
+			var t, t0, i, j, k, l;
 			if( isPause ) return;
 			if( isLive ){
-				t = +new Date, i = len;
-				while( i-- ) if( ani[i].ANI(t) ) len--, ani.splice( i, 1 );
+				t = +new Date, j = ( k = i = ani.length ) % 8;
+				while( j-- ) if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+				j = ( i * 0.125 ) ^ 0;
+				while(j--){
+					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+				}
 				ani.length ? 0 : end();
 			}
 		};
@@ -1131,153 +1165,181 @@ function ANI(){
 		PI = Math.PI, HPI = PI * .5;
 		return {//rate,start,term
 			linear:function(a,c,b){return b*a+c},
-			backIn:function(a,c,b){return b*a*a*(2.70158*a-1.70158)+c},
-			backOut:function(a,c,b){a-=1;return b*(a*a*(2.70158*a+1.70158)+1)+c},
+			backIn:function(a,c,b){return b*a*a*(2.70158*a-1.70158)+c}, backOut:function(a,c,b){a-=1;return b*(a*a*(2.70158*a+1.70158)+1)+c},
 			backInOut:function(a,c,b){a*=2;if(1>a)return 0.5*b*a*a*(3.5949095*a-2.5949095)+c;a-=2;return 0.5*b*(a*a*(3.70158*a+2.70158)+2)+c},
 			bounceIn:function(a,c,b,d,e){return b-ease[3]((e-d)/e,0,b)+c},
 			bounceOut:function(a,c,b){if(0.363636>a)return 7.5625*b*a*a+c;if(0.727272>a)return a-=0.545454,b*(7.5625*a*a+0.75)+c;if(0.90909>a)return a-=0.818181,b*(7.5625*a*a+0.9375)+c;a-=0.95454;return b*(7.5625*a*a+0.984375)+c},
 			bounceInOut:function(a,c,b,d,e){if(d<0.5*e)return d*=2,0.5*ease[13](d/e,0,b,d,e)+c;d=2*d-e;return 0.5*ease[14](d/e,0,b,d,e)+0.5*b+c},
-			sineIn:function(a,c,b){return -b*Math.cos(a*HPI)+b+c},
-			sineOut:function(a,c,b){return b*Math.sin(a*HPI)+c},
+			sineIn:function(a,c,b){return -b*Math.cos(a*HPI)+b+c}, sineOut:function(a,c,b){return b*Math.sin(a*HPI)+c},
 			sineInOut:function(a,c,b){return 0.5*-b*(Math.cos(PI*a)-1)+c},
-			circleIn:function(a,c,b){return -b*(Math.sqrt(1-a*a)-1)+c},
-			circleOut:function(a,c,b){a-=1;return b*Math.sqrt(1-a*a)+c},
+			circleIn:function(a,c,b){return -b*(Math.sqrt(1-a*a)-1)+c}, circleOut:function(a,c,b){a-=1;return b*Math.sqrt(1-a*a)+c},
 			circleInOut:function(a,c,b){a*=2;if(1>a)return 0.5*-b*(Math.sqrt(1-a*a)-1)+c;a-=2;return 0.5*b*(Math.sqrt(1-a*a)+1)+c},
-			quadraticIn:function(a,c,b){return b*a*a+c},
-			quadraticOut:function(a,c,b){return -b*a*(a-2)+c}
+			quadraticIn:function(a,c,b){return b*a*a+c},quadraticOut:function(a,c,b){return -b*a*(a-2)+c}
 		};
-	})();
-	tweenPool = {length:0},
-	tween = function(){},
+	})(),
+	pool = {length:0}, tween = function(){},
 	(function(){
-		var t0, i;
-		t0 = 'time,ease,delay,loop,end,update'.split(','), i = t0.length;
+		var t0 = 'id,time,ease,delay,loop,end,update,yoyo,path,circle,bezier'.split(','), i = t0.length;
 		while( i-- ) tween[t0[i]] = 1;
 	})(),
+	ex = function( v, v0 ){
+		var t0;
+		if( ( t0 = typeof v ) == 'number' ) return v;
+		else if( t0 == 'string' ){
+			if( v.charAt(0) == '{' ){ // && v.charAt(v.length - 1) == '}'
+				v = ( t0 = v.charAt(1) ) == '=' ? v0 : (
+					v = parseFloat(v.substring( 2, v.length - 1 )),
+					t0 == '+' ? v0 + v : t0 == '-' ? v0 - v : t0 == '*' ? v0 * v : t0 == '/' ? v0 / v : 0
+				);
+			}else return parseFloat(v);
+		}else if( t0 == 'function' ) return v( v, v0 );
+		return v;
+	},
 	tween.prototype.S = function(arg){
-		var t0, l, i, j, k, v, isDom, v0;
-		this.t = t0 = arg[0].nodeType == 1 ? bs.Dom(arg[0]) : arg[0], this.isDom = isDom = ( t0.instanceOf == bs.Dom ),
-		this.delay = this.stop = this.pause = 0, this.id = this.end = this.update = null, this.ease = ease.linear,
+		var t0, t1, l, i, j, k, v, v0, v1;
+		this.t = t0 = bs.Dom(arg[0]),
+		this.bezier = this.circle = this.delay = this.stop = this.yoyo = this.pause = 0, this.id = this.end = this.update = null, this.ease = ease.linear,
 		this.time = 1000, this.timeR = .001, this.loop = this.loopC = 1, this.length = l = t0.length || 1;
-		while(l--) ( this[l] ? (this[l].length=0) : (this[l]=[]) ), ( this[l][0] = isDom ? t0[l].bsS : (t0[l] || t0) );
+		while(l--) this[l] ? this[l].length = 0 : this[l] = [], this[l][0] = t0[l].bsS;
 		i = 1, j = arg.length;
 		while( i < j ){
 			k = arg[i++], v = arg[i++];
 			if( tween[k] ){
 				if( k == 'time' ) this.time = parseInt(v*1000), this.timeR = 1/this.time;
 				else if( k == 'ease' ) this.ease = ease[v];
-				else if( k == 'delay' ) this.delay = parseInt(v*1000);
-				else if( k == 'loop' ) this.loop = this.loopC = v;
 				else if( k == 'end' || k == 'update' ) this[k] = v;
+				else if( k == 'loop' ) this.loop = this.loopC = v;
+				else if( k == 'delay' ) this.delay = parseInt(v*1000);
+				else if( k == 'id' || k == 'yoyo' || k == 'bezier' || k == 'circle' ) this[k] = v;
 			}else{
 				l = this.length;
-				while( l-- ) this[l].push( isDom ? style[k] : k, v0 = isDom ? this[l][0].g(k) : this[l][0][k], v - v0 );
+				while( l-- ){
+					t0 = this[l], v0 = t0[0].g(k), t0[t0.length] = style[k];
+					if( typeof v == 'string' && v.indexOf(',') > -1 ) v = v.split(','), t0[t0.length] = v1 = ex( v[0], v0 ), t0[t0.length] = ex( v[1], v0 ) - v1;
+					else t0[t0.length] = v0, t0[t0.length] = ex( v, v0 ) - v0;
+					t0[t0.length] = typeof style[k] == 'function' ? 1 : 0;
+				}
 			}
 		}
-		this.stime = Date.now() + this.delay, this.etime = this.stime + this.time,
-		this.ANI = isDom ? ANIstyle : ANIobj, ani[ani.length] = this, start();
-	};
-	function ANIstyle( T, pause ){
-		var t0, t1, term, time, rate, i, j, l, k, v, e, s, u;
+		this.keyLen = this[0].length, this.etime = ( this.stime = Date.now() + this.delay ) + this.time;
+		if( t0 = this.circle ){
+			if( i = t0.center ) i = i.split(','), t0.centerX = parseFloat(i[0]), t0.centerY = parseFloat(i[1]);
+			if( i = t0.offset ) i = i.split(','), t0.offsetX = parseFloat(i[0]), t0.offsetY = parseFloat(i[1]);
+			if( i = t0.angle ) i = i.split(','), t0.angle0 = parseFloat(i[0]), t0.angle1 = parseFloat(i[1]);
+			if( i = t0.radius ) i = i.split(','), t0.radius0 = parseFloat(i[0]), t0.radius1 = parseFloat(i[1]);
+			t0.angle0 *= toRadian, t0.angle1 *= toRadian, t0.angle2 = t0.angle1 - t0.angle0, t0.radius2 = t0.radius1 - t0.radius0,
+			t0.x0 = typeof ( t0.x = style[t0.x] ) == 'function' ? 1 : 0, t0.y0 = typeof ( t0.y = style[t0.y] ) == 'function' ? 1 : 0;
+		}else if( t0 = this.bezier ){
+			t1 = this.bezier0 || ( this.bezier0 = [] ), t1.length = 0;
+			for( i  in t0 ){//styleKey, array, rate, val, isFunction
+				if( ( l = t0[i].length ) != 3 ) bs.err(1);
+				t1.push( style[i], t0[i], 1 / t0[i].length, 0, typeof style[i] == 'function' ? 1 : 0 ); 
+			}
+		}
+		this.ANI = this.easing;
+		return this;
+	},
+	tween.prototype.easing = function( T, pause ){
+		var t0, t1, term, time, rate, i, j, l, k, v, e, s, u, 
+			circle, ckx, cky, cvx, cvy, 
+			bezier, bv0, bv1, bv2, bt, bl, br;
 		if( this.stop ) return 1;
 		if( pause )
 			if( pause == 1 && this.pause == 0 ) return this.pause = T, 0;
 			else if( pause == 2 && this.pause ) t0 = T - this.pause, this.stime += t0, this.etime += t0, this.pause = 0;
 		if( this.pause || ( term = T - this.stime ) < 0 ) return;
-		e = this.ease, time = this.time, rate = term * this.timeR, l = this.length, j = this[0].length;
-		if( term > this.time ){
-			if( --this.loopC ) return this.stime = T + this.delay, this.etime = this.stime + this.time, 0;
-			else{
-				while( l-- ){
-					t0 = this[l], t1 = this[l][0], s = t1.s, u = t1.u, i = 1;
-					while( i < j ) k = t0[i++], v = t0[i++] + t0[i++],
-						typeof k == 'function' ? k( t1, v ) : s[k] = v + u[k], t1[k] = v;
+		l = this.length, j = this.keyLen, circle = this.circle, bezier = this.bezier;
+		if( term > ( time = this.time ) ){
+			if( bezier ) bt = this.bezier0, bl = bt.length;
+			if( --this.loopC ){
+				if( this.yoyo ){
+					while( l-- ){
+						t0 = this[l], i = 1;
+						while( i < j ) t0[i + 1] +=  t0[i + 2], t0[i + 2] *= -1, i += 4;
+					}
+					if( circle ) t0 = circle.angle1, circle.angle1 = circle.angle0, circle.angle0 = t0, circle.angle2 *= -1,
+						t0 = circle.radius1, circle.radius1 = circle.radius0, circle.radius0 = t0, circle.radius2 *= -1;
+					if( bezier ) for( i = 0 ; i < bl ; i += 5 ) j = bt[i + 2][2], bt[i + 2][2] = bt[i + 2][0], bt[i + 2][0] = j;
 				}
-				if( this.end ) this.end(this.t);
-				tweenPool[tweenPool.length++] = this;
+				return this.stime = T + this.delay, this.etime = this.stime + this.time, 0;
+			}else{
+				if( circle ) cvx = circle.centerX + circle.offsetX + cos(circle.angle1) * circle.radius1, ckx = circle.x,
+					cvy = circle.centerY + circle.offsetY + sin(circle.angle1) * circle.radius1, cky = circle.y
+				while( l-- ){
+					t0 = this[l], t1 = t0[0], s = t1.s, u = t1.u, i = 1;
+					while( i < j ) k = t0[i++], v = t0[i++] + t0[i++], t0[i++] ? k( t1, v ) : s[k] = v + u[k], t1[k] = v;
+					if( circle ) t1[ckx] = cvx, circle.x0 ? ckx( t1, cvx ) : s[ckx] = cvx + u[ckx], t1[cky] = cvy, circle.y0 ? cky( t1, cvy ) : s[cky] = cvy + u[cky];
+					if( bezier ) for( i = 0 ; i < bl ; i += 5 ) k = bt[i], v = bt[i + 2][2], bt[i + 4] ? k( t1, v ) : s[k] = v + u[k], t1[k] = v;
+				}
+				if( this.end ) this.end( this.t, 1, T );
+				pool[pool.length++] = this;
 				return 1;
 			}
 		}
+		e = this.ease, rate = term * this.timeR;
+		if( circle ) i = e( rate, circle.angle0, circle.angle2, term, time ), j = e( rate, circle.radius0, circle.radius2, term, time ),
+			cvx = circle.centerX + circle.offsetX + cos(i) * j, ckx = circle.x, cvy = circle.centerY + circle.offsetY + sin(i) * j, cky = circle.y;
+		if( bezier ) bv1 = 2 * ( rate - ( bv0 = rate * rate ) ), bv2 = 1 - 2 * rate + bv0, bt = this.bezier0, bl = bt.length;
 		while( l-- ){
-			t0 = this[l], t1 = this[l][0], s = t1.s, u = t1.u, i = 1;
-			while( i < j ) k = t0[i++], v = e( rate, t0[i++], t0[i++], term, time ),
-				typeof k == 'function' ? k( t1, v ) : s[k] = v + u[k], t1[k] = v;
-		}
-		if( this.update ) this.update( rate, T, this );
-	}
-	function ANIobj( T, pause ){
-		var t0, t1, term, time, rate, i, j, l, k, v, e;
-		if( this.stop ) return 1;
-		if( pause )
-			if( pause == 1 && this.pause == 0 ) return this.pause = T, 0;
-			else if( pause == 2 && this.pause ) t0 = T - this.pause, this.stime += t0, this.etime += t0, this.pause = 0;
-		if( this.pause ) return;
-		if( ( term = T - this.stime ) < 0 ) return;
-		e = this.ease, time = this.time, rate = term * this.timeR, l = this.length, j = this[0].length;
-		if( term > this.time ){
-			if( --this.loopC ) return this.stime = T + this.delay, this.etime = this.stime + this.time, 0;
-			else{
-				while( l-- ){
-					t0 = this[l], t1 = this[l][0], i = 1;
-					while( i < j ) t1[t0[i++]] = t0[i++] + t0[i++];
+			t0 = this[l], t1 = t0[0], s = t1.s, u = t1.u, i = 1;
+			while( i < j ) k = t0[i++], v = e( rate, t0[i++], t0[i++], term, time ), t0[i++] ? k( t1, v ) : s[k] = v + u[k], t1[k] = v;
+			if( circle ) circle.x0 ? ckx( t1, cvx ) : s[ckx] = cvx + u[ckx], t1[ckx] = cvx, circle.y0 ? cky( t1, cvy ) : s[cky] = cvy + u[cky], t1[cky] = v;
+			if( bezier ){
+				for( i = 0 ; i < bl ; i += 5 ){
+					k = bt[i], t1 = bt[i + 1], v = t1[2] * bv0 + t1[1] * bv1 + t1[0] * bv2,
+					bt[i + 4] ? k( t1, v ) : s[k] = v + u[k], t1[k] = v;
 				}
-				tweenPool[tweenPool.length++] = this;
-				if( this.end ) this.end( this.t );
-				return 1;
 			}
 		}
-		while( l-- ){
-			t0 = this[l], t1 = this[l][0], i = 1;
-			while( i < j ) t1[t0[i++]] = e( rate, t0[i++], t0[i++], term, time );
-		}
-		if( this.update ) this.update( rate, T, this );
-	}
+		if( this.update ) this.update( this.t, rate, T );
+	};
 	return ANI = {
-		ani:function(v){if(v.ANI) ani[ani.length] = v,start(), len++;},
+		ease:ease,
+		ani:function(v){if(v.ANI) ani[ani.length] = v, start()},
 		tween:function(){
-			var t0 = tweenPool.length ? tweenPool[--tweenPool.length] : new tween;
-			return t0.S( arguments ), len++, t0;
+			var t0 = pool.length ? pool[--pool.length] : new tween;
+			return ani[ani.length] = t0, t0.S(arguments), start(), t0;
 		},
 		tweenStop:function(){
 			var t0, i, j, k;
-			i = len, j = arguments.length;
+			i = ani.length, j = arguments.length;
 			while( i-- ){
 				t0 = ani[i], k = j;
-				while( k-- ) if( t0.id == arguments[k] || t0.isDom && t0.t[0] == arguments[k] ) tweenPool[tweenPool.length++] = t0, t0.stop = 1, len--, ani.splice( i, 1 );
+				while( k-- ) if( t0.id == arguments[k] || t0.t[0] == arguments[k] ) pool[pool.length++] = t0, t0.stop = 1, ani.splice( i, 1 );
 			}
 		},
 		tweenPause:function(){
 			var t0, t, i, j, k;
-			t = Date.now(), i = len, j = arguments.length;
+			t = Date.now(), i = ani.length, j = arguments.length;
 			while( i-- ){
 				t0 = ani[i], k = j;
-				while( k-- ) if( t0.id == arguments[k] || t0.isDom && t0.t[0] == arguments[k] ) t0.ANI( t, 1 );
+				while( k-- ) if( t0.id == arguments[k] || t0.t[0] == arguments[k] ) t0.ANI( t, 1 );
 			}
 		},
 		tweenResume:function(){
 			var t0, t, i, j, k;
-			t = Date.now(), i = len, j = arguments.length;
+			t = Date.now(), i = ani.length, j = arguments.length;
 			while( i-- ){
 				t0 = ani[i], k = j;
-				while( k-- ) if( t0.id == arguments[k] || t0.isDom && t0.t[0] == arguments[k] ) ani[i].ANI( t, 2 );
+				while( k-- ) if( t0.id == arguments[k] || t0.t[0] == arguments[k] ) ani[i].ANI( t, 2 );
 			}
 		},
 		tweenToggle:function(){
 			var t0, t, i, j, k;
-			t = Date.now(), i = len, j = arguments.length;
+			t = Date.now(), i = ani.length, j = arguments.length;
 			while( i-- ){
 				t0 = ani[i], k = j;
-				while( k-- ) if( t0.id == arguments[k] || t0.isDom && t0.t[0] == arguments[k] ) ani[i].ANI( t, ani[i].pause ? 2 : 1 );
+				while( k-- ) if( t0.id == arguments[k] || t0.t[0] == arguments[k] ) ani[i].ANI( t, ani[i].pause ? 2 : 1 );
 			}
 		},
 		pause:function(){
 			var i, t;
-			isPause = 1, t = Date.now(), i = len;
+			isPause = 1, t = Date.now(), i = ani.length;
 			while( i-- ) ani[i].ANI( t, 1 );
 		},
 		resume:function(){
 			var i, t;
-			isPause = 0, t = Date.now(), i = len;
+			isPause = 0, t = Date.now(), i = ani.length;
 			while( i-- ) ani[i].ANI( t, 2 );
 			loop();
 		},

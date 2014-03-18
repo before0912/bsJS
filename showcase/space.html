@@ -15,11 +15,12 @@
 <div id="stage"></div>
 <script src="../bs/bsjs.js"></script>
 <script>
+bs.plugin( 'fps', 'last' );
 bs( function(){
 var started;
 bs.Css( 'body' ).S( 'background', '#000' );
 bs.Css( '.ani' ).S( 'position', 'absolute' );
-//bs.ANI.fps( bs.Dom('<div></div>' ).S( '@id', 'fps', 'position','absolute', 'font-size', 11, 'color', '#fff', '<', 'body', 'this' )[0] );
+bs.fps( bs.Dom('<div></div>' ).S( '@id', 'fps', 'position','absolute', 'font-size', 11, 'color', '#900', '<', 'body', 'this' )[0] );
 bs.Dom( '<div id="toggle"></div>' ).S( '<', 'body', 
 	'position','absolute', 'top', 30, 'left', 30, 'width', 70, 'height', 20, 'border-radius', 15, 'html', 'pause',
 	'background', '#fdd', 'line-height', 20, 'text-align', 'center', 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
@@ -36,17 +37,21 @@ bs.Dom( '<div id="stop"></div>' ).S( '<', 'body',
 bs.WIN.sizer( function( w, h ){
 	var i, k, s;
 	if( started ) return;
-	started = 1, i = bs.DETECT.device =='tablet' || bs.DETECT.device=='mobile' ? 50 : 300;
+	started = 1, i = bs.DETECT.device =='tablet' || bs.DETECT.device=='mobile' ? 300 : 1000;
 	while( i-- ){
 		k = bs.rand( 0, 1 ), s = bs.rand( 3, 15 );
 		bs.ANI.tween( 
 			bs.Dom( '<div></div>' ).S( 
-				'border-radius', s, 'opacity', 1,
-				'left', w * .5, 'top', h * .5, 'width', 1, 'height', 1, 
+				'transform', 'rotateZ(0)',
+				'border-radius', s, 'opacity', 1, 'width', 1, 'height', 1, 
+//				'translateX', w * .5, 'translateY', h * .5,
+				'left',w * .5, 'top', h * .5,
 				'background', 'rgb(' + bs.rand( 210, 255 ) + ',' + bs.rand( 210, 255 ) + ',' + bs.rand( 150, 200 ) + ')',
 				'class', 'ani', '<', '#stage', 'this'
 			),
 			'opacity', 0, 'width', s, 'height', s,
+//			'translateX', k ? bs.rand( 0, 1 ) ? 0 : w - 30 : bs.rand( 0, w - 30 ),
+//			'translateY', k ? bs.rand( 0, h - 30 ) : bs.rand( 0, 1 ) ? 0 : h - 30, 
 			'left', k ? bs.rand( 0, 1 ) ? 0 : w - 30 : bs.rand( 0, w - 30 ),
 			'top', k ? bs.rand( 0, h - 30 ) : bs.rand( 0, 1 ) ? 0 : h - 30, 
 			'delay', bs.randf( 0, 2 ), 'time', bs.randf( .5, 5 ), 'loop', 0
