@@ -59,60 +59,60 @@ bs(function(){
             'html', 'static',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'block', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static > static</div>', 'class', 'static', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative > static</div>', 'class', 'static', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed > static</div>', 'class', 'static', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute > static</div>', 'class', 'static', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static > static</div>', 'class', 'static', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative > static</div>', 'class', 'static', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed > static</div>', 'class', 'static', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute > static</div>', 'class', 'static', 'display', 'block', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'relative',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'block', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static > relative</div>', 'class', 'relative', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative > relative</div>', 'class', 'relative', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static > relative</div>', 'class', 'relative', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative > relative</div>', 'class', 'relative', 'display', 'block', 'float', 'none');
                 bs.Dom(rect_3).S('html', '<div>fixed > relative</div>', 'class', 'relative', 'display', 'block');
-                bs.Dom(rect_4).S('html', '<div>absolute > relative</div>', 'class', 'relative', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_4).S('html', '<div>absolute > relative</div>', 'class', 'relative', 'display', 'block', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'fixed',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'block', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static > fixed</div>', 'class', 'fixed', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative > fixed</div>', 'class', 'fixed', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed > fixed</div>', 'class', 'fixed', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute > fixed</div>', 'class', 'fixed', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static > fixed</div>', 'class', 'fixed', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative > fixed</div>', 'class', 'fixed', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed > fixed</div>', 'class', 'fixed', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute > fixed</div>', 'class', 'fixed', 'display', 'block', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'absolute',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'block', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static > absolute</div>', 'class', 'absolute', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative > absolute</div>', 'class', 'absolute', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed > absolute</div>', 'class', 'absolute', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute > absolute</div>', 'class', 'absolute', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static > absolute</div>', 'class', 'absolute', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative > absolute</div>', 'class', 'absolute', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed > absolute</div>', 'class', 'absolute', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute > absolute</div>', 'class', 'absolute', 'display', 'block', 'float', 'none');
             }
     );
 
@@ -133,40 +133,40 @@ bs(function(){
             'html', 'inline > inline',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'inline', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'inline', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'inline', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'inline', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static(inline) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(inline) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(inline) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(inline) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(inline) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(inline) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(inline) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(inline) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'inline > block',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'inline', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'inline', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'inline', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'inline', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static(inline) > static(block)</div>', 'class', 'static', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(inline) > static(block)</div>', 'class', 'static', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(inline) > static(block)</div>', 'class', 'static', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(inline) > static(block)</div>', 'class', 'static', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(inline) > static(block)</div>', 'class', 'static', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(inline) > static(block)</div>', 'class', 'static', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(inline) > static(block)</div>', 'class', 'static', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(inline) > static(block)</div>', 'class', 'static', 'display', 'block', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'inline > block_float',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'inline', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'inline', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'inline', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'inline', 'float', 'none' );
 
                 bs.Dom(rect_1).S('html', '<div>static(inline) > static(block_float)</div>', 'class', 'static', 'display', 'block', 'float', 'left');
                 bs.Dom(rect_2).S('html', '<div>relative(inline) > static(block_float)</div>', 'class', 'static', 'display', 'block', 'float', 'left');
@@ -181,40 +181,40 @@ bs(function(){
             'html', 'block > inline',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'block', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static(block) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(block) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(block) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(block) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(block) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(block) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(block) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(block) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'block > block',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'block', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static(block) > static(block)</div>', 'class', 'static', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(block) > static(block)</div>', 'class', 'static', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(block) > static(block)</div>', 'class', 'static', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(block) > static(block)</div>', 'class', 'static', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(block) > static(block)</div>', 'class', 'static', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(block) > static(block)</div>', 'class', 'static', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(block) > static(block)</div>', 'class', 'static', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(block) > static(block)</div>', 'class', 'static', 'display', 'block', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'block > block_float',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'block', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'none' );
 
                 bs.Dom(rect_1).S('html', '<div>static(block) > static(block_float)</div>', 'class', 'static', 'display', 'block', 'float', 'left');
                 bs.Dom(rect_2).S('html', '<div>relative(block) > static(block_float)</div>', 'class', 'static', 'display', 'block', 'float', 'left');
@@ -235,10 +235,10 @@ bs(function(){
                 bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'left' );
                 bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'left' );
 
-                bs.Dom(rect_1).S('html', '<div>static(block_float) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(block_float) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(block_float) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(block_float) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(block_float) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(block_float) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(block_float) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(block_float) > static(inline)</div>', 'class', 'static', 'display', 'inline', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
@@ -250,10 +250,10 @@ bs(function(){
                 bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'left' );
                 bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'left' );
 
-                bs.Dom(rect_1).S('html', '<div>static(block_float) > static(block)</div>', 'class', 'static', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(block_float) > static(block)</div>', 'class', 'static', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(block_float) > static(block)</div>', 'class', 'static', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(block_float) > static(block)</div>', 'class', 'static', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(block_float) > static(block)</div>', 'class', 'static', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(block_float) > static(block)</div>', 'class', 'static', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(block_float) > static(block)</div>', 'class', 'static', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(block_float) > static(block)</div>', 'class', 'static', 'display', 'block', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
@@ -282,40 +282,40 @@ bs(function(){
             'html', 'inline > inline',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'inline', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'inline', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'inline', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'inline', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static(inline) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(inline) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(inline) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(inline) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(inline) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(inline) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(inline) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(inline) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'inline > block',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'inline', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'inline', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'inline', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'inline', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static(inline) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(inline) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(inline) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(inline) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(inline) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(inline) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(inline) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(inline) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'inline > block_float',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'inline', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'inline', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'inline', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'inline', 'float', 'none' );
 
                 bs.Dom(rect_1).S('html', '<div>static(inline) > relative(block_float)</div>', 'class', 'relative', 'display', 'block', 'float', 'left');
                 bs.Dom(rect_2).S('html', '<div>relative(inline) > relative(block_float)</div>', 'class', 'relative', 'display', 'block', 'float', 'left');
@@ -330,40 +330,40 @@ bs(function(){
             'html', 'block > inline',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'block', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static(block) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(block) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(block) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(block) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(block) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(block) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(block) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(block) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'block > block',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'block', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static(block) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(block) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(block) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(block) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(block) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(block) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(block) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(block) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'block > block_float',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'block', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'none' );
 
                 bs.Dom(rect_1).S('html', '<div>static(block) > relative(block_float)</div>', 'class', 'relative', 'display', 'block', 'float', 'left');
                 bs.Dom(rect_2).S('html', '<div>relative(block) > relative(block_float)</div>', 'class', 'relative', 'display', 'block', 'float', 'left');
@@ -384,10 +384,10 @@ bs(function(){
                 bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'left' );
                 bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'left' );
 
-                bs.Dom(rect_1).S('html', '<div>static(block_float) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(block_float) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(block_float) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(block_float) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(block_float) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(block_float) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(block_float) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(block_float) > relative(inline)</div>', 'class', 'relative', 'display', 'inline', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
@@ -399,10 +399,10 @@ bs(function(){
                 bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'left' );
                 bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'left' );
 
-                bs.Dom(rect_1).S('html', '<div>static(block_float) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(block_float) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(block_float) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(block_float) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(block_float) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(block_float) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(block_float) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(block_float) > relative(block)</div>', 'class', 'relative', 'display', 'block', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
@@ -434,40 +434,40 @@ bs(function(){
             'html', 'inline > inline',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'inline', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'inline', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'inline', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'inline', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static(inline) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(inline) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(inline) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(inline) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(inline) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(inline) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(inline) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(inline) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'inline > block',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'inline', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'inline', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'inline', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'inline', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static(inline) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(inline) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(inline) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(inline) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(inline) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(inline) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(inline) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(inline) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'inline > block_float',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'inline', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'inline', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'inline', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'inline', 'float', 'none' );
 
                 bs.Dom(rect_1).S('html', '<div>static(inline) > fixed(block_float)</div>', 'class', 'fixed', 'display', 'block', 'float', 'left');
                 bs.Dom(rect_2).S('html', '<div>relative(inline) > fixed(block_float)</div>', 'class', 'fixed', 'display', 'block', 'float', 'left');
@@ -482,40 +482,40 @@ bs(function(){
             'html', 'block > inline',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'block', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static(block) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(block) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(block) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(block) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(block) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(block) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(block) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(block) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'block > block',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'block', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static(block) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(block) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(block) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(block) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(block) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(block) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(block) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(block) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'block > block_float',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'block', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'none' );
 
                 bs.Dom(rect_1).S('html', '<div>static(block) > fixed(block_float)</div>', 'class', 'fixed', 'display', 'block', 'float', 'left');
                 bs.Dom(rect_2).S('html', '<div>relative(block) > fixed(block_float)</div>', 'class', 'fixed', 'display', 'block', 'float', 'left');
@@ -536,10 +536,10 @@ bs(function(){
                 bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'left' );
                 bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'left' );
 
-                bs.Dom(rect_1).S('html', '<div>static(block_float) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(block_float) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(block_float) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(block_float) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(block_float) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(block_float) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(block_float) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(block_float) > fixed(inline)</div>', 'class', 'fixed', 'display', 'inline', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
@@ -551,10 +551,10 @@ bs(function(){
                 bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'left' );
                 bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'left' );
 
-                bs.Dom(rect_1).S('html', '<div>static(block_float) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(block_float) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(block_float) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(block_float) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(block_float) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(block_float) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(block_float) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(block_float) > fixed(block)</div>', 'class', 'fixed', 'display', 'block', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
@@ -585,40 +585,40 @@ bs(function(){
             'html', 'inline > inline',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'inline', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'inline', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'inline', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'inline', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static(inline) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(inline) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(inline) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(inline) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(inline) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(inline) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(inline) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(inline) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'inline > block',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'inline', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'inline', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'inline', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'inline', 'float', 'none' );
 
-                bs.Dom(rect_1).S('html', '<div>static(inline) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(inline) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(inline) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(inline) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(inline) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(inline) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(inline) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(inline) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'inline > block_float',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'inline', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'inline', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'inline', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'inline', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'inline', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'inline', 'float', 'none' );
 
                 bs.Dom(rect_1).S('html', '<div>static(inline) > absolute(block_float)</div>', 'class', 'absolute', 'display', 'block', 'float', 'left');
                 bs.Dom(rect_2).S('html', '<div>relative(inline) > absolute(block_float)</div>', 'class', 'absolute', 'display', 'block', 'float', 'left');
@@ -633,40 +633,40 @@ bs(function(){
             'html', 'block > inline',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'block' , 'clear', 'both');
-                bs.Css( '#fixed' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#absolute' ).S( 'display', 'block', 'clear', 'both');
+                bs.Css( '#static' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'block' , 'float', 'none');
+                bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'none');
 
-                bs.Dom(rect_1).S('html', '<div>static(block) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(block) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(block) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(block) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(block) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(block) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(block) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(block) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'block > block',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'block' , 'clear', 'both');
-                bs.Css( '#fixed' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#absolute' ).S( 'display', 'block', 'clear', 'both');
+                bs.Css( '#static' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'block' , 'float', 'none');
+                bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'none');
 
-                bs.Dom(rect_1).S('html', '<div>static(block) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(block) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(block) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(block) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(block) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(block) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(block) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(block) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
             'html', 'block > block_float',
             'background', '#fdd', 'line-height', 20, 'font-weight', 'bold', 'cursor', 'pointer', 'font-size', 11,
             'down', function($e){
-                bs.Css( '#static' ).S( 'display', 'block', 'clear', 'both');
-                bs.Css( '#relative' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#fixed' ).S( 'display', 'block', 'clear', 'both' );
-                bs.Css( '#absolute' ).S( 'display', 'block', 'clear', 'both' );
+                bs.Css( '#static' ).S( 'display', 'block', 'float', 'none');
+                bs.Css( '#relative' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'none' );
+                bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'none' );
 
                 bs.Dom(rect_1).S('html', '<div>static(block) > absolute(block_float)</div>', 'class', 'absolute', 'display', 'block', 'float', 'left');
                 bs.Dom(rect_2).S('html', '<div>relative(block) > absolute(block_float)</div>', 'class', 'absolute', 'display', 'block', 'float', 'left');
@@ -687,10 +687,10 @@ bs(function(){
                 bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'left' );
                 bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'left' );
 
-                bs.Dom(rect_1).S('html', '<div>static(block_float) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(block_float) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(block_float) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(block_float) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(block_float) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(block_float) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(block_float) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(block_float) > absolute(inline)</div>', 'class', 'absolute', 'display', 'inline', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
@@ -702,10 +702,10 @@ bs(function(){
                 bs.Css( '#fixed' ).S( 'display', 'block', 'float', 'left' );
                 bs.Css( '#absolute' ).S( 'display', 'block', 'float', 'left' );
 
-                bs.Dom(rect_1).S('html', '<div>static(block_float) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_2).S('html', '<div>relative(block_float) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_3).S('html', '<div>fixed(block_float) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'clear', 'both');
-                bs.Dom(rect_4).S('html', '<div>absolute(block_float) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'clear', 'both');
+                bs.Dom(rect_1).S('html', '<div>static(block_float) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_2).S('html', '<div>relative(block_float) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_3).S('html', '<div>fixed(block_float) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'float', 'none');
+                bs.Dom(rect_4).S('html', '<div>absolute(block_float) > absolute(block)</div>', 'class', 'absolute', 'display', 'block', 'float', 'none');
             }
     );
     bs.Dom( '<div></div>' ).S( '<', '#btns',
