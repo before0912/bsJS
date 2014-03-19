@@ -489,7 +489,7 @@ function DOM(){
 			}else if( typeof k == 'function' ) return k( this, v );
 			return this[k] = v;
 		},
-		style['float'] = 'styleFloat' in b ? 'styleFloat' : 'cssFloat' in b ? 'cssFloat' : 'float', value['url('] = function(v){return v;},
+		style['float'] = 'styleFloat' in b ? 'styleFloat' : 'cssFloat' in b ? 'cssFloat' : 'float',
 		(function(){
 			var gra, rgb, mk0, mk1, b;
 			b = '#000000', gra = bs.DETECT.browser == 'ie' && bs.DETECT.browserVer < 10 ? function( s, d, b, e ){
