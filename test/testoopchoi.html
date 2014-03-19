@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>position</title>
+    <meta charset="utf-8"/>
+    <script src="../bs/bsjs.js"></script>
+</head>
+<body>
+
+<div id="stage" width="100%" height="100%" style="overflow:scroll; display:block">
+    <div id="static"></div>
+    <br>
+    <br>
+    <div id="relative"></div>
+    <br>
+    <br>
+    <div id="fixed"></div>
+    <br>
+    <br>
+    <div id="absolute"></div>
+</div>
+
+<script>
+bs(function(){
+    bs.Css( '#stage>2').S( 'position', 'absolute', 'width', 400, 'height', 300, 'background-color', '#eee' );
+
+    bs.Css( '.test' ).S( 'position', 'absolute', 'width', 20, 'height', 20 );
+
+    var static_1 = bs.Dom('<div></div>').S('<', '#static', 'class', 'test', 'top', 100, 'background-color', '#ff0000', 'this');
+    var static_2 = bs.Dom('<div></div>').S('<', '#static', 'class', 'test', 'top', 200, 'background-color', '#00ff00', 'this');
+    var static_3 = bs.Dom('<div></div>').S('<', '#static', 'class', 'test', 'top', 300, 'background-color', '#0000ff', 'this');
+});
+</script>
+</body>
+</html>
