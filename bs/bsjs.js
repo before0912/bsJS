@@ -436,7 +436,7 @@ function DETECT( W, doc ){
 function DOM(){
 	var style;
 	bs.STYLE = style = (function(){
-		var style = function(s){this.s = s, this.u = {};}, fn = style.prototype,
+		var style = function(s){this.s = s, this.u = {};}, fn = style.prototype, value = {},
 			r = /-[a-z]/g, re = function(_0){return _0.charAt(1).toUpperCase();},
 			b = doc.body.style, pf = bs.DETECT.stylePrefix, nopx = {'opacity':1,'zIndex':1},
 			key = style.key = function(v){
@@ -464,11 +464,11 @@ function DOM(){
 					if( this[k] === undefined ){ //add
 						if( ( t0 = typeof v ) == 'number' ) this[k] = v, u[k] = nopx[k] ? '' : 'px';
 						else if( t0 == 'string' ){
-							if( v0 = style[v.substr(0,4)] && typeof v0 == 'function' ) this[k] = v = v0(v), u[k]='';
+							if( v0 = value[v.substr(0,4)] && typeof v0 == 'function' ) this[k] = v = v0(v), u[k]='';
 							else if( ( v0 = v.indexOf( ':' ) ) == -1 ) this[k] = v, u[k] = '';
 							else this[k] = parseFloat( v.substr( 0, v0 ) ), u[k] = v.substr( v0 + 1 ), v = this[k];
 						}
-					}else this[k] = ( typeof v == 'string' && (v0 = style[v.substr( 0, 4 )] ) ) ? v0(v) : v; //set
+					}else this[k] = ( typeof v == 'string' && (v0 = value[v.substr( 0, 4 )] ) && typeof v0 == 'function' ) ? v0(v) : v; //set
 					s[k] = v + u[k];
 				}else if( v === null ) delete this[k], delete u[k], s[k] = '';//del
 				else return this[k]; //get
@@ -489,7 +489,7 @@ function DOM(){
 			}else if( typeof k == 'function' ) return k( this, v );
 			return this[k] = v;
 		},
-		style['float'] = 'styleFloat' in b ? 'styleFloat' : 'cssFloat' in b ? 'cssFloat' : 'float', style['url('] = function(v){return v;},
+		style['float'] = 'styleFloat' in b ? 'styleFloat' : 'cssFloat' in b ? 'cssFloat' : 'float', value['url('] = function(v){return v;},
 		(function(){
 			var gra, rgb, mk0, mk1, b;
 			b = '#000000', gra = bs.DETECT.browser == 'ie' && bs.DETECT.browserVer < 10 ? function( s, d, b, e ){
@@ -536,7 +536,7 @@ function DOM(){
 				else if( v === null ) return delete s.opacity, s.s.filter = '', v;
 				else return s.s.filter = 'alpha(opacity=' + parseInt( v * 100 ) + ')', s.opacity = v;
 			},
-			style['rgba'] = function(v){
+			value['rgba'] = function(v){
 				var t0 = v.substring( 5, v.length - 1 ).split(',');
 				t0[3] = parseFloat(t0[3]);
 				return 'rgb('+parseInt((255+t0[0]*t0[3])*.5)+','+parseInt((255+t0[1]*t0[3])*.5)+','+parseInt((255+t0[2]*t0[3])*.5)+')';
