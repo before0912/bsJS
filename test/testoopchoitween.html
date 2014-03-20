@@ -23,9 +23,9 @@ bs(function(){
     // 초기 값이 없으면 트윈이 안됨.
     var rect = bs.Dom('<div></div>').S('<', '#stage', 'class', 'rect', 'left', 0, 'top', 0, 'this');
     (function repeat(){
-        bs.ANI.tween(rect, 'left', bs.Dom('#stage').S('w')-bs.Dom(rect).S('w'), 'top', bs.Dom('#stage').S('h')-bs.Dom(rect).S('h'), 'ease', 'bounceOut', 'time', 1, 'end', function(){
+        bs.ANI.tween(rect, 'left', bs.Dom('#stage').S('w')-bs.Dom(rect).S('w'), 'top', bs.Dom('#stage').S('h')-bs.Dom(rect).S('h'), 'ease', 'bounceOut', 'time', 3, 'end', function(){
             console.log('end');
-            bs.ANI.tween(rect, 'left', 0, 'top', 0, 'ease', 'bounceOut', 'time', 1, 'end', function(){
+            bs.ANI.tween(rect, 'left', 0, 'top', 0, 'ease', 'bounceOut', 'time', 3, 'end', function(){
                 console.log('end');
                 repeat();
             }, 'update', function(){
