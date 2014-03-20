@@ -1,15 +1,41 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<title>tween</title>
-<meta charset="utf-8"/>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="format-detection" content="telephone=no" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black" />
-<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target-densitydpi=medium-dpi" />
-<link rel="shortcut icon" href="http://blog.bsidesoft.com/favicon.ico" type="image/x-icon">
+    <title>tween</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target-densitydpi=medium-dpi" />
+    <link rel="shortcut icon" href="http://blog.bsidesoft.com/favicon.ico" type="image/x-icon">
+    <script src="../bs/bsjs.js"></script>
 </head>
 <body>
+    <div id="stage"></div>
+<script>
+bs(function(){
+    bs.Css('body').S('margin', '0px');
+    bs.Css('#stage').S('position', 'absolute', 'width', 800, 'height', 600, 'background', '#eee');
+    bs.Css('.rect').S('position', 'absolute', 'width', 50, 'height', 50, 'background', '#ff0000');
+
+    // left, top 속성으로 트윈할 거라서 초기 값을 지정해주어야 함.
+    // 초기 값이 없으면 트윈이 안됨.
+    var rect = bs.Dom('<div></div>').S('<', '#stage', 'class', 'rect', 'left', 0, 'top', 0, 'this');
+    (function repeat(){
+        bs.ANI.tween(rect, 'left', bs.Dom('#stage').S('w')-bs.Dom(rect).S('w'), 'top', bs.Dom('#stage').S('h')-bs.Dom(rect).S('h'), 'ease', 'bounceOut', 'time', 1, 'end', function(){
+            console.log('end');
+            bs.ANI.tween(rect, 'left', 0, 'top', 0, 'ease', 'bounceOut', 'time', 1, 'end', function(){
+                console.log('end');
+                repeat();
+            }, 'update', function(){
+                console.log('update');
+            });
+        }, 'update', function(){
+            console.log('update');
+        });
+    })();
+});
+</script>
 </body>
 </html>
