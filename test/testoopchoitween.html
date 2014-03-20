@@ -26,6 +26,8 @@ bs(function(){
     var rect_3 = bs.Dom('<div></div>').S('<', '#stage', 'class', 'rect', 'left', 0, 'bottom', 0, 'width', 20, 'height', 20, 'background', '#00ff00', 'this');
     var rect_4 = bs.Dom('<div></div>').S('<', '#stage', 'class', 'rect', 'left', 150, 'bottom', 150, 'width', 100, 'height', 100, 'background', '#00ffff', 'transform', 'rotate(0deg)', 'this');
     var rect_5 = bs.Dom('<div></div>').S('<', '#stage', 'class', 'rect', 'left', 0, 'top', 250, 'width', 100, 'height', 100, 'background', '#00ffff', 'transform', 'rotate(0deg)', 'this');
+    var rect_6 = bs.Dom('<div></div>').S('<', '#stage', 'class', 'rect', 'left', 10, 'top', 10, 'width', 20, 'height', 20, 'background', '#ffff00', 'this');
+    var rect_7 = bs.Dom('<div></div>').S('<', '#stage', 'class', 'rect', 'left', 200, 'top', 500, 'width', 20, 'height', 20, 'background', '#ffff00', 'this');
 
     (function repeat1(){
         bs.ANI.tween(rect_1, 'left', bs.Dom('#stage').S('w')-bs.Dom(rect_1).S('w'), 'top', bs.Dom('#stage').S('h')-bs.Dom(rect_1).S('h'), 'ease', 'bounceOut', 'time', 2, 'end', function(){
@@ -75,6 +77,34 @@ bs(function(){
             bs.ANI.tween(rect_5, 'left', 0, 'ease', 'bounceOut', 'time', 2, 'end', function(){
                 console.log('end');
                 repeat4();
+            }, 'update', function(){
+                console.log('update');
+            });
+        }, 'update', function(){
+            console.log('update');
+        });
+    })();
+
+    (function repeat5(){
+        bs.ANI.tween(rect_6, 'left', 100, 'top', 100,  'width', 200, 'height', 200, 'ease', 'bounceOut', 'time', 2, 'end', function(){
+            console.log('end');
+            bs.ANI.tween(rect_6, 'left', 10, 'top', 10,  'width', 20, 'height', 20, 'ease', 'bounceOut', 'time', 2, 'end', function(){
+                console.log('end');
+                repeat5();
+            }, 'update', function(){
+                console.log('update');
+            });
+        }, 'update', function(){
+            console.log('update');
+        });
+    })();
+
+    (function repeat6(){
+        bs.ANI.tween(rect_7, 'left', 100, 'top', 400,  'width', 200, 'height', 200, 'ease', 'bounceOut', 'time', 2, 'end', function(){
+            console.log('end');
+            bs.ANI.tween(rect_7, 'left', 200, 'top', 500,  'width', 20, 'height', 20, 'ease', 'bounceOut', 'time', 2, 'end', function(){
+                console.log('end');
+                repeat6();
             }, 'update', function(){
                 console.log('update');
             });
