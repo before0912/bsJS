@@ -2,26 +2,6 @@
 @import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
 
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-}
 
 html, body {
     font-family: 'Nanum Gothic', Helvetica, arial, freesans, clean, sans-serif;
@@ -30,23 +10,29 @@ html, body {
     border: 0;
     font-size: 12px;
     overflow-x: hidden;
+    background:#333;
 }
+
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
     display: block;
 }
 
 
-.thumb_title{padding:5px 5px 0px 5px}
+.thumb_title{padding:5px 5px 10px 5px}
 .thumb_photo{border-radius:10px}
-.thumb_year{padding:3px 5px 5px 5px}
-.thumb_detail{padding:5px}
-.thumb_detailView{margin:0px 10px 20px 10px;padding:15px;background:#eee;border-radius:10px;line-height:1.4}
+.thumb_year{padding:5px 5px 5px 5px}
+.thumb_detail{padding:5px;margin-top:5px;border-radius:10px;border:1px}
+.thumb_detailView{margin:10px 10px 20px 10px;padding:15px;background:#444;border-radius:10px;line-height:1.4}
 .detail_title{font-size:20px;margin-bottom:10px}
 .detail_homepage{font-size:14px;padding:10px 0px 10px 0px}
 
 ._FL {float:left}
 ._FR {float:right}
 ._CLEAR {clear:both}
+._TS1{text-shadow:0 -1px 0 rgba(0,0,0,.7)}
+._BOXSHADOW1{box-shadow:1px 1px 20px 0px rgba(0, 0, 0, 0.5)}
+._TR_LR10 {border-top-left-radius:10px;border-top-right-radius:10px;border:1px;}
+._BR_LR10 {border-bottom-left-radius:10px;border-bottom-right-radius:10px;border:1px}
 ._MARGIN_CENTER {margin:auto}
 ._MARGIN_CENTER {margin:auto}
