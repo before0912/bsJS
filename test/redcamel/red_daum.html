@@ -144,7 +144,7 @@
             if($data&&$data['code']&&$data['code']==500) time++, bs.js(result, daumURL(str))
             else {
                 // 여튼 올바르게 리턴이 됐으면 판단하고 화면을 표현함
-                if($data.channel.item.length==0)  site.contents.naviBox.S('html', '검색결과없음')
+                if($data.channel.item.length==0)  site.contents.naviBox.S('html', '검색결과없음','display', 'block')
                 else {
                     var info
                     var con=site.contents.naviBox.S('display', 'block', 'this')
