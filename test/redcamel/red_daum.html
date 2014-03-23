@@ -112,7 +112,10 @@
                     'padding', 30, 'font-size', 20, '@value', '검색',
                     'box-sizing', 'border-box',
                     'width', '100%',
-                    '@class', '_BR_LR10',
+                    'cursor','pointer',
+                    'color','#fff',
+                    'background-image','linear-gradient(to bottom, #46284c 0%, #171323 100%)',
+                    '@class', '_BR_LR10 _BOXSHADOW1 _TS1',
                     'mousedown', function() {
                         site.contents.naviBox.S('html', '', 'this')
                         site.contents.naviBox2.S('html', '', 'this')
@@ -155,7 +158,7 @@
                                 '>', bs.Dom('<div class="thumb_title"></div>').S('html', info.title[0].content, 'width', 110, 'this'),
                                 '>', bs.Dom('<img class="thumb_photo" src="' + info.thumbnail[0].content + '">'),
                                 '>', bs.Dom('<div class="thumb_year" ></div>').S('html', info.year[0].content, 'this'),
-                                '>', bs.Dom('<input type="button" value="자세히보기">').S('display', 'block', 'width', '100%', '@itemInfo', info,
+                                '>', bs.Dom('<input type="button" value="자세히보기" class="thumb_detail _BOXSHADOW1 _TS1" >').S('display', 'block', 'width', '100%', '@itemInfo', info,
                                         'mousedown', function($e) {
                                             con2.S('display', 'block', 'html', '')
                                             con2.S(
