@@ -14,20 +14,20 @@
     Event.prototype.hasListener = function (type){return this.listeners[type];},
     Event.prototype.dispatchEvent = function (type, data){this.listeners[type].forEach(function (e){e.call(this, data);});},
 
-    listener1 = function (data){alert(data)},
-    listener2 = function (data){alert(data)},
+    listener1 = function (data){console.log(data)},
+    listener2 = function (data){console.log(data)},
 
     evt = new Event(),
     evt.addListener('change_data', listener1),
     evt.addListener('change_data', listener2),
-    evt.addListener('change_data', function (data){alert(data)}),
+    evt.addListener('change_data', function (data){console.log(data)}),
 
     (function (){
-        evt.hasListener('change_data').forEach(function (listener){alert('my listener')}),
+        evt.hasListener('change_data').forEach(function (listener){console.log('my listener')}),
         evt.dispatchEvent('change_data', 'my data'),
         evt.removeListener('change_data', listener1),
         evt.removeListener('change_data', listener2),
-        evt.hasListener('change_data').forEach(function (listener){alert('my listener')});
+        evt.hasListener('change_data').forEach(function (listener){console.log('my listener')});
     })();
 </script>
 </body>
