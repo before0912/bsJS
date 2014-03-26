@@ -83,6 +83,7 @@
             canvasContext.rotate( toRadian * element.get('rotate') );
             canvasContext.translate( -element.get('centerX'), -element.get('centerY') );
         }
+        alert("image width:" + img.width + ", height:" + img.height);
         canvasContext.drawImage( img, 0, 0, img.width, img.height );
         canvasContext.restore();
     },
@@ -134,7 +135,7 @@
             },
             View.prototype.start = function(){
                 this.data.startTime = Date.now();
-                this.timer = setInterval(this.render, 5000);
+                this.timer = setInterval(this.render, 3000);
             },
             View.prototype.stop = function(){
                 clearInterval(this.timer);
