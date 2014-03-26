@@ -8,7 +8,7 @@
     <input type="button" id="start" value=" start "/>
     <input type="button" id="stop" value=" stop "/>
 </div>
-<canvas id="canvas" style="width:1000px; height:500px; border: 1px solid #000; display: block"></canvas>
+<canvas id="canvas" width='500' height='500' style="width:500px; height:500px; border: 1px solid #000; display: block"></canvas>
 <script>
     var Event, Model, Element, View,
             toRadian, drawCanvas;
@@ -56,8 +56,8 @@
                 this.eventCanvasContext = this.eventCanvas.getContext('2d'),
 
                 // 뷰, 이벤트 담당 캔바스 사이즈를 실제 캔바스 사이즈와 동일하게 초기화
-                this.width = this.eventCanvas.width = this.canvas.width,
-                this.height = this.eventCanvas.height = this.canvas.height,
+                this.eventCanvas.width = this.width = this.canvas.width,
+                this.eventCanvas.height = this.height = this.canvas.height,
 
                 this.mouseX = this.mouseY = this.isDowned = 0,  // 뷰 안에 마우스 속성을 0으로 초기화
                 this.eventStack = {down:[], up:[], move:[]},    // 마우스 상태에 따란 element를 스택에 저장
@@ -81,17 +81,12 @@
     toRadian = 2 * Math.PI / 360,
     drawCanvas = function(canvasContext, element, img){
         canvasContext.save();
-        canvasContext.translate( element.get('x')/2, element.get('y')/2 );
+        canvasContext.translate( element.get('x'), element.get('y') );
         if( element.get('rotate') ){
             canvasContext.translate( element.get('centerX'), element.get('centerY') );
             canvasContext.rotate( toRadian * element.get('rotate') );
             canvasContext.translate( -element.get('centerX'), -element.get('centerY') );
-
-            console.log('x:'+element.get('x') + ", y:" + element.get('y'));
-            console.log('centerX:'+element.get('centerX') + ", centerY:" + element.get('centerY'));
-            console.log('rotate(radian):'+toRadian * element.get('rotate'));
         }
-        console.log('img.width:'+img.width +', img.height:'+ img.height);
 
         canvasContext.drawImage( img, 0, 0, img.width, img.height );
         canvasContext.restore();
@@ -103,7 +98,7 @@
                         i,j;
                 model = this.model;
                 if(!model.isUpdate()) return;
-                model.update(),
+                model.updated(),
                         canvasContext = this.canvasContext,
                         canvasContext.clearRect(0, 0, this.width, this.height),
                         // 이벤트 스택 정보를 모두 초기화 한다.
@@ -144,7 +139,7 @@
             },
             View.prototype.start = function(){
                 this.data.startTime = Date.now();
-                this.timer = setInterval(this.render, 3000);
+                this.timer = setInterval(this.render, 16);
             },
             View.prototype.end = function(){
                 clearInterval(this.timer);
@@ -168,7 +163,6 @@
                 model.addListener( 'render', function( e ){
                     var r, d, cos, sin, i, j, k, element;
                     cos = Math.cos( r = ( k = e.frameCount % 720 ) * toRadian * .5 ),
-                            //console.log('e.frame % 720:' + k),
                             sin = Math.sin( r ),
                             i = view.model.numElements();
                     while( i-- ){
