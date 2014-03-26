@@ -161,23 +161,6 @@ else throw new Error( 0, 'not supported platform' );
 			t0 = {length:0}; while( i-- ) t0[t0.length++] = o[i];
 		}
 		return t0;
-	} ),
-	(function(){
-		var h = [], t0 = [];
-		fn( 'param', function(arg){
-			var i, j;
-			if( !arg || ( j = arg.length ) < 4 ) return '';
-			h.length = t0.length = 0, i = 2;
-			while( i < j )
-				if ( arg[i].charAt(0) == '@' ) h[h.length] = arg[i++].substr(1), h[h.length] = arg[i++];
-				else t0[t0.length] = encodeURIComponent( arg[i++] ) + '=' + encodeURIComponent( arg[i++] );
-			return t0.join('&');
-		} ),
-		bs.param.header = h;
-	})(),
-	fn( 'url', function( url, arg ){
-		var t0 = url.split( '#' );
-		return t0[0] + ( t0[0].indexOf('?') > -1 ? '&' : '?' ) + 'bsNC=' + bs.rand( 1000, 9999 ) + '&' + bs.param(arg) + ( t0[1] ? '#' + t0[1] : '' );
 	} );
 })();
 if( !doc ) return require('./node/core.js')(bs);//branch node
@@ -223,31 +206,59 @@ if( !W['console'] ) (function(){
 })();
 //network
 (function(bs){
-	var h = bs.param.header,
-	rq = W['XMLHttpRequest'] ? function(){return new XMLHttpRequest;} : (function(){
-		var t0, i, j;
-		t0 = 'MSXML2.XMLHTTP', t0 = ['Microsoft.XMLHTTP',t0,t0+'.3.0',t0+'.4.0',t0+'.5.0'], i = t0.length;
-		while( i-- ){try{new ActiveXObject( j = t0[i] );}catch(e){continue;}break;}
-		return function(){return new ActiveXObject(j);};
+	var h = [], p = [],
+	rq = (function(){
+		var xhr = W['XMLHttpRequest'] ? function(){return new XMLHttpRequest;} : (function(){
+				var t0, i, j;
+				t0 = 'MSXML2.XMLHTTP', t0 = ['Microsoft.XMLHTTP',t0,t0+'.3.0',t0+'.4.0',t0+'.5.0'], i = t0.length;
+				while( i-- ){try{new ActiveXObject( j = t0[i] );}catch(e){continue;}break;}
+				return function(){return new ActiveXObject(j);};
+			})(),
+			pool = {length:0};
+		return function(x){
+			if( x ){
+				if( x.readyState != 4 ) x.abort();
+				x.onreadystatechange = null, pool[pool.length++] = x;
+			}else return pool.length ? pool[--pool.length] : xhr();
+		};
 	})(),
 	http = function( type, end, url, arg ){
-		var t0, t1, i, j;
+		var t0, t1, t2, i, j;
 		t0 = rq();
 		if( end ) t0.onreadystatechange = function(){
+			var b, h;
 			if( t0.readyState != 4 || t1 < 0 ) return;
-			t0.onreadystatechange = null, clearTimeout(t1), t1 = -1, end( t0.status == 200 || t0.status == 0 ? t0.responseText : '@'+t0.status, t0.getAllResponseHeaders() );
-		}, t1 = setTimeout( function(){if( t1 > -1 ) t1 = -1, t0.onreadystatechange = null, end( '@timeout' );}, bs.timeout() );
+			clearTimeout(t1), t1 = -1,
+			h = t0.status == 200 || t0.status == 0 ? t0.responseText : null,
+			rq(t0), end( h, h ? t0.getAllResponseHeaders() : t0.status );
+		}, t1 = setTimeout( function(){
+			if( t1 > -1 ) t1 = -1, rq(t0),	end( null, 'timeout' );
+		}, bs.timeout() );
 		t0.open( type, url, end ? true : false ),
 		t0.setRequestHeader( 'Content-Type', ( type == 'GET' ? 'text/plain' : 'application/x-www-form-urlencoded' ) + '; charset=UTF-8' ),
 		t0.setRequestHeader( 'Cache-Control', 'no-cache' ),
-		i = 0, j = h.length;
+		t2 = bs.param(arg) || '', i = 0, j = h.length;
 		while( i < j ) t0.setRequestHeader( h[i++], h[i++] );
-		t0.send( bs.param(arg) || '' );
-		if( !end ) return t0.responseText;
+		t0.send(t2);
+		if( !end ) return t1 = t0.responseText, rq(t0), t1;
 	},
 	mk = function(m){return function( end, url ){return http( m, end, bs.url(url), arguments );};};
 	fn( 'get', function( end, url ){return http( 'GET', end, bs.url( url, arguments ) );} ),
-	fn( 'post', mk('POST') ), fn( 'put', mk('PUT') ), fn( 'delete', mk('DELETE') );
+	fn( 'post', mk('POST') ), fn( 'put', mk('PUT') ), fn( 'delete', mk('DELETE') ),
+	fn( 'param', function(arg){
+		var i, j, k;
+		if( !arg || ( j = arg.length ) < 4 ) return '';
+		h.length = p.length = 0, i = 2;
+		while( i < j )
+			if ( arg[i].charAt(0) == '@' ) h[h.length] = arg[i++].substr(1), h[h.length] = arg[i++];
+			else if( i < j - 1 ) p[p.length] = encodeURIComponent( arg[i++] ) + '=' + encodeURIComponent( arg[i++] );
+			else k = encodeURIComponent( arg[i++] );
+		return k || p.join('&');
+	} ),
+	fn( 'url', function( url, arg ){
+		var t0 = url.split( '#' );
+		return t0[0] + ( t0[0].indexOf('?') > -1 ? '&' : '?' ) + 'bsNC=' + bs.rand( 1000, 9999 ) + '&' + bs.param(arg) + ( t0[1] ? '#' + t0[1] : '' );
+	} );
 })(bs);
 fn( 'js', (function(doc){
 	var h = doc.getElementsByTagName('head')[0], e = W['addEventListener'], id = 0, c = bs.__callback = {},	js = function( data, load, end ){
