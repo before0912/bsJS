@@ -123,19 +123,18 @@
                     }
 
                     drawCanvas(canvasContext, element, img);
-
-                    // element.dispatchEvent() : 매 프레임 마다 이벤트 스택에 element가 존재한다면 dispatch 된다.
-                    i = eventStack.down.length;
-                    while(i--) this.eventStack.down[i].dispatchEvent( 'down', {type:'down', target:this.eventStack.down[i], x:this.mouseX, y:this.mouseY} ), this.isDowned = -1;
-                    i = eventStack.up.length;
-                    while(i--) this.eventStack.down[i].dispatchEvent( 'up', {type:'up', target:this.eventStack.up[i], x:this.mouseX, y:this.mouseY} );
-                    i = eventStack.move.length;
-                    while(i--) this.eventStack.down[i].dispatchEvent( 'move', {type:'move', target:this.eventStack.move[i], x:this.mouseX, y:this.mouseY} );
                 }
+                // element.dispatchEvent() : 매 프레임 마다 이벤트 스택에 element가 존재한다면 dispatch 된다.
+                i = eventStack.down.length;
+                while(i--) this.eventStack.down[i].dispatchEvent( 'down', {type:'down', target:this.eventStack.down[i], x:this.mouseX, y:this.mouseY} ), this.isDowned = -1;
+                i = eventStack.up.length;
+                while(i--) this.eventStack.down[i].dispatchEvent( 'up', {type:'up', target:this.eventStack.up[i], x:this.mouseX, y:this.mouseY} );
+                i = eventStack.move.length;
+                while(i--) this.eventStack.down[i].dispatchEvent( 'move', {type:'move', target:this.eventStack.move[i], x:this.mouseX, y:this.mouseY} );
             },
             View.prototype.start = function(){
                 this.data.startTime = Date.now();
-                this.timer = setInterval(this.render, 3000);
+                this.timer = setInterval(this.render, 5000);
             },
             View.prototype.stop = function(){
                 clearInterval(this.timer);
