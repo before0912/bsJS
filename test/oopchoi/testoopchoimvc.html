@@ -83,7 +83,7 @@
             canvasContext.rotate( toRadian * element.get('rotate') );
             canvasContext.translate( -element.get('centerX'), -element.get('centerY') );
         }
-        alert("image width:" + img.width + ", height:" + img.height);
+        console.log(toRadian * element.get('rotate'));
         canvasContext.drawImage( img, 0, 0, img.width, img.height );
         canvasContext.restore();
     },
@@ -152,8 +152,7 @@
                     img.src = 'http://www.bsidesoft.com/hika/s58/' + i + '.png';
     })(function (images){
         var model, view, element, elementDownListener,
-                i, j, x, y,
-                canvas;
+                i, j, x, y;
 
         model = new Model,
                 // 매 프레임마다 시간 데이터가 업데이트 되고 인자로 data 객체가 들어온다.
@@ -193,7 +192,7 @@
                     element.addListener( 'down', elementDownListener );
         }
 
-        view.start(model);
+        view.start();
     });
 
 </script>
