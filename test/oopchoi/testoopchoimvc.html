@@ -8,7 +8,7 @@
     <input type="button" id="start" value=" start "/>
     <input type="button" id="stop" value=" stop "/>
 </div>
-<canvas id="canvas" style="width:500px; height:500px; border: 1px solid #000; display: block"></canvas>
+<canvas id="canvas" style="width:1000px; height:500px; border: 1px solid #000; display: block"></canvas>
 <script>
     var Event, Model, Element, View,
             toRadian, drawCanvas;
@@ -81,7 +81,7 @@
     toRadian = 2 * Math.PI / 360,
     drawCanvas = function(canvasContext, element, img){
         canvasContext.save();
-        canvasContext.translate( element.get('x'), element.get('y') );
+        canvasContext.translate( element.get('x')/2, element.get('y')/2 );
         if( element.get('rotate') ){
             canvasContext.translate( element.get('centerX'), element.get('centerY') );
             canvasContext.rotate( toRadian * element.get('rotate') );
