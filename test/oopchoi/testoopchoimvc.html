@@ -82,8 +82,13 @@
             canvasContext.translate( element.get('centerX'), element.get('centerY') );
             canvasContext.rotate( toRadian * element.get('rotate') );
             canvasContext.translate( -element.get('centerX'), -element.get('centerY') );
+
+            console.log('x:'+element.get('x') + ", y:" + element.get('y'));
+            console.log('centerX:'+element.get('centerX') + ", centerY:" + element.get('centerY'));
+            console.log('rotate(radian):'+toRadian * element.get('rotate'));
         }
-        console.log(toRadian * element.get('rotate'));
+        console.log('img.width:'+img.width +', img.height:'+ img.height);
+
         canvasContext.drawImage( img, 0, 0, img.width, img.height );
         canvasContext.restore();
     },
