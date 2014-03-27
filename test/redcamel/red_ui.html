@@ -170,8 +170,10 @@ bs(function() {
 
         bs.Dom('<div></div>').S('<',target,'margin-top',10)
         bs.Ui('label').S('<',target,'html','다이알로그','display','block','background','#666','padding',10,'margin','10px 0px 10px 0px');
-        bs.Dom('<div></div>').S('<',target,'margin-top',10,'html','부트스트랩이...IE7에서 렌더링 오류가 있는듯한데')
-        bs.Dom('<div></div>').S('<',target,'margin-top',10,'html','음 일단 API를 좀더 고민해야것음...먼가 많이 불편해질듯한데')
+        bs.Dom('<div></div>').S('<',target,'margin-top',10,'html','고민1. 부트스트랩이...IE7에서 렌더링 오류가 있는듯한데')
+        bs.Dom('<div></div>').S('<',target,'margin-top',10,'html','고민2. 음 일단 API를 좀더 고민해야것음...먼가 많이 불편해질듯한데')
+        bs.Dom('<div></div>').S('<',target,'margin-top',10,'html','고민3. API가 확정되면 완전 중앙 정렬도 도입')
+        bs.Dom('<div></div>').S('<',target,'margin-top',10,'html','고민4. 모바일에서 다이알로그가 애매하군....모바일일때는 가로 100%에 적당히 맞춰주는 기능이 필요한겐가')
         bs.Ui('button', 'default').S('@value', '다이얼로그 띄우기', 'mousedown', function($e) {
             var txt = "bs.Ui('dialog', 'title', '타이틀입니당', 'contents', 'txt').box.S('width',500,'left',$e.x,'top',$e.y)"
             bs.Ui('dialog', 'title', '타이틀입니당', 'contents', txt).box.S('width',500,'left',$e.x,'top',$e.y)
