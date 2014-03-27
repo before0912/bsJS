@@ -206,7 +206,7 @@ if( !W['console'] ) (function(){
 })();
 //network
 (function(bs){
-	var h = [], p = [],
+	var H = {'Content-Type':1,'Cache-Control':1}, h = [], hi = {}, p = [],
 	rq = (function(){
 		var xhr = W['XMLHttpRequest'] ? function(){return new XMLHttpRequest;} : (function(){
 				var t0, i, j;
@@ -223,7 +223,7 @@ if( !W['console'] ) (function(){
 		};
 	})(),
 	http = function( type, end, url, arg ){
-		var t0, t1, t2, i, j;
+		var t0, t1, t2, i, j, k;
 		t0 = rq();
 		if( end ) t0.onreadystatechange = function(){
 			var b, h;
@@ -235,10 +235,13 @@ if( !W['console'] ) (function(){
 			if( t1 > -1 ) t1 = -1, rq(t0),	end( null, 'timeout' );
 		}, bs.timeout() );
 		t0.open( type, url, end ? true : false ),
-		t0.setRequestHeader( 'Content-Type', ( type == 'GET' ? 'text/plain' : 'application/x-www-form-urlencoded' ) + '; charset=UTF-8' ),
-		t0.setRequestHeader( 'Cache-Control', 'no-cache' ),
 		t2 = bs.param(arg) || '', i = 0, j = h.length;
-		while( i < j ) t0.setRequestHeader( h[i++], h[i++] );
+		while( i < j ){
+			if( H[k = h[i++]] ) hi[k] = 1;
+			t0.setRequestHeader( k, h[i++] );
+		}
+		if( !hi['Content-Type'] ) hi['Content-Type'] = 0, t0.setRequestHeader( 'Content-Type', ( type == 'GET' ? 'text/plain' : 'application/x-www-form-urlencoded' ) + '; charset=UTF-8' );
+		if( !hi['Cache-Control'] ) hi['Cache-Control'] = 0, t0.setRequestHeader( 'Cache-Control', 'no-cache' ),
 		t0.send(t2);
 		if( !end ) return t1 = t0.responseText, rq(t0), t1;
 	},
