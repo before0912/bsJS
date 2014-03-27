@@ -967,7 +967,7 @@ function DOM(){
 								self.id = self.id0, self.mx = self.mx0, self.my = self.my0, self.x = self.x0, self.y = self.y0, self.lx = self.lx0, self.ly = self.ly0, self.dx = self.dx0, self.dy = self.dy0, self.cx = self.cx0, self.cy = self.cy0;
 							}else{
 								self.length = 0,
-								self.x = X = e[pageX], self.y = Y = e[pageY], self.lx = e[layerX], self.ly = e[layerY], self.cx = e.clientX, self.cy = e.clientY,
+                                    self.cx=e.clientX, self.cy=e.clientY, self.x=X=e['pageX'] ? e[pageX] : self.cx + docel.scrollLeft, self.y=Y=e['pageY'] ? e[pageY] : self.cy + docel.scrollTop, self.lx=e[layerX], self.ly=e[layerY],
 								type == 4 ?
 									( self.$x = self._x = X, self.$y = self._y = Y ) :
 									( self.dx = X - self._x, self.dy = Y - self._y );
