@@ -951,7 +951,7 @@ function DOM(){
 				fn = ( ev = function(d){
 					var self;
 					self = this, self.target = d, this.e = {}, self.listener = function(e){
-						var type, start, dx, dy, t0, t1, t2, id, i, j, X, Y;
+						var type, start, dx, dy, t0, t1, t2, id, i, j, X, Y,docel=document.documentElement;
 						self.event = e || ( e = event ), self.type = eventName[e.type] || e.type, self.keyName = keyName[self.keyCode = e.keyCode];
 						if( d.value ) self.value = bs.trim(d.value);
 						if( type = evType[self.type] ){
