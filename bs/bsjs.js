@@ -503,7 +503,19 @@ function DOM(){
 			}else if( typeof k == 'function' ) return k( this, v );
 			return this[k] = v;
 		},
-		style['float'] = 'styleFloat' in b ? 'styleFloat' : 'cssFloat' in b ? 'cssFloat' : 'float',
+		style['float'] = 'styleFloat' in b ? 'styleFloat' : 'cssFloat' in b ? 'cssFloat' : 'float';
+		if( !( 'opacity' in b ) ){
+			style.opacity = function( s, v ){
+				if( v === undefined ) return s.opacity;
+				else if( v === null ) return delete s.opacity, s.s.filter = '', v;
+				else return s.s.filter = 'alpha(opacity=' + parseInt( v * 100 ) + ')', s.opacity = v;
+			},
+			value['rgba'] = function(v){
+				var t0 = v.substring( 5, v.length - 1 ).split(',');
+				t0[3] = parseFloat(t0[3]);
+				return 'rgb('+parseInt((255+t0[0]*t0[3])*.5)+','+parseInt((255+t0[1]*t0[3])*.5)+','+parseInt((255+t0[2]*t0[3])*.5)+')';
+			};
+		}
 		(function(){
 			var gra, rgb, mk0, mk1, b;
 			b = '#000000', gra = bs.DETECT.browser == 'ie' && bs.DETECT.browserVer < 10 ? function( s, d, b, e ){
@@ -526,36 +538,7 @@ function DOM(){
 			style.gradientBegin = function( self, v ){return v === undefined ? self.grB:( gra( self.s, self.grD, self.grB = v, self.grE || b ), v);},
 			style.gradientEnd = function( self, v ){return v === undefined ? self.grE:( gra( self.s, self.grD, self.grB || b, self.grE = v ), v);},
 			style.gradientDirection = function( self, v ){return v === undefined ? self.grD:(gra( self.s, self.grD = v, self.grB || b, self.grE || b ), v);};
-		})(),
-		(function(){
-			var k = key('transform');
-			style.translateX = bs.DETECT.transform3D ? function( self, v ){
-				return v === undefined ? self.translateX : ( self.s[k] = 'translate3d(' + ( self.translateX = v ) + 'px,' + ( self.translateY || 0 ) + 'px,0)', v );
-			} : bs.DETECT.transform ? function( self, v ){
-				return v === undefined ? self.translateX : ( self.s[k] = 'translate(' + ( self.translateX = v ) + 'px,' + ( self.translateY || 0 ) + 'px)', v );
-			} : function( self, v ){
-				return v === undefined ? self.translateX : ( self.s.left = ( self.translateX = v ) + 'px', v );
-			};
-			style.translateY = bs.DETECT.transform3D ? function( self, v ){
-				return v === undefined ? self.translateY : ( self.s[k] = 'translate3d(' + ( self.translateX || 0 ) + 'px,' + ( self.translateY = v ) + 'px,0)', v );
-			} : bs.DETECT.transform ? function( self, v ){
-				return v === undefined ? self.translateY : ( self.s[k] = 'translate(' + ( self.translateX || 0 ) + 'px,' + ( self.translateY = v ) + 'px)', v );
-			} : function( self, v ){
-				return v === undefined ? self.translateY : ( self.s.top = ( self.translateY = v ) + 'px', v );
-			};
 		})();
-		if( !( 'opacity' in b ) ){
-			style.opacity = function( s, v ){
-				if( v === undefined ) return s.opacity;
-				else if( v === null ) return delete s.opacity, s.s.filter = '', v;
-				else return s.s.filter = 'alpha(opacity=' + parseInt( v * 100 ) + ')', s.opacity = v;
-			},
-			value['rgba'] = function(v){
-				var t0 = v.substring( 5, v.length - 1 ).split(',');
-				t0[3] = parseFloat(t0[3]);
-				return 'rgb('+parseInt((255+t0[0]*t0[3])*.5)+','+parseInt((255+t0[1]*t0[3])*.5)+','+parseInt((255+t0[2]*t0[3])*.5)+')';
-			};
-		}
 		return style;
 	})(),
 	bs.cls( 'Css', function( fn, bs ){
@@ -931,8 +914,8 @@ function DOM(){
 				if( W['TransitionEvent'] && !EV.transitionend ) EV.transitionend = 1;
 			}
 			ev = ( function( EV, x, y ){
-				var ev, fn, pageX, pageY, evType, prevent, keycode, add, del, eventName, isChild, keyName, layerX, layerY;
-				( bs.DETECT.browser == 'ie' && bs.DETECT.browserVer < 9 ) ? ( pageX = 'x', pageY = 'y', layerX = 'offsetX', layerY = 'offsetY' ) : ( pageX = 'pageX', pageY = 'pageY', layerX = 'layerX', layerY = 'layerY' );
+				var ev, fn, page, evType, prevent, keycode, add, del, eventName, isChild, keyName, layerX, layerY;
+				( bs.DETECT.browser == 'ie' && bs.DETECT.browserVer < 9 ) ? ( layerX = 'offsetX', layerY = 'offsetY' ) : ( page = 1, layerX = 'layerX', layerY = 'layerY' );
 				if( W['addEventListener'] ) add = function( ev, k ){ev.target.addEventListener( k, ev.listener, ev.target.isCapture ? true : false );},
 					del = function( ev, k ){ev.target.removeEventListener( k, ev.listener, ev.target.isCapture ? true : false );};
 				else if( W['attachEvent'] ) add = function( ev, k ){ev.target.attachEvent( 'on' + k, ev.listener );},
@@ -949,28 +932,28 @@ function DOM(){
 				})() ),
 				eventName = {webkitTransitionEnd:'transitionend'};
 				fn = ( ev = function(d){
-					var self;
+					var self, docel=document.documentElement;
 					self = this, self.target = d, this.e = {}, self.listener = function(e){
-						var type, start, dx, dy, t0, t1, t2, id, i, j, X, Y,docel=document.documentElement;
+						var type, start, dx, dy, t0, t1, t2, id, i, j, X, Y;
 						self.event = e || ( e = event ), self.type = eventName[e.type] || e.type, self.keyName = keyName[self.keyCode = e.keyCode];
 						if( d.value ) self.value = bs.trim(d.value);
 						if( type = evType[self.type] ){
 							if( type < 3 ){
 								t0 = e.changedTouches, self.length = i = t0.length;
 								while( i-- ) self[i] = t1 = t0[i], self['id'+i] = t1.identifier,
-									self['x'+i] = X = t1[pageX], self['y'+i] = Y = t1[pageY], self['lx'+i] = t1[layerX], self['ly'+i] = t1[layerY],
 									self['cx'+i] = t1.clientX, self['cy'+i] = t1.clientY,
+									self['x'+i] = X = t1.pageX, self['y'+i] = Y = t1.pageY,
+									self['lx'+i] = t1[layerX], self['ly'+i] = t1[layerY],
 									type == 2 ?
 										( self['$x'+i] = self['_x'+i] = X, self['$y'+i] = self['_y'+i] = Y ) :
 										( self['dx'+i] = X - self['_x'+i], self['dy'+i] = Y - self['_y'+i] );
 									if( type == 1 ) self['mx'+i] = X - self['$x'+i], self['my'+i] = Y - self['$y'+i], self['$x'+i] = X, self['$y'+i] = Y;
 								self.id = self.id0, self.mx = self.mx0, self.my = self.my0, self.x = self.x0, self.y = self.y0, self.lx = self.lx0, self.ly = self.ly0, self.dx = self.dx0, self.dy = self.dy0, self.cx = self.cx0, self.cy = self.cy0;
 							}else{
-								self.length = 0,
-                                    self.cx=e.clientX, self.cy=e.clientY, self.x=X=e['pageX'] ? e[pageX] : self.cx + docel.scrollLeft, self.y=Y=e['pageY'] ? e[pageY] : self.cy + docel.scrollTop, self.lx=e[layerX], self.ly=e[layerY],
-								type == 4 ?
-									( self.$x = self._x = X, self.$y = self._y = Y ) :
-									( self.dx = X - self._x, self.dy = Y - self._y );
+								self.length = 0, self.cx = e.clientX, self.cy = e.clientY,
+								self.x = X = page ? e.pageX : self.cx + docel.scrollLeft, self.y = Y = page ? e.pageY : self.cy + docel.scrollTop,
+								self.lx = e[layerX], self.ly = e[layerY],
+								type == 4 ? ( self.$x = self._x = X, self.$y = self._y = Y ) : ( self.dx = X - self._x, self.dy = Y - self._y );
 								if( type == 3 ) self.mx = X - self.$x, self.my = Y - self.$y, self.$x = X, self.$y = Y;
 							}
 						}
@@ -1131,49 +1114,34 @@ function DOM(){
 	})() );
 }
 function ANI(){
-	var style, timer, start, end, loop, ease, ANI, ani, time, isLive, isPause, tween, pool, ex,
+	var style, timer, start, end, loop, ltype, ease, ANI, ani, time, isLive, isPause, tween, pool, ex,
 		toRadian = Math.PI/180, cos = bs.cos, sin = bs.sin;
 	style = bs.STYLE, ani = [], time = 0, timer = 'equestAnimationFrame';
-	if( timer = W['r' + timer] || W[bs.DETECT.stylePrefix + 'R' + timer] ){
+	if( timer = W['r' + timer] || W[bs.DETECT.stylePrefix + 'R' + timer] )
 		start = function(){if( !isLive ) isPause = 0, isLive = 1, loop();},
 		end = function(){ani.length = isLive = 0;},
 		timer( function(T){time = Date.now() - T;} ),
-		loop = function(T){
-			var t, t0, i, j, k;
-			if( isPause ) return;
-			if( isLive ){
-				t = T + time || 0, j = ( k = i = ani.length ) % 8;
-				while( j-- ) if( ani[--k].ANI(t) ) ani.splice( k, 1 );
-				j = ( i * 0.125 ) ^ 0;
-				while(j--){
-					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
-					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
-					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
-					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
-				}
-				ani.length ? timer(loop) : end();
-			}
-		};
-	}else{
+		ltype = 1;
+	else
 		start = function start(){if( !isLive ) isLive = setInterval( loop, 16 );},
-		end = function end(){if( isLive ) clearInterval(isLive), ani.length = isLive = 0;},
-		loop = function loop(){
-			var t, t0, i, j, k, l;
-			if( isPause ) return;
-			if( isLive ){
-				t = +new Date, j = ( k = i = ani.length ) % 8;
-				while( j-- ) if( ani[--k].ANI(t) ) ani.splice( k, 1 );
-				j = ( i * 0.125 ) ^ 0;
-				while(j--){
-					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
-					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
-					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
-					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
-				}
-				ani.length ? 0 : end();
+		end = function end(){if( isLive ) clearInterval(isLive), ani.length = isLive = 0;};
+	loop = function(T){
+		var t, t0, i, j, k;
+		if( isPause ) return;
+		if( isLive ){
+			t = ltype ? T + time || 0 : +new Date, 
+			j = ( k = i = ani.length ) % 8;
+			while( j-- ) if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+			j = ( i * 0.125 ) ^ 0;
+			while(j--){
+				if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+				if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+				if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+				if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
 			}
-		};
-	}
+			ani.length ? timer(loop) : end();
+		}
+	};
 	ease = (function(){
 		var PI, HPI;
 		PI = Math.PI, HPI = PI * .5;
