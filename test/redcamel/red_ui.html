@@ -125,6 +125,20 @@ bs(function() {
                 '>', bs.Ui('buttonIcon', 'Icon@align-right', 'primary').S('<', target, 'html+', ' right', 'this'),
                 '>', bs.Ui('buttonIcon', 'Icon@align-justify', 'primary').S('<', target, 'html+', ' justify', 'this')
         )
+        bs.Dom('<div></div>').S('<',target,'margin-top',10)
+        bs.Ui('buttonGroup').S('<', target,
+                '>', bs.Ui('buttonIcon', 'Icon@align-left', 'success' ,'sm').S('<', target, 'html+', ' left', 'this'),
+                '>', bs.Ui('buttonIcon', 'Icon@align-center', 'success','sm').S('<', target, 'html+', ' center', 'this'),
+                '>', bs.Ui('buttonIcon', 'Icon@align-right', 'success','sm').S('<', target, 'html+', ' right', 'this'),
+                '>', bs.Ui('buttonIcon', 'Icon@align-justify', 'success','sm').S('<', target, 'html+', ' justify', 'this')
+        )
+        bs.Dom('<div></div>').S('<',target,'margin-top',10)
+        bs.Ui('buttonGroup').S('<', target,
+                '>', bs.Ui('buttonIcon', 'Icon@align-left', 'warning' ,'xs').S('<', target, 'html+', ' left', 'this'),
+                '>', bs.Ui('buttonIcon', 'Icon@align-center', 'warning','xs').S('<', target, 'html+', ' center', 'this'),
+                '>', bs.Ui('buttonIcon', 'Icon@align-right', 'warning','xs').S('<', target, 'html+', ' right', 'this'),
+                '>', bs.Ui('buttonIcon', 'Icon@align-justify', 'warning','xs').S('<', target, 'html+', ' justify', 'this')
+        )
 
         bs.Dom('<div></div>').S('<',target,'margin-top',10)
         bs.Ui('label').S('<',target,'html','버튼툴바생성','display','block','background','#666','padding',10,'margin','10px 0px 10px 0px')
@@ -147,6 +161,26 @@ bs(function() {
                 '>', bs.Ui('buttonGroup').S(
                         '>', bs.Ui('buttonIcon', 'Icon@plus', 'default').S('<', target, 'this'),
                         '>', bs.Ui('buttonIcon', 'Icon@minus', 'default').S('<', target, 'this'),
+                        'this'
+                )
+        )
+        bs.Dom('<div></div>').S('<',target,'margin-top',10)
+        bs.Ui('buttonToolbar').S('<', target,
+                '>', bs.Ui('buttonGroup').S(
+                        '>', bs.Ui('buttonIcon', 'Icon@align-left', 'default','xs').S('<', target, 'this'),
+                        '>', bs.Ui('buttonIcon', 'Icon@align-center', 'default','xs').S('<', target, 'this'),
+                        '>', bs.Ui('buttonIcon', 'Icon@align-right', 'default','xs').S('<', target, 'this'),
+                        '>', bs.Ui('buttonIcon', 'Icon@align-justify', 'default','xs').S('<', target, 'this'),
+                        'this'
+                ),
+                '>', bs.Ui('buttonGroup').S(
+                        '>', bs.Ui('buttonIcon', 'Icon@resize-full', 'default','xs').S('<', target, 'this'),
+                        '>', bs.Ui('buttonIcon', 'Icon@resize-small', 'default','xs').S('<', target, 'this'),
+                        'this'
+                ),
+                '>', bs.Ui('buttonGroup').S(
+                        '>', bs.Ui('buttonIcon', 'Icon@plus', 'default','xs').S('<', target, 'this'),
+                        '>', bs.Ui('buttonIcon', 'Icon@minus', 'default','xs').S('<', target, 'this'),
                         'this'
                 )
         )
