@@ -951,7 +951,7 @@ function DOM(){
 				fn = ( ev = function(d){
 					var self;
 					self = this, self.target = d, this.e = {}, self.listener = function(e){
-						var type, start, dx, dy, t0, t1, t2, id, i, j, X, Y;
+						var type, start, dx, dy, t0, t1, t2, id, i, j, X, Y,docel=document.documentElement;
 						self.event = e || ( e = event ), self.type = eventName[e.type] || e.type, self.keyName = keyName[self.keyCode = e.keyCode];
 						if( d.value ) self.value = bs.trim(d.value);
 						if( type = evType[self.type] ){
@@ -967,7 +967,7 @@ function DOM(){
 								self.id = self.id0, self.mx = self.mx0, self.my = self.my0, self.x = self.x0, self.y = self.y0, self.lx = self.lx0, self.ly = self.ly0, self.dx = self.dx0, self.dy = self.dy0, self.cx = self.cx0, self.cy = self.cy0;
 							}else{
 								self.length = 0,
-								self.x = X = e[pageX], self.y = Y = e[pageY], self.lx = e[layerX], self.ly = e[layerY], self.cx = e.clientX, self.cy = e.clientY,
+                                    self.cx=e.clientX, self.cy=e.clientY, self.x=X=e['pageX'] ? e[pageX] : self.cx + docel.scrollLeft, self.y=Y=e['pageY'] ? e[pageY] : self.cy + docel.scrollTop, self.lx=e[layerX], self.ly=e[layerY],
 								type == 4 ?
 									( self.$x = self._x = X, self.$y = self._y = Y ) :
 									( self.dx = X - self._x, self.dy = Y - self._y );
