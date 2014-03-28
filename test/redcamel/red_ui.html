@@ -22,8 +22,9 @@
 // By Redcamel
 // 개발목적 : Open API를 연동해봅세... JSON 콜백처리도 좀 -_-;;
 bs(function() {
-    bs.Css('body').S('font-size',12)
     bs.Css('input').S('margin',5)
+    bs.Css('button').S('margin',5)
+    bs.Css('.exBase').S('border','1px #ccc solid','padding',10,'background','#eee')
     start()
     function start() {
         var target=bs.Dom('<div></div>').S('<','body','@id','stage','max-width',980,'margin','0px auto','padding',20,'this')
@@ -76,7 +77,7 @@ bs(function() {
 
                 ,'display','block','padding','0px 0px 10px 0px')
         bs.Dom('<div></div>').S('<',target,'margin-top',10)
-        bs.Ui('form').S('<',target,
+        target.S(
                 '>',bs.Ui('button').S('<',target,'@value',"bs.Ui('button')",'this'),
                 '>',bs.Ui('button','default','lg').S('<',target,'@value',"bs.Ui('button','default','lg')",'this'),
                 '>',bs.Ui('button','primary').S('<',target,'@value',"bs.Ui('button','primary')",'this'),
@@ -86,6 +87,68 @@ bs(function() {
                 '>',bs.Ui('button','danger').S('<',target,'@value',"bs.Ui('button','danger')",'this'),
                 '>',bs.Ui('button','link','lg').S('<',target,'@value',"bs.Ui('button','link','lg')",'this')
 
+        )
+        bs.Dom('<div></div>').S('<',target,'margin-top',10)
+        bs.Ui('label').S('<',target,'html','버튼아이콘생성','display','block','background','#666','padding',10,'margin','10px 0px 10px 0px')
+        bs.Dom('<div></div>').S('<',target,'html',
+                        '<li>bs.Ui("buttonIcon","icon@글리피콘네임")</li>' +
+                        '<li>텍스트는 html+를 통해 입력합니다.</li>'
+
+                ,'display','block','padding','0px 0px 10px 0px')
+        bs.Dom('<div></div>').S('<',target,'margin-top',10)
+        target.S(
+                '>',bs.Ui('buttonIcon','Icon@star').S('<',target,'html+',' star','this'),
+                '>',bs.Ui('buttonIcon','default','lg','Icon@star').S('<',target,'html+',' star','this'),
+                '>',bs.Ui('buttonIcon','primary','Icon@asterisk').S('<',target,'html+',' asterisk','this'),
+                '>',bs.Ui('buttonIcon','success','sm','Icon@asterisk').S('<',target,'html+',' asterisk','this'),
+                '>',bs.Ui('buttonIcon','info','xs','Icon@remove').S('<',target,'html+',' remove','this'),
+                '>',bs.Ui('buttonIcon','warning','sm','Icon@remove').S('<',target,'html+',' remove','this'),
+                '>',bs.Ui('buttonIcon','danger','Icon@star').S('<',target,'html+',' star','this'),
+                '>',bs.Ui('buttonIcon','link','lg','Icon@star').S('<',target,'html+',' star','this')
+        )
+        bs.Dom('<div>반환구조</div>').S('<', target, 'margin-top', 10)
+        bs.Dom('<div>button Tag<br><br></div>').S('<', target, '@class', 'exBase',
+                '>', bs.Dom('<div>span tag(icon)<br><br></div>').S('@class', 'exBase', 'float', 'left', 'this'),
+                '>', bs.Dom('<div>텍스트</div>').S('html', 'contents', '@class', 'exBase', 'float', 'right', 'this'),
+                '>', bs.Dom('<div></div>').S('clear', 'both', 'this')
+        )
+
+
+        bs.Dom('<div></div>').S('<',target,'margin-top',10)
+        bs.Ui('label').S('<',target,'html','버튼그룹생성','display','block','background','#666','padding',10,'margin','10px 0px 10px 0px')
+        bs.Dom('<div></div>').S('<',target,'html',
+                        '<li>bs.Ui("buttonGroup")</li>'
+                ,'display','block','padding','0px 0px 10px 0px')
+        bs.Ui('buttonGroup').S('<', target,
+                '>', bs.Ui('buttonIcon', 'Icon@align-left', 'primary').S('<', target, 'html+', ' left', 'this'),
+                '>', bs.Ui('buttonIcon', 'Icon@align-center', 'primary').S('<', target, 'html+', ' center', 'this'),
+                '>', bs.Ui('buttonIcon', 'Icon@align-right', 'primary').S('<', target, 'html+', ' right', 'this'),
+                '>', bs.Ui('buttonIcon', 'Icon@align-justify', 'primary').S('<', target, 'html+', ' justify', 'this')
+        )
+
+        bs.Dom('<div></div>').S('<',target,'margin-top',10)
+        bs.Ui('label').S('<',target,'html','버튼툴바생성','display','block','background','#666','padding',10,'margin','10px 0px 10px 0px')
+        bs.Dom('<div></div>').S('<',target,'html',
+                '<li>bs.Ui("buttonToolbar")</li>'
+                ,'display','block','padding','0px 0px 10px 0px')
+        bs.Ui('buttonToolbar').S('<', target,
+                '>', bs.Ui('buttonGroup').S(
+                        '>', bs.Ui('buttonIcon', 'Icon@align-left', 'default').S('<', target, 'this'),
+                        '>', bs.Ui('buttonIcon', 'Icon@align-center', 'default').S('<', target, 'this'),
+                        '>', bs.Ui('buttonIcon', 'Icon@align-right', 'default').S('<', target, 'this'),
+                        '>', bs.Ui('buttonIcon', 'Icon@align-justify', 'default').S('<', target, 'this'),
+                        'this'
+                ),
+                '>', bs.Ui('buttonGroup').S(
+                        '>', bs.Ui('buttonIcon', 'Icon@resize-full', 'default').S('<', target, 'this'),
+                        '>', bs.Ui('buttonIcon', 'Icon@resize-small', 'default').S('<', target, 'this'),
+                        'this'
+                ),
+                '>', bs.Ui('buttonGroup').S(
+                        '>', bs.Ui('buttonIcon', 'Icon@plus', 'default').S('<', target, 'this'),
+                        '>', bs.Ui('buttonIcon', 'Icon@minus', 'default').S('<', target, 'this'),
+                        'this'
+                )
         )
 
 
@@ -161,6 +224,7 @@ bs(function() {
         target.S('>',bs.Ui('icon','play-circle').S('margin',10,'this'))
         target.S('>',bs.Ui('icon','repeat').S('margin',10,'this'))
         target.S('>',bs.Ui('icon','refresh').S('margin',10,'this'));
+        bs.Ui('label').S('<',target,'html','<a href="http://getbootstrap.com/components/" target="_blank">적용가능 글리피콘 더보기...넣기도 구차늠 http://getbootstrap.com/components/</a>','display','block','background','#666','padding',10,'margin','10px 0px 10px 0px')
 
 
         bs.Dom('<div></div>').S('<',target,'margin-top',10)
@@ -168,6 +232,9 @@ bs(function() {
         target.S('>',bs.Ui('음냐냐냔','refresh'));
 
 
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // dialog
+        ////////////////////////////////////////////////////////////////////////////////////////////
         bs.Dom('<div></div>').S('<',target,'margin-top',10)
         bs.Ui('label').S('<',target,'html','다이알로그','display','block','background','#666','padding',10,'margin','10px 0px 10px 0px');
         bs.Dom('<div></div>').S('<',target,'margin-top',10,'html','고민1. 부트스트랩이...IE7에서 렌더링 오류가 있는듯한데')
@@ -183,9 +250,39 @@ bs(function() {
             bs.Ui('dialog', 'title', '타이틀입니당', 'contents', txt).box.S('width',500)
         }, '<', target)
 
+        bs.Dom('<div>반환구조</div>').S('<',target,'margin-top',10)
+        bs.Dom('<div>box<br><br></div>').S('<',target,'@class','exBase',
+                '>',bs.Dom('<div>titleBox<br><br></div>').S('@class','exBase',
+                        '>',bs.Dom('<div>title</div>').S('@class','exBase','float','left','this'),
+                        '>',bs.Dom('<div>close</div>').S('@class','exBase','float','right','this'),
+                        '>',bs.Dom('<div></div>').S('clear','both','this'),
+                        'this'
+                ),
+                '>',bs.Dom('<div></div>').S('html','contents','@class','exBase','this')
+        )
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // 알러트
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        bs.Dom('<div></div>').S('<',target,'margin-top',10)
+        bs.Ui('label').S('<',target,'html','alert(알러트박스)','display','block','background','#666','padding',10,'margin','10px 0px 10px 0px');
+        bs.Dom('<div></div>').S('<',target,'html',
+                        '<li>bs.Ui("alert","success")</li>' +
+                        '<li>bs.Ui("alert","info")</li>' +
+                        '<li>bs.Ui("alert","warning")</li>' +
+                        '<li>bs.Ui("alert","danger")</li>' +
+                        "<li> Alert의경우 alert-success 같은 클래스네임을 alert-를 빼고 success만 설정하시면됩니다.</li>"
+
+                ,'display','block','padding','0px 0px 10px 0px')
+        target.S(
+                '>',bs.Ui('alert','success').S('html',"<b>Success!</b>  Best check yo self, you're not looking too good.",'this'),
+                '>',bs.Ui('alert','info').S('this').S('html',"<b>info!</b>  Best check yo self, you're not looking too good.",'this'),
+                '>',bs.Ui('alert','warning').S('html',"<b>warning!</b>  Best check yo self, you're not looking too good.",'this'),
+                '>',bs.Ui('alert','danger').S('html',"<b>danger!</b>  Best check yo self, you're not looking too good.",'this')
+        )
+
 
         bs.Dom('<div></div>').S('<',target,'margin-top',10)
-        bs.Ui('label').S('<',target,'html','<a href="http://getbootstrap.com/components/" target="_blank">적용가능 글리피콘 더보기...넣기도 구차늠 http://getbootstrap.com/components/</a>','display','block','background','#666','padding',10,'margin','10px 0px 10px 0px')
         target.S('>',bs.Dom('<div><a href="https://github.com/projectBS/bsJS/"><img src="ui/res/logo.png"></a></div>').S('background','#333','padding',20,'border-radius',10,'this'))
 
 
@@ -208,8 +305,14 @@ bs.Ui=(function() {
     cssLoad('//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css');
     var theme=cssLoad('//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css','__bsTheme');
     return function() {
-        var add=arguments[1] ? arguments[1] : '',pre=arguments[0]=="button" ? ' btn-' : ' '
-        for(var i=1; i < arguments.length; i++) add+=pre + arguments[i]
+        var add=arguments[1] ? arguments[1] : '',pre=" "
+        switch(arguments[0]){
+            case 'button' : pre=' btn-' ;break
+            case 'buttonIcon' : pre=' btn-';break
+            case 'alert' : pre=" alert-" ;break
+        }
+        var icon = ""
+        for(var i=1; i < arguments.length; i++) arguments[i].indexOf('@')>-1 ? icon=arguments[i].split('@')[1] : add+=pre + arguments[i] ;
 
         switch(arguments[0]) {
             case 'theme' :theme.setAttribute('href',arguments[1])
@@ -219,10 +322,19 @@ bs.Ui=(function() {
             case "label" :return bs.Dom('<label></label>').S('@class',add,'this')
             case "submit" :return bs.Dom('<input type="submit"/>').S('@class','btn btn-' + add,'this')
             case "reset" :return bs.Dom('<input type="reset"/>').S('@class','btn btn-' + add,'this')
-            case "button" :return bs.Dom('<input type="button"/>').S('@class','btn btn-' + add,'this')
             case "text" :return bs.Dom('<input type="text"/>').S('@class','form-control','@value','textField','this')
             case "email" :return bs.Dom('<input type="email"/>').S('@class','form-control','@value','email','this')
             case "password" :return bs.Dom('<input type="password"/>').S('@class','form-control','@value','password','this')
+
+            case "buttonToolbar" :return bs.Dom('<div class="btn-toolbar"></div>')
+            case "buttonGroup" :return bs.Dom('<div class="btn-group"></div>')
+            case "button" :return bs.Dom('<input type="button"/>').S('@class','btn btn-' + add,'this')
+            case "buttonIcon" : {
+                console.log(icon)
+                var result = bs.Dom('<button type="button"></button>').S('@class','btn btn-' + add,'html','<span class="glyphicon glyphicon-'+icon+'"></span>','this')
+                return result
+            }
+            case "alert" :return bs.Dom('<div></div>').S('@class','alert alert-' + add,'this')
             case "dialog" :
                 //TODO 다이알로그 일단 구현해보자 -0-
                 //TODO 부트스트랩 IE7에서 먼가 렌더링문제가 -_- 있는듯한데?
@@ -234,12 +346,14 @@ bs.Ui=(function() {
                         'this'
                 ), contents:[]}, t0=arguments, t1, startX, startY, x, y, move={}
                 var titleBox=bs.Dom('<div></div>').S(
-                        '>', bs.Ui('icon', 'remove-circle').S('float', 'right', 'mousedown', function(){titleBox.S('mousedown', null), result.box.S(null)}, 'this'), '<', result.box,
-                        'background', '#ddd', 'cursor', 'pointer', 'user-select', 'none', '@class', 'btn-default', 'width', '100%', 'padding', 10, 'user-select', 'none', 'font-size', 16,
+                        '>', bs.Dom('<div>X</div>').S('float', 'right', 'mousedown', function(){titleBox.S('mousedown', null), result.box.S(null)}, 'this'),
+                        '<', result.box,
+                        'cursor', 'pointer', 'user-select', 'none', '@class', 'btn btn-default', 'width', '100%', 'padding', 10, 'user-select', 'none', 'font-size', 16,
                         'border-bottom-right-radius', 0, 'border-bottom-left-radius', 0,
                         'mousedown', function($e){
                             startX=$e.event.offsetX||$e.lx, startY=$e.event.offsetY||$e.ly, x=$e.x, y=$e.y
                             console.log($e.event.clientX, $e.event.clientY)
+
                             bs.Dom('body').S('mousemove', function($e){x=$e.x, y=$e.y})
                             move.ANI=function(){result.box.S('left', x-startX, 'top', y-startY)}
                             bs.ANI.ani(move)
@@ -252,6 +366,7 @@ bs.Ui=(function() {
                         },
                         'this'
                 )
+                result.titleBox = titleBox
                 var t2={
                     title:bs.Dom('<div></div>').S('<', titleBox, 'float', 'left', 'this'),
                     contents:bs.Dom('<div></div>').S('<', result.box, 'background', '#fff', 'width', '100%', 'user-select', 'none', 'border-top-right-radius', 0, 'border-top-left-radius', 0, 'padding', 15, 'this')
