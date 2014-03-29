@@ -1114,7 +1114,7 @@ function DOM(){
 	})() );
 }
 function ANI(){
-	var style, timer, start, end, loop, ltype, ease, ANI, ani, time, isLive, isPause, tween, pool, ex,
+	var style, timer, start, end, loop, ltype, ease, ani, time, isLive, isPause, tween, pool, ex, ANI, mk0, mk1,
 		toRadian = Math.PI/180, cos = bs.cos, sin = bs.sin;
 	style = bs.STYLE, ani = [], time = 0, timer = 'equestAnimationFrame';
 	if( timer = W['r' + timer] || W[bs.DETECT.stylePrefix + 'R' + timer] )
@@ -1139,7 +1139,7 @@ function ANI(){
 				if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
 				if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
 			}
-			ani.length ? timer(loop) : end();
+			ani.length ? ltype ? timer(loop) : 0 : end();
 		}
 	};
 	ease = (function(){
@@ -1218,10 +1218,9 @@ function ANI(){
 				t1.push( style[i], t0[i], 1 / t0[i].length, 0, typeof style[i] == 'function' ? 1 : 0 ); 
 			}
 		}
-		this.ANI = this.easing;
 		return this;
 	},
-	tween.prototype.easing = function( T, pause ){
+	tween.prototype.ANI = function( T, pause ){
 		var t0, t1, term, time, rate, i, j, l, k, v, e, s, u, 
 			circle, ckx, cky, cvx, cvy, 
 			bezier, bv0, bv1, bv2, bt, bl, br;
@@ -1274,67 +1273,36 @@ function ANI(){
 			}
 		}
 		if( this.update ) this.update( this.t, rate, T );
+	},
+	mk0 = function( p0, p1 ){
+		return function(){
+			var i = ani.length, t = Date.now();
+			isPause = p0; while( i-- ) ani[i].ANI( t, p1 );
+			if( p0 == 0 ) loop();
+		};
+	},
+	mk1 = function(p){
+		return function(){
+			var t0, t, i, j, k;
+			if( p ) t = Date.now();
+			i = ani.length, j = arguments.length;
+			while( i-- ){
+				t0 = ani[i], k = j;
+				while( k-- ) if( t0.id == arguments[k] || t0.t[0] == arguments[k] ) p == 0 ? ( pool[pool.length++] = t0, t0.stop = 1, ani.splice( i, 1 ) ) :
+					p == 1 ? t0.ANI( t, 1 ) : p == 2 ? ani[i].ANI( t, 2 ) : ani[i].ANI( t, ani[i].pause ? 2 : 1 );
+			}
+		}
 	};
 	return ANI = {
-		ease:ease,
 		ani:function(v){if(v.ANI) ani[ani.length] = v, start()},
 		tween:function(){
 			var t0 = pool.length ? pool[--pool.length] : new tween;
 			return ani[ani.length] = t0, t0.S(arguments), start(), t0;
 		},
-		tweenStop:function(){
-			var t0, i, j, k;
-			i = ani.length, j = arguments.length;
-			while( i-- ){
-				t0 = ani[i], k = j;
-				while( k-- ) if( t0.id == arguments[k] || t0.t[0] == arguments[k] ) pool[pool.length++] = t0, t0.stop = 1, ani.splice( i, 1 );
-			}
-		},
-		tweenPause:function(){
-			var t0, t, i, j, k;
-			t = Date.now(), i = ani.length, j = arguments.length;
-			while( i-- ){
-				t0 = ani[i], k = j;
-				while( k-- ) if( t0.id == arguments[k] || t0.t[0] == arguments[k] ) t0.ANI( t, 1 );
-			}
-		},
-		tweenResume:function(){
-			var t0, t, i, j, k;
-			t = Date.now(), i = ani.length, j = arguments.length;
-			while( i-- ){
-				t0 = ani[i], k = j;
-				while( k-- ) if( t0.id == arguments[k] || t0.t[0] == arguments[k] ) ani[i].ANI( t, 2 );
-			}
-		},
-		tweenToggle:function(){
-			var t0, t, i, j, k;
-			t = Date.now(), i = ani.length, j = arguments.length;
-			while( i-- ){
-				t0 = ani[i], k = j;
-				while( k-- ) if( t0.id == arguments[k] || t0.t[0] == arguments[k] ) ani[i].ANI( t, ani[i].pause ? 2 : 1 );
-			}
-		},
-		pause:function(){
-			var i, t;
-			isPause = 1, t = Date.now(), i = ani.length;
-			while( i-- ) ani[i].ANI( t, 1 );
-		},
-		resume:function(){
-			var i, t;
-			isPause = 0, t = Date.now(), i = ani.length;
-			while( i-- ) ani[i].ANI( t, 2 );
-			loop();
-		},
+		pause:mk0( 1, 1 ), resume:mk0( 0, 2 ), tweenStop:mk1(0), tweenPause:mk1(1), tweenResume:mk1(2), tweenToggle:mk1(3),
 		toggle:function(){return isPause ? ANI.resume() : ANI.pause(), isPause;},
 		stop:function(){end();},
-		delay:(function(){
-			var delay = [];
-			return function(f){
-				var i = delay.indexOf(f);
-				if( i == -1 ) delay[delay.length] = f, f.bsDelay = setTimeout( f, ( arguments[1] || 1 ) * 1000 );
-				else delay.splice( i, 1 ), clearTimeout( f.bsDelay ), delete f.bsDelay;
-			};
-		})()
+		ease:ease
 	};
 }
 (function(){
