@@ -79,9 +79,9 @@ bsJS로 만들어진 bsTest와 bsShowCase는 bsJS 연구나무의 bsjs.js를 상
 
 로컬에서만 놀지 마시고 bsTest에 직접 올리면서 마음껏 테스트해보세요.
 
-bsTest 웹 페이지는 <a href='http://projectbs.github.io/bsTest/test/' target='_blank'>여기</a>에서 보실 수 있습니다. 멋지죠? ^^
+bsTest 웹 페이지는 <a href='http://projectbs.github.io/bsTest/test/' target='_blank'><b>여기</b></a>에서 보실 수 있습니다. 멋지죠? ^^
 
-Push 권한을 얻으려면 <a href='https://www.facebook.com/photo.php?fbid=828142343867893' target='_blank'>여기</a>에 GitHub의 아이디와 함께 'bsTest Push 권한 주세요'라고 댓글 달아주세요.
+Push 권한을 얻으려면 <a href='https://www.facebook.com/photo.php?fbid=828142343867893' target='_blank'><b>여기</b></a>에 GitHub의 아이디와 함께 'bsTest Push 권한 주세요'라고 댓글 달아주세요.
 
 # 자료
 
@@ -101,7 +101,7 @@ Push 권한을 얻으려면 <a href='https://www.facebook.com/photo.php?fbid=828
  
 # License
 
-bsJS는 <a href='http://opensource.org/licenses/MIT' target='_blank'>MIT 라이선스</a> 또는 <a href='http://www.gnu.org/licenses/gpl-2.0.html' target='_blank'>GPL v2 라이선스</a>로 배포되는 Open Source Software 입니다.
+bsJS는 <a href='http://opensource.org/licenses/MIT' target='_blank'><b>MIT 라이선스</b></a> 또는 <a href='http://www.gnu.org/licenses/gpl-2.0.html' target='_blank'><b>GPL v2 라이선스</b></a>로 배포되는 Open Source Software 입니다.
 
 # Contact us
 
