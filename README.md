@@ -110,4 +110,4 @@ bsJS는 <a href='http://opensource.org/licenses/MIT' target='_blank'>MIT 라이�
 
 
 ----------
-Copyrightⓒ 2013, ProjectBS Committee
+Copyrightⓒ 2013, ProjectBS Committee. All rights reserved.
