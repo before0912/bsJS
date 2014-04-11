@@ -22,20 +22,20 @@ bsJS를 쓰면 ShowCase에 있는 것들을  **빠르고** **쉽게** 만들 수
 
 실제 Core와 예제의 소스를 로컬에 내려받아서 마음대로 만져보실 수 있습니다.
 
-bsJS로 만들어진 bsTest와 bsShowCase는 bsJS 연구나무의 bsjs.js를 상대 경로로 참조하고 있습니다.
+bsJS로 만들어진 bsJSTest와 bsShowCase는 bsJS 연구나무의 bsjs.js를 상대 경로로 참조하고 있습니다.
 
 그래서 아래와 같이 폴더를 구성하셔야 내려받은 로컬에서도 문제 없이 쓸 수 있습니다. 
 
     ANY-FOLDER
           └----bsJS           
           └----bsShowCase
-          └----bsTest
+          └----bsJSTest
 
 구체적으로 말씀드리면 `ANY-FOLDER`에서 
 
 >git clone https://github.com/projectBS/bsJS.git
 
->git clone https://github.com/projectBS/bsTest.git
+>git clone https://github.com/projectBS/bsJSTest.git
 
 >git clone https://github.com/projectBS/bsShowCase.git
 
@@ -75,13 +75,13 @@ bsJS로 만들어진 bsTest와 bsShowCase는 bsJS 연구나무의 bsjs.js를 상
 
 이제 bsJS의 새싹이 되실 차례입니다. ^^
 
-## bsTest의 Push 권한 얻기
+## bsJSTest의 Push 권한 얻기
 
-로컬에서만 놀지 마시고 bsTest에 직접 올리면서 마음껏 테스트해보세요.
+로컬에서만 놀지 마시고 bsJSTest에 직접 올리면서 마음껏 테스트해보세요.
 
-bsTest 웹 페이지는 <a href='http://projectbs.github.io/bsTest/test/' target='_blank'><b>여기</b></a>에서 보실 수 있습니다. 멋지죠? ^^
+bsJSTest 웹 페이지는 <a href='http://projectbs.github.io/bsJSTest/test/' target='_blank'><b>여기</b></a>에서 보실 수 있습니다. 멋지죠? ^^
 
-Push 권한을 얻으려면 <a href='https://www.facebook.com/photo.php?fbid=828142343867893' target='_blank'><b>여기</b></a>에 GitHub의 아이디와 함께 'bsTest Push 권한 주세요'라고 댓글 달아주세요.
+Push 권한을 얻으려면 <a href='https://www.facebook.com/photo.php?fbid=828142343867893' target='_blank'><b>여기</b></a>에 GitHub의 아이디와 함께 'bsJSTest Push 권한 주세요'라고 댓글 달아주세요.
 
 # 자료
 
