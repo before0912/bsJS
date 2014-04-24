@@ -1,7 +1,7 @@
-/* bsJS - OpenSource JavaScript library
- * Copyright 2013.10 projectBS committee.
- * Dual licensed under the MIT or GPL Version 2 licenses.
- * GitHub-http://ligo.kr/i7e Facebook group-http://ligo.kr/jg
+/* bsJS v0.4
+ * Copyright (c) 2013 by ProjectBS Committe and contributors. 
+ * http://www.bsplugin.com All rights reserved.
+ * Licensed under the BSD license. See http://opensource.org/licenses/BSD-3-Clause
  */
 ( function( W, N ){
 'use strict';

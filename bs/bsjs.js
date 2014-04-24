@@ -25,7 +25,7 @@ if( doc = W['document'] ){//browser
 })();
 else throw new Error( 0, 'not supported platform' );
 (function(){//core
-	var timeout = 5000, que, register = {}, depends = {};
+	var timeout = 5000, register = {}, depends = {};
 	bs.fn = fn = function( name, f ){bs[name.replace( trim, '' ).toLowerCase()] = f;},
 	fn( 'obj', function( name, o ){bs[name.replace( trim, '' ).toUpperCase()] = o;} ),
 	fn( 'cls', function( name, f ){
