@@ -79,7 +79,7 @@ bsJS로 만들어진 bsJSTest와 bsShowCase는 bsJS 연구나무의 bsjs.js를 �
 
 로컬에서만 놀지 마시고 bsJSTest에 직접 올리면서 마음껏 테스트해보세요.
 
-bsJSTest 웹 페이지는 <a href='http://projectbs.github.io/bsJSTest/test/' target='_blank'><b>여기</b></a>에서 보실 수 있습니다. 멋지죠? ^^
+bsJSTest 웹 페이지는 <a href='http://projectbs.github.io/bsJSTest/0.3/' target='_blank'><b>여기</b></a>에서 보실 수 있습니다. 멋지죠? ^^
 
 Push 권한을 얻으려면 <a href='https://www.facebook.com/photo.php?fbid=828142343867893' target='_blank'><b>여기</b></a>에 GitHub의 아이디와 함께 'bsJSTest Push 권한 주세요'라고 댓글 달아주세요.
 
