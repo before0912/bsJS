@@ -867,12 +867,12 @@ fn( 'ev', (function(){
 			while( i < j ){
 				k = arg[i++], v = arg[i++];
 				if( tween[k] ){
-					if( k == 'time' ) tw.time = parseInt(v*1000), tw.timeR = 1/tw.time;
-					else if( k == 'ease' ) tw.ease = ease[v];
-					else if( k == 'end' || k == 'update' ) tw[k] = v;
-					else if( k == 'loop' ) tw.loop = tw.loopC = v;
-					else if( k == 'delay' ) tw.delay = parseInt(v*1000);
-					else if( k == 'group' || k == 'yoyo' || k == 'bezier' || k == 'circle' ) tw[k] = v;
+					k == 'time' ? ( tw.time = parseInt( v * 1000 ), tw.timeR = 1 / tw.time ) :
+					k == 'ease' ? tw.ease = ease[v] :
+					k == 'end' || k == 'update' ? tw[k] = v :
+					k == 'loop' ? tw.loop = tw.loopC = v :
+					k == 'delay' ? tw.delay = parseInt( v * 1000 ) :
+					k == 'group' || k == 'yoyo' || k == 'bezier' || k == 'circle' ? tw[k] = v : 0
 				}else{
 					l = tw.length;
 					while( l-- ){
@@ -996,6 +996,22 @@ fn( 'ev', (function(){
 		};
 		return ANI;
 	},
+	t0 = setInterval( function(){
+		var start, i;
+		switch( doc.readyState ){
+		case'complete':case'loaded':break;
+		case'interactive':if( doc.documentElement.doScroll ) try{doc.documentElement.doScroll('left');}catch(e){return;}
+		default:return;
+		}
+		clearInterval(t0),
+		start = function(){
+			var t0 = que, i = 0, j = t0.length;
+			que = null;
+			while( i < j ) t0[i++]();
+		},
+		bs.obj( 'DETECT', detectDOM( W, detect ) ), DOM(), bs.obj( 'ANI', ANIMATE() ), EXT(),
+		pque.length ? ( i = pque, pque = null, bs['plugin~']( start, i ) ) : start();
+	}, 1 ),
 	EXT = function(){
 		var fn;
 		NETWORK:
@@ -1151,22 +1167,6 @@ fn( 'ev', (function(){
 			aniCircle:'t1[ckx] = cvx, circle.x0 ? ckx( t1, cvx ) : s[ckx] = cvx + u[ckx], t1[cky] = cvy, circle.y0 ? cky( t1, cvy ) : s[cky] = cvy + u[cky]',
 			aniBezier:'bt[i + 4] ? k( t1, s, v ) : s[k] = v + u[k], t1[k] = v'
 		} );
-	},
-	t0 = setInterval( function(){
-		var start, i;
-		switch( i = doc.readyState ){
-		case'complete':case'loaded':break;
-		case'interactive':if( doc.documentElement.doScroll ) try{doc.documentElement.doScroll('left');}catch(e){return;}
-		default:return;
-		}
-		clearInterval(t0),
-		start = function(){
-			var t0 = que, i = 0, j = t0.length;
-			que = null;
-			while( i < j ) t0[i++]();
-		},
-		bs.obj( 'DETECT', detectDOM( W, detect ) ), DOM(), bs.obj( 'ANI', ANIMATE() ), EXT(),
-		pque.length ? ( i = pque, pque = null, bs['plugin~']( start, i ) ) : start();
-	}, 1 );
+	};
 })();
 } )(this);
