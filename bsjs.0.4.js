@@ -93,7 +93,7 @@ detectDOM = function( W, detect ){
 		break;
 	case'firefox': cssPrefix = '-moz-', stylePrefix = 'Moz'; transform3D = 1; break;
 	case'opera': cssPrefix = '-o-', stylePrefix = 'O'; transform3D = 1; break;
-	default: cssPrefix = '-webkit-', stylePrefix = 'webkit'; transform3D = detect.os == 'android' ? ( detect.osVersion < 4 ? 0 : 1 ) : 1;
+	default: cssPrefix = '-webkit-', stylePrefix = 'webkit'; transform3D = detect.os == 'android' ? ( detect.osVer < 4 ? 0 : 1 ) : 1;
 	}
 	if( keyframe ){
 		if( keyframe.WEBKIT_KEYFRAME_RULE ) keyframe = '-webkit-keyframes';
