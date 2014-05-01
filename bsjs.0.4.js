@@ -26,7 +26,8 @@ detectWindow = function( W, detect ){
 		if( agent.indexOf( i = 'chrome' ) < 0 && agent.indexOf( i = 'crios' ) < 0 ) return;
 		return browser = 'chrome', bv = parseFloat( ( i == 'chrome' ? /chrome\/([\d]+)/ : /crios\/([\d]+)/ ).exec(agent)[1] );
 	},
-	firefox = function(){return agent.indexOf('firefox') < 0 ? 0 : browser = 'firefox', bv = parseFloat( /firefox\/([\d]+)/.exec(agent)[1] );},
+	//firefox = function(){return agent.indexOf('firefox') < 0 ? 0 : browser = 'firefox', bv = parseFloat( /firefox\/([\d]+)/.exec(agent)[1] );},
+    firefox = function(){return agent.indexOf('firefox') < 0 ? 0 : browser = 'firefox', bv = /firefox\/([\d]+)/.exec(agent), bv==null ? 0: parseFloat(/firefox\/([\d]+)/.exec(agent)[1]);},
 	safari = function(){return agent.indexOf('safari') < 0 ? 0 : browser = 'safari', bv = parseFloat(/safari\/([\d]+)/.exec(agent)[1]);},
 	opera = function(){return agent.indexOf('opera') < 0 ? 0 : browser = 'opera', bv = parseFloat( /version\/([\d]+)/.exec(agent)[1] );},
 	naver = function(){return agent.indexOf( 'naver' ) < 0 ? 0 : browser = 'naver';};
@@ -36,13 +37,13 @@ detectWindow = function( W, detect ){
 		browser = os = 'android';
 		if( agent.indexOf('mobile') == -1 ) browser += 'Tablet', device = 'tablet';
 		else device = 'mobile';
-		if( i = /android ([\d.]+)/.exec(agent) ) i = i[1].split('.'), osVersion = parseFloat( i[0] + '.' + i[1] );
+		if( i = /android ([\d.]+)/.exec(agent) ) i = i[1].split('.'), osv = parseFloat( i[0] + '.' + i[1] );
 		else osv = 0;
 		if( i = /safari\/([\d.]+)/.exec(agent) ) bv = parseFloat(i[1]);
 		naver() || chrome() || firefox() || opera();
 	}else if( agent.indexOf( i = 'ipad' ) > -1 || agent.indexOf( i = 'iphone' ) > -1 ){
 		device = i == 'ipad' ? 'tablet' : 'mobile', browser = os = i;
-		if( i = /os ([\d_]+)/.exec(agent) ) i = i[1].split('_'), osVersion = parseFloat( i[0] + '.' + i[1] );
+		if( i = /os ([\d_]+)/.exec(agent) ) i = i[1].split('_'), osv = parseFloat( i[0] + '.' + i[1] );
 		else osv = 0;
 		if( i = /mobile\/([\S]+)/.exec(agent) ) bv = parseFloat(i[1]);
 		naver() || chrome() || firefox() || opera();
@@ -92,7 +93,7 @@ detectDOM = function( W, detect ){
 		break;
 	case'firefox': cssPrefix = '-moz-', stylePrefix = 'Moz'; transform3D = 1; break;
 	case'opera': cssPrefix = '-o-', stylePrefix = 'O'; transform3D = 1; break;
-	default: cssPrefix = '-webkit-', stylePrefix = 'webkit'; transform3D = detect.os == 'android' ? ( detect.osVersion < 4 ? 0 : 1 ) : 1;
+	default: cssPrefix = '-webkit-', stylePrefix = 'webkit'; transform3D = detect.os == 'android' ? ( detect.osVer < 4 ? 0 : 1 ) : 1;
 	}
 	if( keyframe ){
 		if( keyframe.WEBKIT_KEYFRAME_RULE ) keyframe = '-webkit-keyframes';
