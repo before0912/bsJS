@@ -726,23 +726,240 @@ fn( 'ev', (function(){
 					return target.innerHTML || target;
 				};
 			})(doc),
-			clsfn.query = (function(doc){
-				var c;
-				if( doc.querySelectorAll ) return function(sel){return doc.querySelectorAll(sel);};
-				else return c = {}, function(sel){
-					var t0, i;
-					if( ( t0 = sel.charAt(0) ) == '#' ){
-						if( c[0] = doc.getElementById(sel.substr(1)) ) return c.length = 1, c;
-						return null;
+			clsfn.query = (function( doc, trim ){
+				var compare = (function(){
+					var r0 = /"|'/g, i, j,//"
+					mT0 = {'~':1, '|':1, '!':1, '^':1, '$':1, '*':1},
+					mTag = {'first-of-type':1, 'last-of-type':1, 'only-of-type':1},
+					enabled = {INPUT:1, BUTTON:1, SELECT:1, OPTION:1, TEXTAREA:1},
+					checked = {INPUT:1, radio:1, checkbox:1, OPTION:2},
+					skip ={'target':1, 'active':1, 'visited':1, 'first-line':1, 'first-letter':1, 'hover':1, 'focus':1, 'after':1, 'before':1, 'not':1, 'selection':1, 
+						'eq':1, 'gt':1, 'lt':1,
+						'valid':1, 'invalid':1, 'optional':1, 'in-range':1, 'out-of-range':1, 'read-only':1, 'read-write':1, 'required':1
+					};
+					return function( el, token ){
+						var data, time, indexes, parent, children, tag, update, dir, t0, t1,t2,  k, v, i, j, m;
+						switch( token.charAt(0) ){
+						case'#':return token.substr(1) == el.id;
+						case'.':return !( t0 = el.className ) ? 0 : ( k = token.substr(1), t0.indexOf(' ') > -1 ? k == t0 : t0.split(' ').indexOf(k) > -1 );
+						case'[':
+							if( ( i = token.indexOf('=') ) == -1 ) return el.getAttribute(token.substr(1)) === null ? 0 : 1;
+							if( ( t0 = el.getAttribute( token.substring( 1, i - ( mT0[t1 = token.charAt( i - 1 )] ? 1 : 0 ) ) ) ) === null ) return;
+							v = token.substr( i + 1 );
+							switch( t1 ){
+							case'~':return t0.split(' ').indexOf(v) > -1;
+							case'|':return t0.split('-').indexOf(v) > -1;
+							case'^':return t0.indexOf(v) == 0;
+							case'$':return t0.lastIndexOf(v) == ( t0.length - v.length );
+							case'*':return t0.indexOf(v) > -1;
+							case'!':return t0 !== v;
+							default:return t0 === v;
+							}
+						case':':
+							k = token.substr(1), i = k.indexOf('('), v = i > -1 ? isNaN( t0 = k.substr( i + 1 ) ) ? t0.replace( trim, '' ) : parseFloat(t0) : null;
+							if( v ) k = k.substring( 0, i );
+							if( skip[k] ) return;
+							tag = el.tagName;
+							switch( k ){
+							case'link':return tag == 'A' && el.getAttribute('href');
+							case'root':return tag == 'HTML';
+							case'lang':return el.getAttribute('lang') == v;
+							case'empty':return el.nodeType == 1 && !el.nodeValue && !el.childNodes.length;
+							case'checked':return t0 = checked[tag], ( t0 == 1 && el.checked == true && checked[el.getAttribute('type')] ) || ( t0 == 2 && el.selected );
+							case'enabled':return enabled[tag] && el.getAttribute('disabled') === null;
+							case'disabled':return enabled[tag] && el.getAttribute('disabled') !== null;
+							case'first-child':case'first-of-type':dir = 1;case'last-child':case'last-of-type':
+								if( ( children = el.parentNode.childNodes ) && ( i = j = children.length ) ){
+									m = 0, t1 = mTag[k];
+									while( i-- ){
+										t0 = children[dir ? j - i - 1 : i];
+										if( t0.nodeType == 1 && ( t1 ? tag == t0.tagName : 1 ) ) return !m++ && t0 == el;
+									}
+								}
+								return;
+							case'only-of-type':case'only-child':
+								if( ( children = el.parentNode.childNodes ) && ( i = children.length ) ){
+									m = 0, t1 = mTag[k];
+									while( i-- ){
+										t0 = children[i];	
+										if( t0.nodeType == 1 ){
+											if( t1 ? tag == t0.tagName : 1 ){
+												if( m++ ) return;
+												t2 = t0;
+											}
+										}
+									}
+									return el == t2;
+								}
+								return;
+							default:
+								if( !( parent = el.parentNode ) || parent.tagName == 'HTML' || !( children = parent.childNodes ) || !( j = i = children.length ) ) return;
+								if( v == 'n' ) return 1;
+								t1 = 0;
+								switch( k ){
+								case'nth-child':
+									for( i = 0 ; i < j ; i++ ){
+										t0 = children[i];
+										if( t0.nodeType == 1 ){
+											t1++;
+											if( el == t0 ) return j = t1 % 2, v == 'even' || v == '2n' ? j == 0 : v == 'odd' || v == '2n+1' ? j == 1 : t1 == v;
+										}
+									}
+									return;
+								case'nth-last-child':
+									while( i-- ){
+										t0 = children[i];
+										if( t0.nodeType == 1 ){
+											t1++;
+											if( el == t0 ) return j = t1 % 2, v == 'even' || v == '2n' ? j == 0 : v == 'odd' || v == '2n+1' ? j == 1 : t1 == v;
+										}
+									}
+									return;
+								case'nth-of-type':
+									tag = el.tagName;
+									for( i = 0 ; i < j ; i++ ){
+										t0 = children[i];
+										if( t0.nodeType == 1 && t0.tagName == tag ){
+											t1++;
+											if( el == t0 ) return j = t1 % 2, v == 'even' || v == '2n' ? j == 0 : v == 'odd' || v == '2n+1' ? j == 1 : t1 == v;
+										}
+									}
+									return;
+								case'nth-last-of-type':
+									tag = el.tagName;
+									while( i-- ){
+										t0 = children[i];
+										if( t0.nodeType == 1 && t0.tagName == tag ){
+											t1++;
+											if( el == t0 ) return j = t1 % 2, v == 'even' || v == '2n' ? j == 0 : v == 'odd' || v == '2n+1' ? j == 1 : t1 == v;
+										}
+									}
+									return;
+								}
+							}
+						default: return token == el.tagName || token == '*';
+						}
+					};
+				})(),
+				isQSA = doc['querySelectorAll'] ? 1 : 0, rTag = /^[a-z]+[0-9]*$/i, rAlpha = /[a-z]/i, rClsTagId = /^[.#]?[a-z0-9]+$/i,
+				DOC = document, tagName = {}, clsName = {},
+				className = (function( tagName, clsName ){
+					var reg = {}, r = {length:0};
+					return document['getElementsByClassName'] ? function(cls){
+						return clsName[cls] || ( clsName[cls] = DOC.getElementsByClassName(cls) );
+					} : function(cls){
+						var t0 = tagName['*'] || ( tagName['*'] = DOC.getElementsByTagName('*') ), t1 = r[cls] || ( r[cls] = new RegExp( '\\b' + cls + '\\b', 'g' ) ), i;
+						r.length = 0;
+						while( i-- ) if( t1.test(t0[i].className) ) r[r.length++] = t0[i];
+						return r;
+					};
+				})( tagName, clsName ),
+				mQSA = {' ':1,'+':1,'~':1,':':1,'[':1}, mT1 = {'>':1, '+':1, '~':1},
+				mParent = {' ':1, '>':1}, mQSAErr = '!', mBracket = {'[':1, '(':1, ']':2, ')':2},
+				mEx = {' ':1, '*':1, ']':1, '>':1, '+':1, '~':1, '^':1, '$':1},
+				mT0 = {' ':1, '*':2, '>':2, '+':2, '~':2, '#':3, '.':3, ':':3, '[':3},
+				R = {length:0}, arrs = {_l:0};
+				return function( query, doc, r ){
+					var sels, sel, hasParent, hasQSAErr, hasQS, el, els, tags, key, hit, token, tokens, t0, t1, t2, t3, i, j, k, l, m, n;
+					if( !r ) r = R;
+					r.length = 0, doc ? ( DOC = doc ) : ( doc = DOC );
+					if( rClsTagId.test(query) ) switch( query.charAt(0) ){
+						case'#':return r[r.length++] = doc.getElementById(query.substr(1)), r;
+						case'.':return className(query.substr(1));
+						default:return tagName[query] || ( tagName[query] = doc.getElementsByTagName(query) );
 					}
-					if( t0 == '.' ){
-						sel = sel.substr(1), t0 = doc.getElementsByTagName('*'), c.length = 0, i = t0.length;
-						while( i-- ) if( t0[i].className.indexOf(sel) > -1 ) c[c.length++] = t0[i];
-						return c.length ? c : null;
+					if( isQSA && ( i = query.indexOf(',') ) > -1 && query.indexOf('!') < 0 ) return doc.querySelectorAll(query);
+					if( i == -1 ) sels = arrs._l ? arrs[--arrs._l] : [], sels[0] = query, i = 1;
+					else sels = query.split(','), i = sels.length;
+					while( i-- ){
+						t0 = arrs._l ? arrs[--arrs._l] : [], t1 = '', sel = sels[i].replace( trim, '' ), m = 0, j = sel.length;
+						while( j-- ){
+							k = sel.charAt(j);
+							if( hasParent || mParent[k] ) hasParent = 1;
+							if( hasQSAErr || m == 2 && k == '!' ) hasQSAErr = 1;
+							if( ( t2 = mBracket[k] ) && ( m = t2 ) == 2 ) continue;
+							if( !( t2 = mEx[k] ) ) t1 = k + t1;
+							if( t2 && m == 2 ) t1 = k + t1;
+							else if( ( t2 = mT0[k] ) == 1 ){
+								if( ( t3 = t0[t0.length - 1] ) == ' ' ) continue;
+								if( t1 ) t0[t0.length] = t1, t1 = '';
+								if( !mT1[t3] ) t0[t0.length] = k;
+							}else if( t2 == 2 ){
+								if( t1.replace( trim, '' ) ) t0[t0.length] = t1, t1 = '';
+								if( t0[t0.length - 1] == ' ' ) t0.pop();
+								t0[t0.length] = k;
+							}else if( t2 == 3 || !j ){
+								if( t1 && m < 2 ) t0[t0.length] = t1, t1 = '';
+							}else if( sel.charAt( j - 1 ) == ' ' ) t0[t0.length] = t1, t1 = '';
+						}
+						j = t0.length;
+						while( j-- ){
+							if( rTag.test(t0[j]) ) t0[j] = t0[j].toUpperCase();
+							else if( t0[j].charAt(0) == ':' ){
+								t0[j] = t0[j].toLowerCase();
+								if( ( t0[j] == ':nth-child(n' || t0[j] == ':nth-last-child(n' ) && t0.length != 1 ){
+									t0.splice( j, 1 );
+									continue;
+								}
+							}
+							if( isQSA && !hasQSAErr && !hasQS && !mQSA[t0[j].charAt(0)] ) hasQS = 1;
+						}
+						sels[i] = t0;
 					}
-					return doc.getElementsByTagName(sel);
+					if( sels.length == 1 ){
+						t0 = sels[0][0];
+						if( ( k = t0.charAt(0) ) == '#' ) els = arrs._l ? arrs[--arrs._l] : [], els[0] = doc.getElementById(t0.substr(1)), sels[0].shift();
+						else if( k == '.' ){
+							els = className(t0.substr(1)), sels[0].shift();
+							if( hasQS && els.length > 100 ) return doc.querySelectorAll(query);
+						}else if( k == '[' || k == ':' ){
+							if( hasQS ) return doc.querySelectorAll(query);
+							if( !hasParent ){
+								t0 = sels[0][sels[0].length - 1], k = t0.charAt(0);
+								if( k == '#' ) sels[0].pop(), els = arrs._l ? arrs[--arrs._l] : [], els[0] = doc.getElementById( t0.substr(1) );
+								else if( k == '.' ) sels[0].pop(), els = className( t0.substr(1) );
+								else if( rTag.test(t0) ) sels[0].pop(), els = tagName[t0] || ( tagName[t0] = doc.getElementsByTagName(t0) );
+							}
+						}else if( rTag.test(t0) ){
+							sels[0].shift(), els = tagName[t0] || ( tagName[t0] = doc.getElementsByTagName(t0) );
+							if( hasQS && els.length > 100 ) return doc.querySelectorAll(query);
+						}
+					}
+					if( !els ) els = tagName['*'] || ( tagName['*'] = doc.getElementsByTagName('*') );
+					if( !sels[0].length ) return arrs[arrs._l++] = sels[0], sels.length = 0, arrs[arrs._l++] = sels, els;
+					for( i = 0, j = els.length ; i < j ; i++ ){
+						l = sels.length;
+						while( l-- ){
+							el = els[i];
+							for( tokens = sels[l], m = 0, n = tokens.length; m < n; m++ ){
+								token = tokens[m];
+								if( ( k = token.charAt(0) ) == ' ' ){
+									m++;
+									while( el = el.parentNode ) if( hit = compare( el, tokens[m] ) ) break;
+								}else if( k == '>' ) hit = compare( el = el.parentNode, tokens[++m] );
+								else if( k == '+' ){
+									while( el = el.previousSibling ) if( el.nodeType == 1 ) break;
+									hit = el && compare( el, tokens[++m] );
+								}else if( k == '~' ){
+									m++;
+									while( (el = el.previousSibling) ){
+										if( el.nodeType == 1 && compare( el, tokens[m] ) ){
+											hit = 1;
+											break;
+										}
+									}
+								}else hit = compare( el, token );
+								if( !hit ) break;
+							}
+							if( i == j - 1 ) tokens.length = 0, arrs[arrs._l++] = tokens;
+							if( hit ) break;
+						}
+						if( i == j - 1 ) sels.length = 0, arrs[arrs._l++] = sels;
+						if( hit ) r[r.length++] = els[i];
+					}
+					return r;
 				};
-			})(doc),
+			})( doc, trim ),
 			clsfn.dom = dom = (function( query, html ){
 				var n = {length:0}, dom = function( sel, isSub ){
 					return typeof sel == 'string' ? sel.charAt(0) == '<' ? html(sel) : query(sel) : sel['nodeType'] == 1 ? ( n[0] = sel, n.length = 1, n ) : sel['instanceOf'] == bs.Dom || sel.length ? sel : null;
