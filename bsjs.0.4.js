@@ -26,7 +26,6 @@ detectWindow = function( W, detect ){
 		if( agent.indexOf( i = 'chrome' ) < 0 && agent.indexOf( i = 'crios' ) < 0 ) return;
 		return browser = 'chrome', bv = parseFloat( ( i == 'chrome' ? /chrome\/([\d]+)/ : /crios\/([\d]+)/ ).exec(agent)[1] );
 	},
-	//firefox = function(){return agent.indexOf('firefox') < 0 ? 0 : browser = 'firefox', bv = parseFloat( /firefox\/([\d]+)/.exec(agent)[1] );},
     firefox = function(){return agent.indexOf('firefox') < 0 ? 0 : browser = 'firefox', bv = /firefox\/([\d]+)/.exec(agent), bv==null ? 0: parseFloat(/firefox\/([\d]+)/.exec(agent)[1]);},
 	safari = function(){return agent.indexOf('safari') < 0 ? 0 : browser = 'safari', bv = parseFloat(/safari\/([\d]+)/.exec(agent)[1]);},
 	opera = function(){return agent.indexOf('opera') < 0 ? 0 : browser = 'opera', bv = parseFloat( /version\/([\d]+)/.exec(agent)[1] );},
@@ -991,7 +990,7 @@ fn( 'ev', (function(){
 								v ? t0.on( k, g, v.splice ? ( m = v[1], a = v, v[0] || d ) : v[k] ? ( m = v[k], v ) : ( m = v, d ), m, a ) : t0.off( k, g );
 						}else{//set
 							if( ( t0 = typeof v ) == 'function' ) v = v( type == 1 ? '@sGet@' : '@tGet@' );
-							else if( t0 == 'string' && v.charAt(0) == '{' && v.charAt( t1 = v.length - 1 ) == '}' ){
+							else if( t0 == 'string' && v.charAt(0) == '{' && exop[v.charAt(1)] && v.charAt( t1 = v.length - 1 ) == '}' ){
 								v0 = type == 1 ? '@sGet@' : '@tGet@',
 								v = ( k0 = v.charAt(1) ) == '=' ? v0 : (
 									v0 = parseFloat(v0), v = parseFloat(v.substring( 2, t1 )),
@@ -1008,7 +1007,7 @@ fn( 'ev', (function(){
 				sGet:'data.BSdomS ? data.BSdomS.g( d.style, k ) : d.style[style[k]]',
 				sSet:'arg.length ? ( data.BSdomS || ( data.BSdomS = bs.Style() ) ).S( d.style, arg, 0 ) : 0',
 				tGet:'type( d, k )'
-			}, {ev:bs.ev.dom, domData:domData, style:bs.Style.keys, attrs:attrs, first:first, ktype:[], arg:{length:0}, del:bs.Dom.del} );
+			}, {ev:bs.ev.dom, domData:domData, style:bs.Style.keys, attrs:attrs, first:first, ktype:[], arg:{length:0}, del:bs.Dom.del, exop:{'+':1,'-':1,'*':1,'/':1,'=':1} } );
 		} ),
 		fn( 'css', (function cssLoader(trim){
 			var r = /^[0-9.-]+$/, parser = function(data){
