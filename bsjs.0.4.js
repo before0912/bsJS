@@ -1014,7 +1014,7 @@ fn( 'ev', (function(){
 				var t0, t1, t2, t3, c, i, j, k, v, m, sel, val;
 				t2 = [], t0 = data.split('}');
 				for( i = 0, j = t0.length ; i < j ; i++ ){
-					if( t0[i] ){
+					if( t0[i].replace( trim, '' ) ){
 						t1 = t0[i], sel = t1.substring( 0, m = t1.indexOf('{') ).replace( trim, '' ), val = t1.substr( m + 1 );
 						if( sel.indexOf('@') == -1 ){
 							c = bs.Css(sel), t1 = val.split(';'), k = t1.length, t2.length = 0;
