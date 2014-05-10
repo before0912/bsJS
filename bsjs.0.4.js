@@ -340,10 +340,10 @@ CORE:
 			if( httpHeader[k] ) httpH[httpH.length] = k;
 		}
 		for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], xhr.setRequestHeader( i, typeof j == 'function' ? j(type) : j );
-		xhr.send(param(arg));
+		xhr.send(arg);
 		if( !end ) return i = xhr.responseText, rq(xhr), i;
 	},
-	mk = function(m){return function( end, U ){return http( m, end, url(U), arguments );};},
+	mk = function(m){return function( end, U ){return http( m, end, url(U), param(arguments) );};},
 	fn( 'post', mk('POST') ), fn( 'put', mk('PUT') ), fn( 'delete', mk('DELETE') ), fn( 'get', function( end, U ){return http( 'GET', end, url( U, arguments ) );} ),
 	fn( 'header', function( k, v ){httpHeader[k] ? err( 2200, k ) : httpHeader[k] = v;} );
 })(trim);
