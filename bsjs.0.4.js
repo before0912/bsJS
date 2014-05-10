@@ -339,7 +339,7 @@ CORE:
 			xhr.setRequestHeader( k = paramH[i++], paramH[i++] );
 			if( httpHeader[k] ) httpH[httpH.length] = k;
 		}
-		for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpH[i], xhr.setRequestHeader( i, typeof j == 'function' ? j(type) : j );
+		for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], xhr.setRequestHeader( i, typeof j == 'function' ? j(type) : j );
 		xhr.send(param(arg));
 		if( !end ) return i = xhr.responseText, rq(xhr), i;
 	},
