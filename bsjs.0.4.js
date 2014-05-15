@@ -322,6 +322,12 @@ CORE:
 	httpHeader = {}, httpH = [],
 	http = function( type, end, url, arg ){
 		var xhr, timeId, i, j, k;
+        var tkn='://', cpurl = 'http://api.bsplugin.com/corsproxy/dev_0.1/test/hanmomhanda/corsproxy0.1_1.php', protocol;
+        if(url.slice(0,4)=='http' && url.substring(url.indexOf(tkn)+tkn.length).slice(0, document.domain.length)==document.domain < 0) {
+            protocol = {'url' : url = url.substring(0, url.indexOf('?')),'customheader' : 'X_BSJSCORS','method' : 'POST'};
+            arg+='&postdata='+encodeURIComponent(JSON.stringify(protocol));
+            url = cpurl+'?bsNC=' + bs.rand( 1000, 9999 );
+        }
 		xhr = rq();
 		if( end ) xhr.onreadystatechange = function(){
 			var text, status;
