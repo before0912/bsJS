@@ -324,8 +324,9 @@ CORE:
 		var xhr, timeId, i, j, k;
         var tkn='://', cpurl = 'http://api.bsplugin.com/corsproxy/dev_0.1/test/hanmomhanda/corsproxy0.1_1.php', protocol;
         if(url.slice(0,4)=='http' && url.substring(url.indexOf(tkn)+tkn.length).slice(0, document.domain.length)!=document.domain) {
-            protocol = {'url' : url = url.substring(0, url.indexOf('?')),'customheader' : 'X_BSJSCORS','method' : 'POST'};
-            arg+='&postdata='+encodeURIComponent(JSON.stringify(protocol));
+            protocol = {'url' : url,'customheader' : 'X_BSJSCORS','method' : type};
+            arg=(type=='GET'?url.substring(url.indexOf('&')+1):arg)+'&postdata='+encodeURIComponent(JSON.stringify(protocol));
+            type = 'POST';
             url = cpurl+'?bsNC=' + bs.rand( 1000, 9999 );
         }
 		xhr = rq();
