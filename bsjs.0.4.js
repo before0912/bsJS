@@ -168,7 +168,7 @@ CORE:
 (function(trim){
 	var rc = 0, rand, template,
 	js, head = doc.getElementsByTagName('head')[0], e = W['addEventListener'], id = 0, c = bs.__callback = {},
-	url, paramH, paramP, param, xhr, httpHeader, httpH, http;
+	url, paramH, paramP, param, xhr, xdr, httpHeader, httpH, http;
 	BASE:
 	fn( 'obj', function( key, v ){var t0 = key.replace( trim, '' ).toUpperCase(); t0 != key ? err( 1002, key ) : bs[t0] ? err( 2002, t0 ) : bs[t0] = v;} ),
 	fn( 'cls', function( key, v ){
@@ -297,6 +297,7 @@ CORE:
 		while( i-- ){try{new ActiveXObject( j = t0[i] );}catch(e){continue;}break;}
 		return function(){return new ActiveXObject(j);};
 	})(),
+    xdr = W['XDomainRequest'] ? function(){return new XDomainRequest;} : function(){return null;},
 	paramH = [], paramP = [],
 	param = function(arg){
 		var i, j, k;
@@ -314,9 +315,9 @@ CORE:
 	},
 	httpHeader = {}, httpH = [],
 	http = function( type, end, U, arg ){
-		var xrq=xhr(), timeId, i, j, k, l;        
+		var xrq, timeId, i, j, k, l;        
 		if( type === 'GET' ) U = url( U, arg ), arg = ''; else U = url( U ), arg = param( arg );
-        httpH.length = i = 0, j = paramH.length;
+        httpH.length = i = 0, j = paramH.length;        
 		if( U.slice(0,4) === 'http' && U.substring(U.indexOf('://')+3).slice(0, document.domain.length) !== document.domain ) {
 			arg = 'url=' + encodeURIComponent(U) + '&method=' + type + '&data='+encodeURIComponent(arg),
 			U = 'http://api.bsplugin.com/corsproxy/corsproxy0.1.php',
@@ -327,29 +328,48 @@ CORE:
 			}
 			for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], l += encodeURIComponent(i) + '=' + encodeURIComponent(typeof j == 'function' ? j(type) : j) + '&';
 			arg += '&headers=' + encodeURIComponent(l.substr(0,l.length-1));
-            xrq.open( type, U, end ? true : false ),
-			xrq.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' ); 
-			xrq.setRequestHeader( 'bscorsproxy', 'bscorsproxy' );
+            
+            if ( detect.browser == 'ie' && detect.browserVer < 10 && detect.browserVer >= 8 ) {
+                xrq = xdr();
+                xrq.onerror = xrq.ontimeout = null; //에러 처리 필요
+                xrq.open( type, U );
+            } else {
+                xrq = xhr();
+                xrq.open( type, U, end ? true : false ),
+                xrq.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' ); 
+                xrq.setRequestHeader( 'bscorsproxy', 'bscorsproxy' );
+            }            
 		} else {
+            xrq = xhr();
             xrq.open(type, U, end ? true : false);
             while( i < j ){
                 xrq.setRequestHeader( k = paramH[i++], paramH[i++] );
                 if( httpHeader[k] ) httpH[httpH.length] = k;
             }
             for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], xrq.setRequestHeader( i, typeof j == 'function' ? j(type) : j );
-        }        
-            
-		if( end ) xrq.onreadystatechange = function(){
-			var text, status;
-			if( xrq.readyState != 4 || timeId < 0 ) return;
-			clearTimeout(timeId), timeId = -1,
-			text = xrq.status == 200 || xrq.status == 0 ? xrq.responseText : null,
-			status = text ? xrq.getAllResponseHeaders() : xrq.status,
-			end( text, status );
-		}, timeId = setTimeout( function(){
-			if( timeId > -1 ) timeId = -1, end( null, 'timeout' );
-		}, timeout );		
-		
+        }
+        if( end ) {
+            if(xrq.hasOwnProperty('onload')) {
+                xrq.onload = function(){
+                    if( timeId < 0 ) return;
+                    clearTimeout(timeId), timeId = -1,
+                    end( xrq.responseText );
+                }, timeId = setTimeout( function(){
+                    if( timeId > -1 ) timeId = -1, end( null, 'timeout' );
+                }, timeout );                
+            } else if (xrq.hasOwnProperty(onreadystatechange)) {
+                xrq.onreadystatechange = function(){
+                    var text, status;
+                    if( xrq.readyState != 4 || timeId < 0 ) return;
+                    clearTimeout(timeId), timeId = -1,
+                    text = xrq.status == 200 || xrq.status == 0 ? xrq.responseText : null,
+                    status = text ? xrq.getAllResponseHeaders() : xrq.status,
+                    end( text, status );
+                }, timeId = setTimeout( function(){
+                    if( timeId > -1 ) timeId = -1, end( null, 'timeout' );
+                }, timeout );
+            }
+        }
 		xrq.send(arg);
 		if( !end ) return i = xrq.responseText, i;
 	},
