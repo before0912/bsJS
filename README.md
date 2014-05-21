@@ -45,7 +45,7 @@ bsJS로 만들어진 bsJSTest와 bsShowCase는 bsJS 연구나무의 bsjs.js를 �
 
 1. HTML 문서에 `<script>` 태그를 통해 bsJS를 포함시킵니다.
 
-        <script src="http://projectbs.github.io/bsJS/bs/bsjs.js"></script>
+        <script src="http://projectbs.github.io/bsJS/bsjs.0.4.js"></script>
 
 2. 아래와 같은 형식으로 bsJS를 사용합니다.
 
