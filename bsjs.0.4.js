@@ -168,7 +168,7 @@ CORE:
 (function(trim){
 	var rc = 0, rand, template,
 	js, head = doc.getElementsByTagName('head')[0], e = W['addEventListener'], id = 0, c = bs.__callback = {},
-	url, paramH, paramP, param, xhr, rq, httpHeader, httpH, http;
+	url, paramH, paramP, param, xhr, httpHeader, httpH, http;
 	BASE:
 	fn( 'obj', function( key, v ){var t0 = key.replace( trim, '' ).toUpperCase(); t0 != key ? err( 1002, key ) : bs[t0] ? err( 2002, t0 ) : bs[t0] = v;} ),
 	fn( 'cls', function( key, v ){
@@ -297,12 +297,6 @@ CORE:
 		while( i-- ){try{new ActiveXObject( j = t0[i] );}catch(e){continue;}break;}
 		return function(){return new ActiveXObject(j);};
 	})(),
-	rq = function(x){
-		if( x ){
-			if( x.readyState != 4 ) x.abort();
-			x.onreadystatechange = null;
-		}else return xhr();
-	},
 	paramH = [], paramP = [],
 	param = function(arg){
 		var i, j, k;
@@ -320,45 +314,44 @@ CORE:
 	},
 	httpHeader = {}, httpH = [],
 	http = function( type, end, U, arg ){
-		var xhr, timeId, isCors, i, j, k, l;
-		isCors = U.slice(0,4) === 'http' && U.substring(U.indexOf('://')+3).slice(0, document.domain.length) !== document.domain ? true : false;
+		var xrq=xhr(), timeId, i, j, k, l;        
 		if( type === 'GET' ) U = url( U, arg ), arg = ''; else U = url( U ), arg = param( arg );
-		if( isCors ) {
-			arg = 'url=' + encodeURIComponent(U) + '&method=' + type + '&data='+encodeURIComponent(arg);
-			U = 'http://api.bsplugin.com/corsproxy/corsproxy0.1.php';
-		} 
-		xhr = rq();
-		if( end ) xhr.onreadystatechange = function(){
-			var text, status;
-			if( xhr.readyState != 4 || timeId < 0 ) return;
-			clearTimeout(timeId), timeId = -1,
-			text = xhr.status == 200 || xhr.status == 0 ? xhr.responseText : null,
-			status = text ? xhr.getAllResponseHeaders() : xhr.status,
-			rq(xhr), end( text, status );
-		}, timeId = setTimeout( function(){
-			if( timeId > -1 ) timeId = -1, rq(xhr), end( null, 'timeout' );
-		}, timeout );
-		xhr.open( isCors ? 'POST' : type, U, end ? true : false ),
-		httpH.length = i = 0, j = paramH.length;
-		if( isCors ) {
-			l = '';
+        httpH.length = i = 0, j = paramH.length;
+		if( U.slice(0,4) === 'http' && U.substring(U.indexOf('://')+3).slice(0, document.domain.length) !== document.domain ) {
+			arg = 'url=' + encodeURIComponent(U) + '&method=' + type + '&data='+encodeURIComponent(arg),
+			U = 'http://api.bsplugin.com/corsproxy/corsproxy0.1.php',
+            type = 'POST', l = '';
 			while( i < j ){
 				l += encodeURIComponent( k = paramH[i++] ) + '=' + encodeURIComponent( paramH[i++] ) + '&';
 				if( httpHeader[k] ) httpH[httpH.length] = k;
 			}
 			for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], l += encodeURIComponent(i) + '=' + encodeURIComponent(typeof j == 'function' ? j(type) : j) + '&';
 			arg += '&headers=' + encodeURIComponent(l.substr(0,l.length-1));
-			xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' ); 
-			xhr.setRequestHeader( 'bscorsproxy', 'bscorsproxy' );
+            xrq.open( type, U, end ? true : false ),
+			xrq.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' ); 
+			xrq.setRequestHeader( 'bscorsproxy', 'bscorsproxy' );
 		} else {
-			while( i < j ){
-				xhr.setRequestHeader( k = paramH[i++], paramH[i++] );
-				if( httpHeader[k] ) httpH[httpH.length] = k;
-			}
-			for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], xhr.setRequestHeader( i, typeof j == 'function' ? j(type) : j );
-		}
-		xhr.send(arg);
-		if( !end ) return i = xhr.responseText, rq(xhr), i;
+            xrq.open(type, U, end ? true : false);
+            while( i < j ){
+                xrq.setRequestHeader( k = paramH[i++], paramH[i++] );
+                if( httpHeader[k] ) httpH[httpH.length] = k;
+            }
+            for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], xrq.setRequestHeader( i, typeof j == 'function' ? j(type) : j );
+        }        
+            
+		if( end ) xrq.onreadystatechange = function(){
+			var text, status;
+			if( xrq.readyState != 4 || timeId < 0 ) return;
+			clearTimeout(timeId), timeId = -1,
+			text = xrq.status == 200 || xrq.status == 0 ? xrq.responseText : null,
+			status = text ? xrq.getAllResponseHeaders() : xrq.status,
+			end( text, status );
+		}, timeId = setTimeout( function(){
+			if( timeId > -1 ) timeId = -1, end( null, 'timeout' );
+		}, timeout );		
+		
+		xrq.send(arg);
+		if( !end ) return i = xrq.responseText, i;
 	},
 	mk = function(m){ return function( end, url ){ return http( m, end, url, arguments ); }; },
 	fn( 'post', mk('POST') ), fn( 'put', mk('PUT') ), fn( 'delete', mk('DELETE') ), fn( 'get', mk('GET') ),
