@@ -112,18 +112,18 @@ detectDOM = function( W, detect ){
 		transition:stylePrefix + 'Transition' in bStyle || 'transition' in bStyle, transform3D:transform3D, keyframe:keyframe,
 		transform:stylePrefix + 'Transform' in bStyle || 'transform' in bStyle,
 		//html5
-		canvas:c ? 1 : 0, canvasText:c && c['getContext'] && c.getContext('2d').fillText,
+		canvas:c ? 1 : 0, canvasText:c && c.getContext('2d').fillText,
 		audio:a ? 1 : 0,
-		audioMp3:a && a['canPlayType'] && a.canPlayType('audio/mpeg;').indexOf('no') < 0 ? 1 : 0,
-		audioOgg:a && a['canPlayType'] && a.canPlayType('audio/ogg;').indexOf('no') < 0 ? 1 : 0,
-		audioWav:a && a['canPlayType'] && a.canPlayType('audio/wav;').indexOf('no') < 0 ? 1 : 0,
-		audioMp4:a && a['canPlayType'] && a.canPlayType('audio/mp4;').indexOf('no') < 0 ? 1 : 0,
+		audioMp3:a && a.canPlayType('audio/mpeg;').indexOf('no') < 0 ? 1 : 0,
+		audioOgg:a && a.canPlayType('audio/ogg;').indexOf('no') < 0 ? 1 : 0,
+		audioWav:a && a.canPlayType('audio/wav;').indexOf('no') < 0 ? 1 : 0,
+		audioMp4:a && a.canPlayType('audio/mp4;').indexOf('no') < 0 ? 1 : 0,
 		video:v ? 1 : 0,
 		videoCaption:'track' in doc.createElement('track') ? 1 : 0,
 		videoPoster:v && 'poster' in v ? 1 : 0,
-		videoWebm:v && v['canPlayType'] && v.canPlayType( 'video/webm; codecs="vp8,mp4a.40.2"' ).indexOf( 'no' ) == -1 ? 1 : 0,
-		videH264:v && v['canPlayType'] && v.canPlayType( 'video/mp4; codecs="avc1.42E01E,m4a.40.2"' ).indexOf( 'no' ) == -1 ? 1 : 0,
-		videoTeora:v && v['canPlayType'] && v.canPlayType( 'video/ogg; codecs="theora,vorbis"' ).indexOf( 'no' ) == -1 ? 1 : 0,
+		videoWebm:v && v.canPlayType( 'video/webm; codecs="vp8,mp4a.40.2"' ).indexOf( 'no' ) == -1 ? 1 : 0,
+		videH264:v && v.canPlayType( 'video/mp4; codecs="avc1.42E01E,m4a.40.2"' ).indexOf( 'no' ) == -1 ? 1 : 0,
+		videoTeora:v && v.canPlayType( 'video/ogg; codecs="theora,vorbis"' ).indexOf( 'no' ) == -1 ? 1 : 0,
 		local:W.localStorage && 'setItem' in localStorage,
 		geo:navigator.geolocation, worker:W.Worker, file:W.FileReader, message:W.postMessage,
 		history:'pushState' in history, offline:W.applicationCache,
@@ -168,7 +168,7 @@ CORE:
 (function(trim){
 	var rc = 0, rand, template,
 	js, head = doc.getElementsByTagName('head')[0], e = W['addEventListener'], id = 0, c = bs.__callback = {},
-	url, paramH, paramP, param, xhr, rqPool, rq, httpHeader, httpH, http;
+	url, paramH, paramP, param, xhr, rq, httpHeader, httpH, http;
 	BASE:
 	fn( 'obj', function( key, v ){var t0 = key.replace( trim, '' ).toUpperCase(); t0 != key ? err( 1002, key ) : bs[t0] ? err( 2002, t0 ) : bs[t0] = v;} ),
 	fn( 'cls', function( key, v ){
@@ -297,38 +297,36 @@ CORE:
 		while( i-- ){try{new ActiveXObject( j = t0[i] );}catch(e){continue;}break;}
 		return function(){return new ActiveXObject(j);};
 	})(),
-	rqPool = {_l:0},
 	rq = function(x){
 		if( x ){
 			if( x.readyState != 4 ) x.abort();
-			x.onreadystatechange = null, rqPool[rqPool._l++] = x;
-		}else return rqPool._l ? rqPool[--rqPool._l] : xhr();
+			x.onreadystatechange = null;
+		}else return xhr();
 	},
 	paramH = [], paramP = [],
 	param = function(arg){
 		var i, j, k;
-		if( !arg || ( j = arg.length ) < 4 ) return '';
+                if( !arg || ( j = arg.length ) < 4 ) return '';
 		paramH.length = paramP.length = 0, i = 2;
 		while( i < j )
 			if ( arg[i].charAt(0) == '@' ) paramH[paramH.length] = arg[i++].substr(1), paramH[paramH.length] = arg[i++];
 			else if( i < j - 1 ) paramP[paramP.length] = encodeURIComponent( arg[i++] ) + '=' + encodeURIComponent( arg[i++] );
 			else k = encodeURIComponent( arg[i++] );
-		return k || paramP.join('&');
+                return k || paramP.join('&');
 	},
 	url = function( url, arg ){
 		var t0 = url.split('#');
 		return t0[0] + ( t0[0].indexOf('?') > -1 ? '&' : '?' ) + 'bsNC=' + bs.rand( 1000, 9999 ) + '&' + param(arg) + ( t0[1] ? '#' + t0[1] : '' );
 	},
 	httpHeader = {}, httpH = [],
-	http = function( type, end, url, arg ){
-		var xhr, timeId, i, j, k;
-        var tkn='://', cpurl = 'http://api.bsplugin.com/corsproxy/dev_0.1/test/hanmomhanda/corsproxy0.1_1.php', protocol;
-        if(url.slice(0,4)=='http' && url.substring(url.indexOf(tkn)+tkn.length).slice(0, document.domain.length)!=document.domain) {
-            protocol = {'url' : url,'customheader' : 'X_BSJSCORS','method' : type};
-            arg=(type=='GET'?url.substring(url.indexOf('&')+1):arg)+'&postdata='+encodeURIComponent(JSON.stringify(protocol));
-            type = 'POST';
-            url = cpurl+'?bsNC=' + bs.rand( 1000, 9999 );
-        }
+	http = function( type, end, U, arg ){
+		var xhr, timeId, isCors, i, j, k, l;
+		isCors = U.slice(0,4) === 'http' && U.substring(U.indexOf('://')+3).slice(0, document.domain.length) !== document.domain ? true : false;
+		if( type === 'GET' ) U = url( U, arg ), arg = ''; else U = url( U ), arg = param( arg );
+		if( isCors ) {
+			arg = 'url=' + encodeURIComponent(U) + '&method=' + type + '&data='+encodeURIComponent(arg);
+			U = 'http://api.bsplugin.com/corsproxy/corsproxy0.1.php';
+		} 
 		xhr = rq();
 		if( end ) xhr.onreadystatechange = function(){
 			var text, status;
@@ -340,18 +338,30 @@ CORE:
 		}, timeId = setTimeout( function(){
 			if( timeId > -1 ) timeId = -1, rq(xhr), end( null, 'timeout' );
 		}, timeout );
-		xhr.open( type, url, end ? true : false ),
+		xhr.open( isCors ? 'POST' : type, U, end ? true : false ),
 		httpH.length = i = 0, j = paramH.length;
-		while( i < j ){
-			xhr.setRequestHeader( k = paramH[i++], paramH[i++] );
-			if( httpHeader[k] ) httpH[httpH.length] = k;
+		if( isCors ) {
+			l = '';
+			while( i < j ){
+				l += encodeURIComponent( k = paramH[i++] ) + '=' + encodeURIComponent( paramH[i++] ) + '&';
+				if( httpHeader[k] ) httpH[httpH.length] = k;
+			}
+			for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], l += encodeURIComponent(i) + '=' + encodeURIComponent(typeof j == 'function' ? j(type) : j) + '&';
+			arg += '&headers=' + encodeURIComponent(l.substr(0,l.length-1));
+			xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' ); 
+			xhr.setRequestHeader( 'bscorsproxy', 'bscorsproxy' );
+		} else {
+			while( i < j ){
+				xhr.setRequestHeader( k = paramH[i++], paramH[i++] );
+				if( httpHeader[k] ) httpH[httpH.length] = k;
+			}
+			for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], xhr.setRequestHeader( i, typeof j == 'function' ? j(type) : j );
 		}
-		for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], xhr.setRequestHeader( i, typeof j == 'function' ? j(type) : j );
 		xhr.send(arg);
 		if( !end ) return i = xhr.responseText, rq(xhr), i;
 	},
-	mk = function(m){return function( end, U ){return http( m, end, url(U), param(arguments) );};},
-	fn( 'post', mk('POST') ), fn( 'put', mk('PUT') ), fn( 'delete', mk('DELETE') ), fn( 'get', function( end, U ){return http( 'GET', end, url( U, arguments ) );} ),
+	mk = function(m){ return function( end, url ){ return http( m, end, url, arguments ); }; },
+	fn( 'post', mk('POST') ), fn( 'put', mk('PUT') ), fn( 'delete', mk('DELETE') ), fn( 'get', mk('GET') ),
 	fn( 'header', function( k, v ){httpHeader[k] ? err( 2200, k ) : httpHeader[k] = v;} );
 })(trim);
 PLUGIN:
@@ -554,7 +564,7 @@ fn( 'ev', (function(){
 						}
 						W.scrollTo( arguments[0], arguments[1] );
 					};
-				})( W, doc, detect.root, doc.documentElement )
+				})( W, doc, detect.root, doc.documentElement ),
 			},
 			win.sizer = (function( W, doc ){
 				var t0 = {w:0, h:0}, t1, size, docEl, docBody;
@@ -682,7 +692,7 @@ fn( 'ev', (function(){
 						t0 = target[i], t0.parentNode.removeChild(t0);
 						if( t0.nodeType == 3 ) continue;
 						if( data = t0.getAttribute('data-bs') ){
-							if( t1 = data.BSdomE ) data.BSdomE = t1.dom = t1.handleEvent = null, ev(t1), console.log('aaa');
+							if( t1 = data.BSdomE ) data.BSdomE = t1.dom = t1.handleEvent = null, ev(t1);
 							domData( t0, null );
 						}
 						j = t0.attributes.length;
