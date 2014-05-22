@@ -5,7 +5,7 @@
  */
 ( function( W, N ){
 'use strict';
-var VERSION = 0.4, REPOSITORY = 'http://projectbs.github.io/bsJSplugin/',
+var VERSION = 0.4, REPOSITORY = 'http://projectbs.github.io/bsJSplugin/', CORSPROXY = 'http://api.bsplugin.com/corsproxy/corsproxy0.1.php',
 	none = function(){}, trim = /^\s*|\s*$/g, doc = W['document'], que = [], pque = [], timeout = 5000, mk, comp, detect, isDebug = 0,
 	bs = W[N = N || 'bs'] = function(f){que ? ( que[que.length] = f ) : f();},
 	err = function( num, msg ){console.log( num, msg ); if( isDebug ) throw new Error( num, msg );},
@@ -325,7 +325,7 @@ CORE:
 		httpH.length = i = 0, j = paramH.length;
 		if( U.slice( 0, 4 ) === 'http' && U.substring(U.indexOf('://') + 3).slice( 0, document.domain.length) !== document.domain ){
 			arg = 'url=' + encodeURIComponent(U) + '&method=' + type + '&data='+encodeURIComponent(arg),
-			U = 'http://api.bsplugin.com/corsproxy/corsproxy0.1.php',
+			U = CORSPROXY,
 			type = 'POST', l = '';
 			while( i < j ){
 				l += encodeURIComponent(k = paramH[i++]) + '=' + encodeURIComponent(paramH[i++]) + '&';
