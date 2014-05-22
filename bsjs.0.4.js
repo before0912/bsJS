@@ -655,7 +655,7 @@ fn( 'ev', (function(){
 			}
 		} ),
 		bs.cls( 'Dom', function( fn, clsfn, bs ){
-			var ev = bs.ev, dom, domData, first = {};
+            var ev = bs.ev, del, dom, domData, first = {};
 			clsfn.data = domData = (function(){
 				var id = 1, data = {};
 				return detect.customData ? function( el, k, v ){
@@ -1016,7 +1016,7 @@ fn( 'ev', (function(){
 			},
 			fn.S = comp( function(){
 				var d, data, target, type, t0, t1, t2, l, i0, i, j, k, v, k0, v0, m, a, g;
-                if( arguments[0] === null ) return del(this);
+				if( arguments[0] === null ) return bs.Dom.del(this);
 				typeof ( i = arguments[0] ) == 'number' ? ( i0 = l = 1, target = d = this[i], data = this[i + 'data'] || ( this[i + 'data'] = domData(target) ) ) : ( l = this.length, i0 = 0 ),
 				j = arguments.length, ktype.length = 0;
 				while( l-- ){
