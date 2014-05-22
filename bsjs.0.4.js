@@ -655,7 +655,7 @@ fn( 'ev', (function(){
 			}
 		} ),
 		bs.cls( 'Dom', function( fn, clsfn, bs ){
-			var ev = bs.ev, del, dom, domData, first = {};
+			var ev = bs.ev, dom, domData, first = {};
 			clsfn.data = domData = (function(){
 				var id = 1, data = {};
 				return detect.customData ? function( el, k, v ){
