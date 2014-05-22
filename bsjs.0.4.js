@@ -577,7 +577,7 @@ fn( 'ev', (function(){
 						}
 						W.scrollTo( arguments[0], arguments[1] );
 					};
-				})( W, doc, detect.root, doc.documentElement ),
+				})( W, doc, detect.root, doc.documentElement )
 			},
 			win.sizer = (function( W, doc ){
 				var t0 = {w:0, h:0}, t1, size, docEl, docBody;
