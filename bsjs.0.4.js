@@ -367,10 +367,7 @@ CORE:
 					end( null, text );
 				}
 			}
-			timeId = setTimeout( function(){
-				if( timeId > -1 ) timeId = -1, end( null, 'timeout' );
-			}, timeout );
-        }
+        	}
 		xrq.send(arg);
 		if( !end ) return i = xrq.responseText, i;
 	},
