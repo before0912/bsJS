@@ -323,7 +323,7 @@ CORE:
 		var xrq, timeId, i, j, k, l;
 		type === 'GET' ? ( U = url( U, arg ), arg = '' ) : ( U = url( U ), arg = param( arg ) );
 		httpH.length = i = 0, j = paramH.length;
-		if( U.slice( 0, 4 ) === 'http' && U.substring(U.indexOf('://') + 3).slice( 0, document.domain.length) !== document.domain ){
+		if( U.slice( 0, 4 ) === 'http' && U.substring(U.indexOf('://') + 3).slice( 0, location.hostname.length) !== location.hostname ){
 			arg = 'url=' + encodeURIComponent(U) + '&method=' + type + '&data='+encodeURIComponent(arg),
 			U = CORSPROXY,
 			type = 'POST', l = '';
@@ -333,7 +333,7 @@ CORE:
 			}
 			for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], l += encodeURIComponent(i) + '=' + encodeURIComponent(typeof j == 'function' ? j(type) : j) + '&';
 			arg += '&headers=' + encodeURIComponent(l.substr(0,l.length-1));
-			if( !xdr( type, U ) )
+			if( !(xrq = xdr( type, U )) )
 				xrq = xhr(), xrq.open( type, U, end ? true : false ),
 				xrq.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' ),
 				xrq.setRequestHeader( 'bscorsproxy', 'bscorsproxy' );
@@ -351,7 +351,7 @@ CORE:
 				xrq.onreadystatechange = function(){
 					var text, status;
 					if( xrq.readyState != 4 || timeId < 0 ) return;
-					cto(timeId),
+					clearTimeout(timeId), timeId = -1,
 					text = xrq.status == 200 || xrq.status == 0 ? xrq.responseText : null,
 					status = text ? xrq.getAllResponseHeaders() : xrq.status,
 					end( text, status );
@@ -359,15 +359,20 @@ CORE:
 			}else if( xrq.hasOwnProperty('contentType') ){
 				xrq.onload = function(){
 					if( timeId < 0 ) return;
-					cto(timeId),
+					clearTimeout(timeId), timeId = -1,
 					end( xrq.responseText );
 				},
 				xrq.onerror = function(){
 					var text = xrq.responseText;
 					end( null, text );
 				}
+			}else{
+			
 			}
-        	}
+			timeId = setTimeout( function(){
+				if( timeId > -1 ) timeId = -1, end( null, 'timeout' );
+			}, timeout );
+		}
 		xrq.send(arg);
 		if( !end ) return i = xrq.responseText, i;
 	},
