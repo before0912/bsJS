@@ -347,7 +347,7 @@ CORE:
 			for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], xrq.setRequestHeader( i, typeof j == 'function' ? j(type) : j );
 		}
         if( end ){
-			if( xrq.hasOwnProperty(onreadystatechange) ){
+			if( xrq.hasOwnProperty('onreadystatechange') ){
 				xrq.onreadystatechange = function(){
 					var text, status;
 					if( xrq.readyState != 4 || timeId < 0 ) return;
@@ -356,12 +356,16 @@ CORE:
 					status = text ? xrq.getAllResponseHeaders() : xrq.status,
 					end( text, status );
 				};
-			}else if( xrq.hasOwnProperty('onload') ){
+			}else if( xrq.hasOwnProperty('contentType') ){
 				xrq.onload = function(){
 					if( timeId < 0 ) return;
 					cto(timeId),
 					end( xrq.responseText );
-				}; 
+				},
+				xrq.onerror = function(){
+					var text = xrq.responseText;
+					end( null, text );
+				}
 			}
 			timeId = setTimeout( function(){
 				if( timeId > -1 ) timeId = -1, end( null, 'timeout' );
