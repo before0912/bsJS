@@ -349,15 +349,7 @@ CORE:
 			for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], xrq.setRequestHeader( i, typeof j == 'function' ? j(type) : j );
 		}
         if( end ){
-			if( xrq.hasOwnProperty('onload') ){
-				xrq.onload = function(){
-					if( timeId < 0 ) return;
-					clearTimeout(timeId), timeId = -1,
-					end( xrq.responseText );
-				}, timeId = setTimeout( function(){
-					if( timeId > -1 ) timeId = -1, end( null, 'timeout' );
-				}, timeout );
-			}else if ( xrq.hasOwnProperty(onreadystatechange) ){
+			if( xrq.hasOwnProperty(onreadystatechange) ){
 				xrq.onreadystatechange = function(){
 					var text, status;
 					if( xrq.readyState != 4 || timeId < 0 ) return;
@@ -365,6 +357,14 @@ CORE:
 					text = xrq.status == 200 || xrq.status == 0 ? xrq.responseText : null,
 					status = text ? xrq.getAllResponseHeaders() : xrq.status,
 					end( text, status );
+				}, timeId = setTimeout( function(){
+					if( timeId > -1 ) timeId = -1, end( null, 'timeout' );
+				}, timeout );
+			}else if( xrq.hasOwnProperty('onload') ){
+				xrq.onload = function(){
+					if( timeId < 0 ) return;
+					clearTimeout(timeId), timeId = -1,
+					end( xrq.responseText );
 				}, timeId = setTimeout( function(){
 					if( timeId > -1 ) timeId = -1, end( null, 'timeout' );
 				}, timeout );
