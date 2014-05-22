@@ -168,7 +168,7 @@ CORE:
 (function(trim){
 	var rc = 0, rand, template,
 	js, head = doc.getElementsByTagName('head')[0], e = W['addEventListener'], id = 0, c = bs.__callback = {},
-	url, paramH, paramP, param, xhr, xdr, httpHeader, httpH, http;
+	url, paramH, paramP, param, xhr, xdr, httpHeader, httpH, http, cto;
 	BASE:
 	fn( 'obj', function( key, v ){var t0 = key.replace( trim, '' ).toUpperCase(); t0 != key ? err( 1002, key ) : bs[t0] ? err( 2002, t0 ) : bs[t0] = v;} ),
 	fn( 'cls', function( key, v ){
@@ -302,6 +302,7 @@ CORE:
 		xrq.onerror = xrq.ontimeout = null, xrq.open( type, U );
 		return xrq;
 	} : none,
+	cto = function(tId){ clearTimeout(tId), tId = -1; },
 	paramH = [], paramP = [],
 	param = function(arg){
 		var i, j, k;
@@ -331,8 +332,7 @@ CORE:
 				if( httpHeader[k] ) httpH[httpH.length] = k;
 			}
 			for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], l += encodeURIComponent(i) + '=' + encodeURIComponent(typeof j == 'function' ? j(type) : j) + '&';
-			arg += '&headers=' + encodeURIComponent(l.substr(0,l.length-1));
-            
+			arg += '&headers=' + encodeURIComponent(l.substr(0,l.length-1));            
 			if( !xdr( type, U ) ) 
 				xrq = xhr(), xrq.open( type, U, end ? true : false ),
 				xrq.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' ),
@@ -351,26 +351,26 @@ CORE:
 				xrq.onreadystatechange = function(){
 					var text, status;
 					if( xrq.readyState != 4 || timeId < 0 ) return;
-					clearTimeout(timeId), timeId = -1,
+					cto(timeId),
 					text = xrq.status == 200 || xrq.status == 0 ? xrq.responseText : null,
 					status = text ? xrq.getAllResponseHeaders() : xrq.status,
 					end( text, status );
-				}, timeId = setTimeout( function(){
-					if( timeId > -1 ) timeId = -1, end( null, 'timeout' );
-				}, timeout );
+				};
 			}else if( xrq.hasOwnProperty('onload') ){
 				xrq.onload = function(){
 					if( timeId < 0 ) return;
-					clearTimeout(timeId), timeId = -1,
+					cto(timeId),
 					end( xrq.responseText );
-				}, timeId = setTimeout( function(){
-					if( timeId > -1 ) timeId = -1, end( null, 'timeout' );
-				}, timeout );
+				}; 
 			}
+			timeId = setTimeout( function(){
+				if( timeId > -1 ) timeId = -1, end( null, 'timeout' );
+			}, timeout );
         }
 		xrq.send(arg);
 		if( !end ) return i = xrq.responseText, i;
 	},
+	
 	mk = function(m){ return function( end, url ){ return http( m, end, url, arguments ); }; },
 	fn( 'get', mk('GET') ), fn( 'post', mk('POST') ), fn( 'put', mk('PUT') ), fn( 'delete', mk('DELETE') ),
 	fn( 'header', function( k, v ){httpHeader[k] ? err( 2200, k ) : httpHeader[k] = v;} );
