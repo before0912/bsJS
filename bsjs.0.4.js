@@ -332,11 +332,11 @@ CORE:
 				if( httpHeader[k] ) httpH[httpH.length] = k;
 			}
 			for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], l += encodeURIComponent(i) + '=' + encodeURIComponent(typeof j == 'function' ? j(type) : j) + '&';
-			arg += '&headers=' + encodeURIComponent(l.substr(0,l.length-1));            
-			if( !xdr( type, U ) ) 
+			arg += '&headers=' + encodeURIComponent(l.substr(0,l.length-1));
+			if( !xdr( type, U ) )
 				xrq = xhr(), xrq.open( type, U, end ? true : false ),
 				xrq.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' ),
-				xrq.setRequestHeader( 'bscorsproxy', 'bscorsproxy' );			
+				xrq.setRequestHeader( 'bscorsproxy', 'bscorsproxy' );
 		}else{
 			xrq = xhr();
 			xrq.open( type, U, end ? true : false );
@@ -346,7 +346,7 @@ CORE:
 			}
 			for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], xrq.setRequestHeader( i, typeof j == 'function' ? j(type) : j );
 		}
-        if( end ){
+		if( end ){
 			if( xrq.hasOwnProperty('onreadystatechange') ){
 				xrq.onreadystatechange = function(){
 					var text, status;
@@ -374,7 +374,6 @@ CORE:
 		xrq.send(arg);
 		if( !end ) return i = xrq.responseText, i;
 	},
-	
 	mk = function(m){ return function( end, url ){ return http( m, end, url, arguments ); }; },
 	fn( 'get', mk('GET') ), fn( 'post', mk('POST') ), fn( 'put', mk('PUT') ), fn( 'delete', mk('DELETE') ),
 	fn( 'header', function( k, v ){httpHeader[k] ? err( 2200, k ) : httpHeader[k] = v;} );
