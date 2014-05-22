@@ -297,7 +297,11 @@ CORE:
 		while( i-- ){try{new ActiveXObject( j = t0[i] );}catch(e){continue;}break;}
 		return function(){return new ActiveXObject(j);};
 	})(),
-	xdr = W['XDomainRequest'] ? function(){return new XDomainRequest;} : function(){return null;},
+	xdr = W['XDomainRequest'] ? function( type, U ){
+		var xrq = new XDomainRequest;
+		xrq.onerror = xrq.ontimeout = null, xrq.open( type, U );
+		return xrq;
+	} : none,
 	paramH = [], paramP = [],
 	param = function(arg){
 		var i, j, k;
@@ -329,16 +333,10 @@ CORE:
 			for( i in httpHeader ) if( httpH.indexOf(i) == -1 ) j = httpHeader[i], l += encodeURIComponent(i) + '=' + encodeURIComponent(typeof j == 'function' ? j(type) : j) + '&';
 			arg += '&headers=' + encodeURIComponent(l.substr(0,l.length-1));
             
-			if( detect.browser == 'ie' && detect.browserVer < 10 && detect.browserVer >= 8 ){
-				xrq = xdr();
-				xrq.onerror = xrq.ontimeout = null;
-				xrq.open( type, U );
-			} else {
-				xrq = xhr();
-				xrq.open( type, U, end ? true : false ),
-				xrq.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' );
-				xrq.setRequestHeader( 'bscorsproxy', 'bscorsproxy' );
-            }
+			if( !xdr( type, U ) ) 
+				xrq = xhr(), xrq.open( type, U, end ? true : false ),
+				xrq.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' ),
+				xrq.setRequestHeader( 'bscorsproxy', 'bscorsproxy' );			
 		}else{
 			xrq = xhr();
 			xrq.open( type, U, end ? true : false );
