@@ -87,7 +87,7 @@ detectDOM = function( W, detect ){
 	div = div.getElementsByTagName( 'div' )[0];
 	switch( detect.browser ){
 	case'ie':
-		if( detect.browserVer == -1 ) detect.browserVer = !c ? 8 : !( 'msTransition' in bStyle ) && !( 'transition' in bStyle ) ? 9 : c.getContext('webgl') || c.getContext("experimental-webgl") ? 11 : 10;
+		if( detect.browserVer == -1 ) detect.browserVer = !c['getContext'] ? 8 : !( 'msTransition' in bStyle ) && !( 'transition' in bStyle ) ? 9 : c.getContext('webgl') || c.getContext('experimental-webgl') ? 11 : 10;
 		cssPrefix = '-ms-', stylePrefix = 'ms'; transform3D = detect.browserVer > 9 ? 1 : 0;
 		if( detect.browserVer == 6 ) doc.execCommand( 'BackgroundImageCache', false, true ), bStyle.position = 'relative';
 		break;
