@@ -77,7 +77,7 @@ detectWindow = function( W, detect ){
 	return detect;
 }
 detectDOM = function( W, detect ){
-	var doc = W['document'], cssPrefix, stylePrefix, transform3D, keyframe = W['CSSRule'],
+	var doc = W['document'], cssPrefix, stylePrefix, transform3D, keyframe = W['CSSRule'], docMode = 0,
 	b = doc.body, bStyle = b.style, div = doc.createElement('div'),
 	c = doc.createElement('canvas'), a = doc.createElement('audio'), v = doc.createElement('video'), k, t0;
 
