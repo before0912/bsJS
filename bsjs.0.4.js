@@ -11,7 +11,7 @@ var VERSION = 0.4, REPOSITORY = 'http://projectbs.github.io/bsJSplugin/', CORSPR
 	err = function( num, msg ){console.log( num, msg ); if( isDebug ) throw new Error( num, msg );},
 	fn = bs.fn = function( key, v ){var t0 = key.replace( trim, '' ).toLowerCase(); t0 != key ? err( 1001, key ) : bs[t0] ? err( 2001, t0 ) : bs[t0] = v;};
 DETECT:
-var detectWindow, detectDOM;
+var detectWindow, detectDOM, detectGPU;
 detectWindow = function( W, detect ){
 	var navi = W['navigator'], agent = navi.userAgent.toLowerCase(),
 	platform = navi.platform.toLowerCase(),
@@ -75,7 +75,7 @@ detectWindow = function( W, detect ){
         'device':device, 'browser':browser, 'browserVer':bv, 'os':os, 'osVer':osv, 'flash':flash, 'sony':agent.indexOf('sony') > -1 ? 1 : 0
 	} ) if( t0.hasOwnProperty(i) ) detect[i] = t0[i];
 	return detect;
-}
+};
 detectDOM = function( W, detect ){
 	var doc = W['document'], cssPrefix, stylePrefix, transform3D, keyframe = W['CSSRule'], docMode = 0,
 	b = doc.body, bStyle = b.style, div = doc.createElement('div'),
@@ -133,8 +133,49 @@ detectDOM = function( W, detect ){
         db:W['openDatabase'] ? 1 : 0, socket:W['WebSocket'] ? 1 : 0
 	} ) if( t0.hasOwnProperty(k) ) detect[k] = t0[k];
 	return detect;
-}
+};
+detectGPU = function( W, detect ){
+    if( !detect ) detect = {};
+    var c = document.createElement('canvas'), t0, t1, k,
+        gl = c.getContext('webgl') || c.getContext('experimental-webgl') || c.getContext('webkit-3d') || c.getContext('moz-webgl'),
+        getGLParam = function(k){ return gl.getParameter(gl[k]) };
+    if (gl) {
+        t0 = gl.getContextAttributes();
+        detect.glEnabled = true;
+        for( k in t1 = {
+            glAlpha:t0['alpha'],
+            glAntialias:t0['antialias'],
+            glDepth:t0['depth'],
+            glPremultipliedAlpha:t0['premultipliedAlpha'],
+            glPreserveDrawingBuffer:t0['preserveDrawingBuffer'],
+            glStencil:t0['stencil'],
+            glVendor:getGLParam('VENDOR'),
+            glVersion:getGLParam('VERSION'),
+            glShadingLanguageVersion:getGLParam('SHADING_LANGUAGE_VERSION'),
+            glRenderer:getGLParam('RENDERER'),
+            glMaxVertexAttribs:getGLParam('MAX_VERTEX_ATTRIBS'),
+            glMaxVaryingVectors:getGLParam('MAX_VARYING_VECTORS'),
+            glMaxVertexUniformVectors:getGLParam('MAX_VERTEX_UNIFORM_VECTORS'),
+            glMaxVertexTextureImageUnits:getGLParam('MAX_VERTEX_TEXTURE_IMAGE_UNITS'),
+            glMaxFragmentUniformVectors:getGLParam('MAX_FRAGMENT_UNIFORM_VECTORS'),
+            glMaxTextureSize:getGLParam('MAX_TEXTURE_SIZE'),
+            glMaxCubeMapTextureSize:getGLParam('MAX_CUBE_MAP_TEXTURE_SIZE'),
+            glMaxCombinedTextureImageUnits:getGLParam('MAX_COMBINED_TEXTURE_IMAGE_UNITS'),
+            glMaxTextureImageUnits:getGLParam('MAX_TEXTURE_IMAGE_UNITS'),
+            glMaxRenderbufferSize:getGLParam('MAX_RENDERBUFFER_SIZE'),
+            glMaxViewportDims:getGLParam('MAX_VIEWPORT_DIMS'),
+            glRedBits:getGLParam('RED_BITS'),
+            glGreenBits:getGLParam('GREEN_BITS'),
+            glBlueBits:getGLParam('BLUE_BITS'),
+            glAlphaBits:getGLParam('ALPHA_BITS'),
+            glDepthBits:getGLParam('DEPTH_BITS'),
+            glStencilBits:getGLParam('STENCIL_BITS')
+        } ) if ( t1.hasOwnProperty(k) ) detect[k] = t1[k];
+    } else { detect.glEnabled = false; }
+    return detect;
+};
 detect = detectWindow(W);
+detect = detectGPU(W, detect);
 ES5:
 if( !Date.now ) Date.now = function(){return +new Date;};
 if( !Array.prototype.indexOf ) Array.prototype.indexOf = function( v, I ){
