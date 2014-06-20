@@ -75,12 +75,10 @@ detectWindow = function( W, detect ){
         'device':device, 'browser':browser, 'browserVer':bv, 'os':os, 'osVer':osv, 'flash':flash, 'sony':agent.indexOf('sony') > -1 ? 1 : 0
 	} ) if( t0.hasOwnProperty(i) ) detect[i] = t0[i];
 	return detect;
-};
+},
 detectDOM = function( W, detect ){
-	var doc = W['document'], cssPrefix, stylePrefix, transform3D, keyframe = W['CSSRule'], docMode = 0,
-	b = doc.body, bStyle = b.style, div = doc.createElement('div'),
-	c = doc.createElement('canvas'), a = doc.createElement('audio'), v = doc.createElement('video'), k, t0;
-
+	var doc = W['document'], cssPrefix, stylePrefix, transform3D, keyframe = W['CSSRule'], docMode = 0, b = doc.body, bStyle = b.style,
+	div = doc.createElement('div'), c = doc.createElement('canvas'), a = doc.createElement('audio'), v = doc.createElement('video'), gl, r, re, t0, t1, i, j, k;
 	if( !detect ) detect = {};
 	if( !doc ) return detect;
 	div.innerHTML = '<div data-test-ok="234">a</div>',
@@ -132,50 +130,23 @@ detectDOM = function( W, detect ){
         history:( 'pushState' in history ) ? 1 : 0, offline:W['applicationCache'] ? 1 : 0,
         db:W['openDatabase'] ? 1 : 0, socket:W['WebSocket'] ? 1 : 0
 	} ) if( t0.hasOwnProperty(k) ) detect[k] = t0[k];
+	//gpu
+	c = doc.createElement('canvas');
+	if( gl = c.getContext('webgl') || c.getContext('experimental-webgl') || c.getContext('webkit-3d') || c.getContext('moz-webgl') ){
+		t0 = gl.getContextAttributes();
+		detect.glEnabled = 1;
+		t1 = 'alpha,antialias,depth,premultipliedAlpha,preserveDrawingBuffer,stencil'.split(',');
+		for( i = 0, j = t1.length ; i < j ; i++ ) k = t1[i], detect['gl' + k.charAt(0).toUpperCase() + k.substr(1)] = t0[k];
+		t0 = ( 'VENDOR,VERSION,SHADING_LANGUAGE_VERSION,RENDERER,MAX_VERTEX_ATTRIBS,MAX_VARYING_VECTORS,MAX_VERTEX_UNIFORM_VECTORS,'+
+			'MAX_VERTEX_TEXTURE_IMAGE_UNITS,MAX_FRAGMENT_UNIFORM_VECTORS,MAX_TEXTURE_SIZE,MAX_CUBE_MAP_TEXTURE_SIZE,'+
+			'MAX_COMBINED_TEXTURE_IMAGE_UNITS,MAX_TEXTURE_IMAGE_UNITS,MAX_RENDERBUFFER_SIZE,MAX_VIEWPORT_DIMS,'+
+			'RED_BITS,GREEN_BITS,BLUE_BITS,ALPHA_BITS,DEPTH_BITS,STENCIL_BITS' ).split(',');
+		r = /[_]\S/g, re = function(_0){return _0.charAt(1).toUpperCase();};
+		for( i = 0, j = t0.length ; i < j ; i++ ) k = t0[i], t1 = k.toLowerCase().replace( r, re ), detect['gl' + t1.charAt(0).toUpperCase() + t1.substr(1)] = gl.getParameter(gl[k]);
+	}else detect.glEnabled = 0;
 	return detect;
-};
-detectGPU = function( W, detect ){
-    if( !detect ) detect = {};
-    var c = document.createElement('canvas'), t0, t1, k,
-        gl = c.getContext('webgl') || c.getContext('experimental-webgl') || c.getContext('webkit-3d') || c.getContext('moz-webgl'),
-        getGLParam = function(k){ return gl.getParameter(gl[k]) };
-    if (gl) {
-        t0 = gl.getContextAttributes();
-        detect.glEnabled = true;
-        for( k in t1 = {
-            glAlpha:t0['alpha'],
-            glAntialias:t0['antialias'],
-            glDepth:t0['depth'],
-            glPremultipliedAlpha:t0['premultipliedAlpha'],
-            glPreserveDrawingBuffer:t0['preserveDrawingBuffer'],
-            glStencil:t0['stencil'],
-            glVendor:getGLParam('VENDOR'),
-            glVersion:getGLParam('VERSION'),
-            glShadingLanguageVersion:getGLParam('SHADING_LANGUAGE_VERSION'),
-            glRenderer:getGLParam('RENDERER'),
-            glMaxVertexAttribs:getGLParam('MAX_VERTEX_ATTRIBS'),
-            glMaxVaryingVectors:getGLParam('MAX_VARYING_VECTORS'),
-            glMaxVertexUniformVectors:getGLParam('MAX_VERTEX_UNIFORM_VECTORS'),
-            glMaxVertexTextureImageUnits:getGLParam('MAX_VERTEX_TEXTURE_IMAGE_UNITS'),
-            glMaxFragmentUniformVectors:getGLParam('MAX_FRAGMENT_UNIFORM_VECTORS'),
-            glMaxTextureSize:getGLParam('MAX_TEXTURE_SIZE'),
-            glMaxCubeMapTextureSize:getGLParam('MAX_CUBE_MAP_TEXTURE_SIZE'),
-            glMaxCombinedTextureImageUnits:getGLParam('MAX_COMBINED_TEXTURE_IMAGE_UNITS'),
-            glMaxTextureImageUnits:getGLParam('MAX_TEXTURE_IMAGE_UNITS'),
-            glMaxRenderbufferSize:getGLParam('MAX_RENDERBUFFER_SIZE'),
-            glMaxViewportDims:getGLParam('MAX_VIEWPORT_DIMS'),
-            glRedBits:getGLParam('RED_BITS'),
-            glGreenBits:getGLParam('GREEN_BITS'),
-            glBlueBits:getGLParam('BLUE_BITS'),
-            glAlphaBits:getGLParam('ALPHA_BITS'),
-            glDepthBits:getGLParam('DEPTH_BITS'),
-            glStencilBits:getGLParam('STENCIL_BITS')
-        } ) if ( t1.hasOwnProperty(k) ) detect[k] = t1[k];
-    } else { detect.glEnabled = false; }
-    return detect;
-};
+},
 detect = detectWindow(W);
-detect = detectGPU(W, detect);
 ES5:
 if( !Date.now ) Date.now = function(){return +new Date;};
 if( !Array.prototype.indexOf ) Array.prototype.indexOf = function( v, I ){
