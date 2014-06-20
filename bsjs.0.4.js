@@ -1345,13 +1345,33 @@ fn( 'ev', (function(){
 			for( k in t0 = {
 				'@':function( d, k, v ){
 					k = k.substr(1);
-					if( v === undefined ) return d[k] || d.getAttribute(k);
+					if( v === undefined ) v = d[k] || d.getAttribute(k);
 					else if( v === null ){
 						d.removeAttribute(k);
 						try{delete d[k];}catch(e){};
-					}else d[k] = v, d.setAttribute( k, v );
+					}else d[k] = v, k == 'value' || d.setAttribute( k, v );
 					return v;
 				},
+				'*':(function(){
+					var r, re;
+					return detect.customData ? (
+					r = /-\S/g, re = function(_0){return _0.charAt(1).toUpperCase();},
+					function( d, k, v ){
+						k = k.substr(1).toLowerCase().replace( r, re );
+						if( v === undefined ) v = d.dataset[k];
+						else if( v === null ){
+							delete d.dataset[k];
+						}else d.dataset[k] = v;
+						return v;
+					} ) : function( d, k, v ){
+						k = 'data-' + k.substr(1).toLowerCase();
+						if( v === undefined ) v = d.getAttribute(k);
+						else if( v === null ){
+							delete d.removeAttribute(k);
+						}else d.setAttribute( k, v );
+						return v;
+					};
+				})(),
 				'_':( function( view, key ){
 					return detect.cstyle ? function( d, k ){return view.getComputedStyle( d, '' ).getPropertyValue(k.substr(1));} :
 						function( d, k ){return d.currentStyle[key(k.substr(1))];};
