@@ -12,7 +12,7 @@ var VERSION = 0.4, REPOSITORY = 'http://projectbs.github.io/bsJSplugin/', CROSSP
 	err = function( num, msg ){console.log( num, msg ); if( isDebug ) throw new Error( num, msg );},
 	fn = bs.fn = function( key, v ){var t0 = key.replace( trim, '' ).toLowerCase(); t0 != key ? err( 1001, key ) : bs[t0] ? err( 2001, t0 ) : bs[t0] = v;};
 DETECT:
-var detectWindow, detectDOM, detectGPU;
+var detectWindow, detectDOM;
 detectWindow = function( W, detect ){
 	var navi = W['navigator'], agent = navi.userAgent.toLowerCase(),
 	platform = navi.platform.toLowerCase(),
