@@ -544,8 +544,8 @@ fn( 'ev', (function(){
 								self['lx'+i] = t1.layerX, self['ly'+i] = t1.layerY,
 								typeCat == 2 ?
 									( self['$x'+i] = self['_x'+i] = X, self['$y'+i] = self['_y'+i] = Y ) :
-									( self['dx'+i] = X - self['_x'+i], self['dy'+i] = Y - self['_y'+i] );
-								if( typeCat == 1 ) self['mx'+i] = X - self['$x'+i], self['my'+i] = Y - self['$y'+i], self['$x'+i] = X, self['$y'+i] = Y;
+									( self['dx'+i] = X - self['_x'+i], self['dy'+i] = Y - self['_y'+i] ),
+								typeCat == 1 ?( self['mx'+i] = X - self['$x'+i], self['my'+i] = Y - self['$y'+i], self['$x'+i] = X, self['$y'+i] = Y) : null;
 							self.id = self.id0, self.mx = self.mx0, self.my = self.my0, self.x = self.x0, self.y = self.y0, self.lx = self.lx0, self.ly = self.ly0, self.dx = self.dx0, self.dy = self.dy0, self.cx = self.cx0, self.cy = self.cy0;
 						}else{
 							self.length = 0, self.cx = e.clientX, self.cy = e.clientY,
