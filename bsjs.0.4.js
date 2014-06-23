@@ -1070,14 +1070,14 @@ fn( 'ev', (function(){
 					while( i < j ){
 						k = arguments[i];
 						if( !( type = ktype[i] ) ) type = ktype[i] = attrs[k] || first[k.charAt(0)] || ( 'on' + k in d ? attrs[k] = 2 : k.indexOf(':') > -1 ? 2 : 1 );
-						if( ++i == j ) return type == 1 ? '@sGet@' : type == 2 ? 0 : type == 3 ? ( '@sSet@', this ) : '@tGet@';
+						if( ++i == j ) return arg.length ? '@sSet@' : 0, type == 1 ? '@sGet@' : type == 2 ? 0 : type == 3 ? this : '@tGet@';
 						v = arguments[i++];
-						if( type == 2 ){//event set
+						if( type == 2 ){
 							if( !( t0 = data.BSdomE ) ) data.BSdomE = t0 = ev(), t0.init(d);
 							if( k == 'event' ) for( i in v ) t0.on( k, '', v, v[i] );
 							else g = ( t1 = k.indexOf(':') ) > -1 ? ( k = k.substring( 0, t1 ), k.substr( t1 + 1 ) ) : '',
 								v ? t0.on( k, g, v.splice ? ( m = v[1], a = v, v[0] || d ) : v[k] ? ( m = v[k], v ) : ( m = v, d ), m, a ) : t0.off( k, g );
-						}else{//set
+						}else{
 							if( ( t0 = typeof v ) == 'function' ) v = v( type == 1 ? '@sGet@' : '@tGet@' );
 							else if( t0 == 'string' && v.charAt(0) == '{' && exop[v.charAt(1)] && v.charAt( t1 = v.length - 1 ) == '}' ){
 								v0 = type == 1 ? '@sGet@' : '@tGet@',
