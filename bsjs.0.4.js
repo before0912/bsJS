@@ -315,12 +315,7 @@ NET:
 		return function(){return new ActiveXObject(j);};
 	})() : function(){return new XMLHttpRequest;},
 	cross = W['XDomainRequest'] ? (function(){
-		var mk = function( x, err ){
-			return function(){
-				var v;
-				x.ontimeout = x.onload = x.onerror = null, err ? ( x.abort(), end( null, err ) ) : end(x.responseText);//( v = JSON.parse(x.responseText), end( v.data, v.header ) );
-			};
-		};
+		var mk = function( x, err ){return function(){x.ontimeout = x.onload = x.onerror = null, err ? ( x.abort(), end( null, err ) ) : end(x.responseText);};};//( x = JSON.parse(x.responseText), end( x.data, x.header ) );};};
 		return function( data, end ){
 			var x = new XDomainRequest;
 			x.ontimeout = mk( x, 'timeout'), x.timeout = timeout, x.onerror = mk( x, 'xdr error'), x.onload = mk(x), x.open( 'POST', CROSSPROXY ), x.send(data);
@@ -343,7 +338,7 @@ NET:
 			var text, status;
 			if( x.readyState !== 4 || timeId == -1 ) return;
 			clearTimeout(timeId), timeId = -1,
-			text = x.status === 200 || x.status === 0 ? x.responseText : null,
+			text = x.status == 200 || x.status == 0 ? x.responseText : null,
 			status = text ? x.getAllResponseHeaders() : x.status,
 			x.onreadystatechange = null, end( text, status );
 		};
