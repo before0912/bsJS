@@ -315,10 +315,15 @@ NET:
 		return function(){return new ActiveXObject(j);};
 	})() : function(){return new XMLHttpRequest;},
 	cross = W['XDomainRequest'] ? (function(){
-		var mk = function( x, err ){return function(){x.ontimeout = x.onload = x.onerror = null, err ? ( x.abort(), end( null, err ) ) : end( x.responseText, x.contentType );};};
+		var mk = function( x, err ){
+			return function(){
+				var v;
+				x.ontimeout = x.onload = x.onerror = null, err ? ( x.abort(), end( null, err ) ) : end(x.responseText);//( v = JSON.parse(x.responseText), end( v.data, v.header ) );
+			};
+		};
 		return function( data, end ){
 			var x = new XDomainRequest;
-			x.ontimeout = mk( x, 'timeout'), x.timeout = timeout, x.onerror = mk( x, 'xdr error'), x.onload = mk( x, time ), x.open( 'POST', CROSSPROXY ), x.send(data);
+			x.ontimeout = mk( x, 'timeout'), x.timeout = timeout, x.onerror = mk( x, 'xdr error'), x.onload = mk(x), x.open( 'POST', CROSSPROXY ), x.send(data);
 		};
 	})() : W['XMLHttpRequest'] ? function( data, end ){
 		var x = xhr();
