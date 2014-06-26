@@ -1388,15 +1388,18 @@ fn( 'ev', (function(){
 				'+text':function( d, k, v ){return d[t] = v + d[t];}
 			} )if( t0.hasOwnProperty(k) ) bs.Dom.fn( k, t0[k] );
 			for( k in t0 = {
-				'@':function( d, k, v ){
-					k = k.substr(1);
-					if( v === undefined ) v = d[k] || d.getAttribute(k);
-					else if( v === null ){
-						d.removeAttribute(k);
-						try{delete d[k];}catch(e){};
-					}else d[k] = v, k == 'value' || d.setAttribute( k, v );
-					return v;
-				},
+				'@':(function(){
+					var key = {'value':1, 'checked':1, 'selected':1};
+					return function( d, k, v ){
+						k = k.substr(1);
+						if( v === undefined ) v = d[k] || d.getAttribute(k);
+						else if( v === null ){
+							d.removeAttribute(k);
+							try{delete d[k];}catch(e){};
+						}else d[k] = v, key[k] || d.setAttribute( k, v );
+						return v;
+					};
+				})(),
 				'*':(function(){
 					var r, re;
 					return detect.customData ? (
