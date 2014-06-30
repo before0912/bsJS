@@ -400,13 +400,15 @@ PLUGIN:
 		run = function( end, list ){
 			var isLoaded, i = 0, j = list.length, loader = function(){
 				var repo, t0, t1, k ,v;
-				if( i == j ) return end();
+				if( i >= j ) return end();
+				console.log( list, i, j );
 				k = list[i++].toLowerCase(), v = list[i++];
 				if( depends[k] ) return loader();
 				( repo = function(){
 					bs.get( function(data){
 						var key, t0;
 						if( !data ) return err( 6001, k ), end();
+						console.log(data);
 						data = JSON.parse(data);
 						if( !v || v == 'last' ){
 							v = 0;
