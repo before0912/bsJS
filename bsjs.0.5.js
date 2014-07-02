@@ -1385,7 +1385,7 @@ fn( 'ev', (function(){
 				'*':(function(){
 					var r, re;
 					return detect.customData ? (
-					r = /-\S/g, re = function(_0){return _0.charAt(1).toUpperCase();},
+					r = /-[a-zA-Z]/g, re = function(_0){return _0.charAt(1).toUpperCase();},
 					function( d, k, v ){
 						k = k.substr(1).toLowerCase().replace( r, re );
 						if( v === undefined ) v = d.dataset[k];
