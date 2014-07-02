@@ -268,8 +268,9 @@ CORE:
 })(trim);
 NET:
 (function( trim ){
-	var xhr = detect.browser === 'ie' && detect.browserVer < 9 ? (function(){
+	var xhrType = 0, xhr = detect.browser === 'ie' && detect.browserVer < 9 ? (function(){
 		var t0, i, j;
+		xhrType = 1;
 		t0 = 'MSXML2.XMLHTTP', t0 = ['Microsoft.XMLHTTP',t0,t0+'.3.0',t0+'.4.0',t0+'.5.0'], i = t0.length;
 		while( i-- ){try{new ActiveXObject( j = t0[i] );}catch(e){continue;}break;}
 		return function(){return new ActiveXObject(j);};
@@ -346,7 +347,7 @@ NET:
 			}
 			for( i in baseHeader ) if( httpH.indexOf(i) == -1 ) x.setRequestHeader( i, paramHeader(baseHeader[i]) );
 			x.send(arg);
-			if( !end ) return ( i = x.responseText ), delete x.onreadystatechange, i;
+			if( !end ) return ( i = x.responseText ), xhrType ? delete x.onreadystatechange : x.onreadystatechange = null, i;
 		}
 	}, baseHeader = {};
 	fn( 'header', function( k, v ){baseHeader[k] ? err( 2200, k ) : baseHeader[k] = v;} ),
