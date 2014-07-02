@@ -355,20 +355,25 @@ NET:
 })(trim);
 PLUGIN:
 (function(){
-	var required = {}, types ={'method':bs.fn, 'class':bs.cls, 'static':bs.obj, 'require':function( k, v ){required[k] = v;}}, run,
+	var required = {}, types ={'method':bs.fn, 'class':bs.cls, 'static':bs.obj}, run,
 	require = function( data, key, type ){
-		var module = {exports:{}}, t0, t1 = data + '\n\n;return [module, exports];';
+		var module = {exports:{}}, t0, t1 = data + '\n\n;return [module, exports];', k;
 		try{
 			t0 = ( new Function( 'bs,module,exports', t1) )( bs, module, module.exports );
 		}catch(e){
 			return err( 7000, e + '::' + t1 );
 		}
 		if( key ){
-			if( ( type = types[type] ) && ( t1 = t0[0].exports[key] || t0[1][key] ) ) return type( key, t1 );
+			if( type == 'require' ){
+				t1 = {};
+				if( t0[0].exports ) for( k in t0[0].exports ) if( t0[0].exports.hasOwnProperty(k) ) t1[k] = t0[0].exports[k];
+				if( t0[1] ) for( k in t0[1] )if( t0[1].hasOwnProperty(k) && !t1[k] ) t1[k] = t0[1][k];	
+				return required[key] = t1;
+			}else if( ( type = types[type] ) && ( t1 = t0[0].exports[key] || t0[1][key] ) ) return type( key, t1 );
 		}else{
 			t1 = {};
 			if( t0[0].exports ) for( key in t0[0].exports ) if( t0[0].exports.hasOwnProperty(key) ) t1[key] = t0[0].exports[key];
-			if( t0[1] ) for( key in t0[1] )if( t0[1].hasOwnProperty(key) ) t1[key] = t0[1][key];
+			if( t0[1] ) for( key in t0[1] )if( t0[1].hasOwnProperty(key) && !t1[key] ) t1[key] = t0[1][key];
 			return t1;
 		}
 		err( 7001, t0 );
@@ -397,9 +402,7 @@ PLUGIN:
 					}
 					if( !(info = data[v1]) ) return err( 6002, data ), end();
 					if( typeof info == 'string' ) return k1 = info, repo();
-					add = function(){
-						bs.get( function(data){require( data, k1, info.type ), loader();}, info.uri );
-					};
+					add = function(){bs.get( function(data){require( data, k1, info.type ), loader();}, info.uri );};
 					if( info.depend && ( j = info.depend.length ) ){
 						t0 = [], i = 0;
 						while( i < j ){
