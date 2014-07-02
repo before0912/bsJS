@@ -8,7 +8,6 @@
 var VERSION = 0.5, REPOSITORY = 'http://projectbs.github.io/bsPlugin/js/',
 	CROSSPROXYKEY = 'CROSSPROXY_DEMO_ACCESS_KEY',
 	CROSSPROXY = 'http://api.bsplugin.com/bsNet/php/crossProxy.0.1.php',
-	
 	none = function(){}, trim = /^\s*|\s*$/g, doc = W['document'], que = [], pque = [], timeout = 5000, mk, comp, detect, isDebug = 0,
 	bs = W[N = N || 'bs'] = function(f){que ? ( que[que.length] = f ) : f();},
 	err = function( num, msg ){console.log( num, msg ); if( isDebug ) throw new Error( num, msg );},
@@ -16,10 +15,7 @@ var VERSION = 0.5, REPOSITORY = 'http://projectbs.github.io/bsPlugin/js/',
 DETECT:
 var detectWindow, detectDOM;
 detectWindow = function( W, detect ){
-	var navi = W['navigator'], agent = navi.userAgent.toLowerCase(),
-	platform = navi.platform.toLowerCase(),
-	app = navi.appVersion.toLowerCase(),
-	flash = 0, device = 'pc', browser, bv, os, osv, i, t0,
+	var navi = W['navigator'], agent = navi.userAgent.toLowerCase(), platform = navi.platform.toLowerCase(), app = navi.appVersion.toLowerCase(), flash = 0, device = 'pc', browser, bv, os, osv, i, t0,
 	ie = function(){
 		if( agent.indexOf('msie') < 0 && agent.indexOf('trident') < 0 ) return;
 		if( agent.indexOf('iemobile') > -1 ) os = 'winMobile';
@@ -35,114 +31,80 @@ detectWindow = function( W, detect ){
 	naver = function(){return agent.indexOf('naver') < 0 ? 0 : browser = 'naver';};
 	if( !detect ) detect = {};
 	if( agent.indexOf('android') > -1 ){
-		browser = os = 'android';
-		if( agent.indexOf('mobile') == -1 ) browser += 'Tablet', device = 'tablet';
-		else device = 'mobile';
-		if( i = /android ([\d.]+)/.exec(agent) ) i = i[1].split('.'), osv = parseFloat( i[0] + '.' + i[1] );
-		else osv = 0;
-		if( i = /safari\/([\d.]+)/.exec(agent) ) bv = parseFloat(i[1]);
-		naver() || opera() || chrome() || firefox();
+		browser = os = 'android', device = agent.indexOf('mobile') == -1 ? ( browser += 'Tablet', 'tablet' ) : 'mobile',
+		osv = i = /android ([\d.]+)/.exec(agent) ? ( i = i[1].split('.'), parseFloat( i[0] + '.' + i[1] ) ) : 0,
+		naver() || opera() || chrome() || firefox() || ( bv = i = /safari\/([\d.]+)/.exec(agent) ? parseFloat(i[1]) : 0 );
 	}else if( agent.indexOf( i = 'ipad' ) > -1 || agent.indexOf( i = 'iphone' ) > -1 ){
-		device = i == 'ipad' ? 'tablet' : 'mobile', browser = os = i;
-		if( i = /os ([\d_]+)/.exec(agent) ) i = i[1].split('_'), osv = parseFloat( i[0] + '.' + i[1] );
-		else osv = 0;
-		if( i = /mobile\/([\S]+)/.exec(agent) ) bv = parseFloat(i[1]);
-		naver() || opera() || chrome() || firefox();
-	}else{
-		if( platform.indexOf('win') > -1 ){
-			os = 'win', i = 'windows nt ';
-			if( agent.indexOf( i + '5.1' ) > -1 ) osv = 'xp';
-			else if( agent.indexOf( i + '6.0' ) > -1 ) osv = 'vista';
-			else if( agent.indexOf( i + '6.1' ) > -1 ) osv = '7';
-			else if( agent.indexOf( i + '6.2' ) > -1 ) osv = '8';
-			else if( agent.indexOf( i + '6.3' ) > -1 ) osv = '8.1';
-			ie() || opera() || chrome() || firefox() || safari();
-		}else if( platform.indexOf('mac') > -1 ){
-			os = 'mac',
-			i = /os x ([\d._]+)/.exec(agent)[1].replace( '_', '.' ).split('.'),
-			osv = parseFloat( i[0] + '.' + i[1] ),
-            opera() || chrome() || firefox() || safari();
-		}else{
-			os = app.indexOf('x11') > -1 ? 'unix' : app.indexOf('linux') > -1 ? 'linux' : 0,
-			chrome() || firefox();
+		device = i == 'ipad' ? 'tablet' : 'mobile', browser = os = i, osv = i = /os ([\d_]+)/.exec(agent) ? ( i = i[1].split('_'), parseFloat( i[0] + '.' + i[1] ) ) : 0,
+		naver() || opera() || chrome() || firefox() || ( bv = i = /mobile\/([\S]+)/.exec(agent) ? parseFloat(i[1]) : 0 );
+	}else if( platform.indexOf('win') > -1 ){
+		for( i in t0 = {'5.1':'xp', '6.0':'vista','6.1':'7','6.2':'8','6.3':'8.1'} ){
+			if( agent.indexOf( 'windows nt ' + i ) > -1 ){
+				osv = t0[i];
+				break;
+			}
 		}
-	}
-    (function(){
-        var plug, t0;
-        plug = navi.plugins;
-        if( browser == 'ie' ) try{t0 = new ActiveXObject('ShockwaveFlash.ShockwaveFlash').GetVariable('$version').substr(4).split(','), flash = parseFloat( t0[0] + '.' + t0[1] );}catch(e){}
-        else if( ( t0 = plug['Shockwave Flash 2.0'] ) || ( t0 = plug['Shockwave Flash'] ) ) t0 = t0.description.split(' ')[2].split('.'), flash = parseFloat( t0[0] + '.' + t0[1] );
-        else if( agent.indexOf('webtv') > -1 ) flash = agent.indexOf('webtv/2.6') > -1 ? 4 : agent.indexOf("webtv/2.5") > -1 ? 3 : 2;
-    })();
-	for( i in t0 = {
-        'device':device, 'browser':browser, 'browserVer':bv, 'os':os, 'osVer':osv, 'flash':flash, 'sony':agent.indexOf('sony') > -1 ? 1 : 0
-	} ) if( t0.hasOwnProperty(i) ) detect[i] = t0[i];
+		os = 'win', ie() || opera() || chrome() || firefox() || safari();
+	}else if( platform.indexOf('mac') > -1 ) os = 'mac', i = /os x ([\d._]+)/.exec(agent)[1].replace( '_', '.' ).split('.'), osv = parseFloat( i[0] + '.' + i[1] ), opera() || chrome() || firefox() || safari();
+	else os = app.indexOf('x11') > -1 ? 'unix' : app.indexOf('linux') > -1 ? 'linux' : 0, chrome() || firefox();
+	(function(){
+		var plug, t0;
+		plug = navi.plugins;
+		if( browser == 'ie' ) try{t0 = new ActiveXObject('ShockwaveFlash.ShockwaveFlash').GetVariable('$version').substr(4).split(','), flash = parseFloat( t0[0] + '.' + t0[1] );}catch(e){}
+		else if( ( t0 = plug['Shockwave Flash 2.0'] ) || ( t0 = plug['Shockwave Flash'] ) ) t0 = t0.description.split(' ')[2].split('.'), flash = parseFloat( t0[0] + '.' + t0[1] );
+		else if( agent.indexOf('webtv') > -1 ) flash = agent.indexOf('webtv/2.6') > -1 ? 4 : agent.indexOf("webtv/2.5") > -1 ? 3 : 2;
+	})();
+	for( i in t0 = {device:device, browser:browser, browserVer:bv, os:os, osVer:osv, flash:flash, sony:agent.indexOf('sony') > -1 ? 1 : 0} ) if( t0.hasOwnProperty(i) ) detect[i] = t0[i];
 	return detect;
 },
 detectDOM = function( W, detect ){
-	var doc = W['document'], cssPrefix, stylePrefix, transform3D, keyframe = W['CSSRule'], docMode = 0, b = doc.body, bStyle = b.style,
-	div = doc.createElement('div'), c = doc.createElement('canvas'), a = doc.createElement('audio'), v = doc.createElement('video'), gl, r, re, t0, t1, i, j, k;
+	var doc = W['document'], cssPrefix, stylePrefix, docMode = 0, b = doc.body, bStyle = b.style, div = doc.createElement('div'), t0, k;
 	if( !detect ) detect = {};
-	if( !doc ) return detect;
-	div.innerHTML = '<div data-test-ok="234">a</div>',
-	div = div.getElementsByTagName( 'div' )[0];
 	switch( detect.browser ){
 	case'ie':
-		if( detect.browserVer == -1 ) detect.browserVer = !c['getContext'] ? 8 : !( 'msTransition' in bStyle ) && !( 'transition' in bStyle ) ? 9 : c.getContext('webgl') || c.getContext('experimental-webgl') ? 11 : 10;
-		cssPrefix = '-ms-', stylePrefix = 'ms'; transform3D = detect.browserVer > 9 ? 1 : 0;
-        docMode = doc['documentMode'] || 0;
+		cssPrefix = '-ms-', stylePrefix = 'ms', docMode = doc['documentMode'] || 0;
 		if( detect.browserVer == 6 ) doc.execCommand( 'BackgroundImageCache', false, true ), bStyle.position = 'relative';
+		else if( detect.browserVer == -1 ) detect.browserVer = !c['getContext'] ? 8 : !( 'msTransition' in bStyle ) && !( 'transition' in bStyle ) ? 9 : c.getContext('webgl') ? 11 : 10;
 		break;
-	case'firefox': cssPrefix = '-moz-', stylePrefix = 'Moz'; transform3D = 1; break;
-	case'opera': cssPrefix = '-o-', stylePrefix = 'O'; transform3D = 1; break;
-	default: cssPrefix = '-webkit-', stylePrefix = 'webkit'; transform3D = detect.os == 'android' ? ( detect.osVer < 4 ? 0 : 1 ) : 1;
+	case'firefox': cssPrefix = '-moz-', stylePrefix = 'Moz';break;
+	case'opera': cssPrefix = '-o-', stylePrefix = 'O';break;
+	default: cssPrefix = '-webkit-', stylePrefix = 'webkit';
 	}
-	if( keyframe ) keyframe = keyframe.WEBKIT_KEYFRAME_RULE ? '-webkit-keyframes' : keyframe.MOZ_KEYFRAME_RULE ? '-moz-keyframes' : keyframe.KEYFRAME_RULE ? keyframe = 'keyframes' : 0;
 	for( k in t0 = {
-		//dom
 		root:b.scrollHeight ? b : doc.documentElement,
-        scroll:doc.documentElement && typeof doc.documentElement.scrollLeft == 'number' ? 'scroll' : 'page', insertBefore:div.insertBefore ? 1 : 0,
-		text:div.textContent ? 'textContent' : div.innerText ? 'innerText' : 'innerHTML',
-        cstyle:( doc.defaultView && doc.defaultView.getComputedStyle ) ? 1 : 0,
-        customData:( div.dataset && div.dataset.testOk == '234' ) ? 1 : 0,
-        docMode:docMode,
-		//css3
-		cssPrefix:cssPrefix, stylePrefix:stylePrefix,
-        transition:( stylePrefix + 'Transition' in bStyle || 'transition' in bStyle ) ? 1 : 0, transform3D:transform3D, keyframe:keyframe ? 1 : 0,
-        transform:( stylePrefix + 'Transform' in bStyle || 'transform' in bStyle ) ? 1 : 0,
-		//html5
-        canvas:c ? 1 : 0, canvasText:c && c['getContext'] && c.getContext('2d').fillText,
-		audio:a ? 1 : 0,
-		audioMp3:a && a['canPlayType'] && a.canPlayType('audio/mpeg;').indexOf('no') < 0 ? 1 : 0,
-		audioOgg:a && a['canPlayType'] && a.canPlayType('audio/ogg;').indexOf('no') < 0 ? 1 : 0,
-		audioWav:a && a['canPlayType'] && a.canPlayType('audio/wav;').indexOf('no') < 0 ? 1 : 0,
-		audioMp4:a && a['canPlayType'] && a.canPlayType('audio/mp4;').indexOf('no') < 0 ? 1 : 0,
-		video:v ? 1 : 0,
-		videoCaption:'track' in doc.createElement('track') ? 1 : 0,
-		videoPoster:v && 'poster' in v ? 1 : 0,
-		videoWebm:v && v['canPlayType'] && v.canPlayType( 'video/webm; codecs="vp8,mp4a.40.2"' ).indexOf( 'no' ) == -1 ? 1 : 0,
-		videH264:v && v['canPlayType'] && v.canPlayType( 'video/mp4; codecs="avc1.42E01E,m4a.40.2"' ).indexOf( 'no' ) == -1 ? 1 : 0,
-		videoTeora:v && v['canPlayType'] && v.canPlayType( 'video/ogg; codecs="theora,vorbis"' ).indexOf( 'no' ) == -1 ? 1 : 0,
-        local:( W['localStorage'] && 'setItem' in localStorage ) ? 1 : 0,
-        geo:( navigator['geolocation'] ) ? 1 : 0, worker:W['Worker'] ? 1 : 0, file:W['FileReader'] ? 1 : 0, message:W['postMessage'] ? 1 : 0,
-        history:( 'pushState' in history ) ? 1 : 0, offline:W['applicationCache'] ? 1 : 0,
-        db:W['openDatabase'] ? 1 : 0, socket:W['WebSocket'] ? 1 : 0
+		scroll:doc.documentElement && typeof doc.documentElement.scrollLeft == 'number' ? 'scroll' : 'page',
+		cstyle:( doc.defaultView && doc.defaultView.getComputedStyle ) ? 1 : 0,
+		docMode:docMode, cssPrefix:cssPrefix, stylePrefix:stylePrefix
 	} ) if( t0.hasOwnProperty(k) ) detect[k] = t0[k];
-	//gpu
-    var keys = {premultipliedAlpha:1,stencil:1,preserveDrawingBuffer:1}
-	c = doc.createElement('canvas');
-	if( gl = c.getContext('webgl',keys) || c.getContext('experimental-webgl',keys) || c.getContext('webkit-3d',keys) || c.getContext('moz-webgl',keys) ){
-		t0 = gl.getContextAttributes();
-		detect.glEnabled = 1;
-		t1 = 'alpha,antialias,depth,premultipliedAlpha,preserveDrawingBuffer,stencil'.split(',');
-		for( i = 0, j = t1.length ; i < j ; i++ ) k = t1[i], detect['gl' + k.charAt(0).toUpperCase() + k.substr(1)] = t0[k];
-		t0 = ( 'VENDOR,VERSION,SHADING_LANGUAGE_VERSION,RENDERER,MAX_VERTEX_ATTRIBS,MAX_VARYING_VECTORS,MAX_VERTEX_UNIFORM_VECTORS,'+
-			'MAX_VERTEX_TEXTURE_IMAGE_UNITS,MAX_FRAGMENT_UNIFORM_VECTORS,MAX_TEXTURE_SIZE,MAX_CUBE_MAP_TEXTURE_SIZE,'+
-			'MAX_COMBINED_TEXTURE_IMAGE_UNITS,MAX_TEXTURE_IMAGE_UNITS,MAX_RENDERBUFFER_SIZE,MAX_VIEWPORT_DIMS,'+
-			'RED_BITS,GREEN_BITS,BLUE_BITS,ALPHA_BITS,DEPTH_BITS,STENCIL_BITS' ).split(',');
-		r = /[_]\S/g, re = function(_0){return _0.charAt(1).toUpperCase();};
-		for( i = 0, j = t0.length ; i < j ; i++ ) k = t0[i], t1 = k.toLowerCase().replace( r, re ), detect['gl' + t1.charAt(0).toUpperCase() + t1.substr(1)] = gl.getParameter(gl[k]);
-	}else detect.glEnabled = 0;
+	(function(){
+		var c = doc.createElement('canvas'), a = doc.createElement('audio'), v = doc.createElement('video'), r, re, gl, keys, t0, t1, i, j, k,
+		c1 = c && c['getContext'] && c.getContext('2d') ? 1 : 0, a1 = a && a['canPlayType'] ? 1 : 0, v1 = v && v['canPlayType'] ? 1 : 0;
+		for( k in t0 = {
+			canvas:c1, audio:a1, video:v1, worker:W['Worker'] ? 1 : 0, file:W['FileReader'] ? 1 : 0, message:W['postMessage'] ? 1 : 0,
+			local:( W['localStorage'] && 'setItem' in localStorage ) ? 1 : 0,
+			geo:( navigator['geolocation'] ) ? 1 : 0, 
+			history:( 'pushState' in history ) ? 1 : 0, offline:W['applicationCache'] ? 1 : 0,
+			db:W['openDatabase'] ? 1 : 0, socket:W['WebSocket'] ? 1 : 0,
+			canvasText:c1 && c.getContext('2d').fillText ? 1 : 0,
+			videoCaption:'track' in doc.createElement('track') ? 1 : 0,
+			videoPoster:v1 && 'poster' in v ? 1 : 0
+		} ) if( t0.hasOwnProperty(k) ) detect[k] = t0[k];	
+		if( a ) for( k in t0 = {Mp3:'mpeg',Ogg:'ogg',Wav:'wav',Mp4:'mp4'} ) detect['audio' + k] = a.canPlayType( 'audio/' + t0[k] + ';' ).indexOf('no') < 0 ? 1 : 0;
+		if( v )	for( k in t0 = {Webm:'/webm; codecs="vp8,mp4a.40.2"',H264:'mp4; codecs="avc1.42E01E,m4a.40.2"',Teora:'ogg; codecs="theora,vorbis"'} ) detect['video' + k] = a.canPlayType( 'video/' + t0[k] ).indexOf('no') < 0 ? 1 : 0;
+		keys = {premultipliedAlpha:1,stencil:1,preserveDrawingBuffer:1}, c = doc.createElement('canvas');
+		if( gl = c.getContext('webgl',keys) || c.getContext('experimental-webgl',keys) || c.getContext('webkit-3d',keys) || c.getContext('moz-webgl',keys) ){
+			t0 = gl.getContextAttributes();
+			detect.glEnabled = 1;
+			t1 = 'alpha,antialias,depth,premultipliedAlpha,preserveDrawingBuffer,stencil'.split(',');
+			for( i = 0, j = t1.length ; i < j ; i++ ) k = t1[i], detect['gl' + k.charAt(0).toUpperCase() + k.substr(1)] = t0[k];
+			t0 = ( 'VENDOR,VERSION,SHADING_LANGUAGE_VERSION,RENDERER,MAX_VERTEX_ATTRIBS,MAX_VARYING_VECTORS,MAX_VERTEX_UNIFORM_VECTORS,'+
+				'MAX_VERTEX_TEXTURE_IMAGE_UNITS,MAX_FRAGMENT_UNIFORM_VECTORS,MAX_TEXTURE_SIZE,MAX_CUBE_MAP_TEXTURE_SIZE,'+
+				'MAX_COMBINED_TEXTURE_IMAGE_UNITS,MAX_TEXTURE_IMAGE_UNITS,MAX_RENDERBUFFER_SIZE,MAX_VIEWPORT_DIMS,'+
+				'RED_BITS,GREEN_BITS,BLUE_BITS,ALPHA_BITS,DEPTH_BITS,STENCIL_BITS' ).split(',');
+			r = /[_]\S/g, re = function(_0){return _0.charAt(1).toUpperCase();};
+			for( i = 0, j = t0.length ; i < j ; i++ ) k = t0[i], t1 = k.toLowerCase().replace( r, re ), detect['gl' + t1.charAt(0).toUpperCase() + t1.substr(1)] = gl.getParameter(gl[k]);
+		}else detect.glEnabled = 0;
+	})();
 	return detect;
 },
 detect = detectWindow(W);
@@ -392,60 +354,65 @@ NET:
 	fn( 'post', mk('POST') ), fn( 'put', mk('PUT') ), fn( 'delete', mk('DELETE') ), fn( 'get', mk('GET') );
 })(trim);
 PLUGIN:
-(function( register, depends ){
+(function(){
+	var required = {}, register = {}, depends = {},
+	types ={'method':bs.fn, 'class':bs.cls, 'static':bs.obj}, run,
+	require = function( data, key, type ){
+		var module = {exports:{}}, t0, t1 = data + ';return [module, exports];';
+		try{
+			t0 = ( new Function( 'bs,module,exports', t1) )( bs, module, module.exports );
+		}catch(e){
+			return err( 7000, e + '::' + t1 );
+		}
+		if( key ){
+			if( ( type = types[type] ) && ( t1 = t0[0].exports[key] || t0[1][key] ) ) return type( key, t1 );
+		}else{
+			t1 = {};
+			if( t0[0].exports ) for( key in t0[0].exports ) if( t0[0].exports.hasOwnProperty(key) ) t1[key] = t0[0].exports[key];
+			if( t0[1] ) for( key in t0[1] )if( t0[1].hasOwnProperty(key) ) t1[key] = t0[1][key];
+			return t1;
+		}
+		err( 7001, t0 );
+	};
+	fn( 'require', function( end, url ){
+		return required[url] ? required[url] : end ? bs.get( function(data){end( required[url] = require(data) );}, url ) : required[url] = require(bs.get( null, url ));
+	} ),
 	fn( 'repository', function(){return arguments[0] ? ( REPOSITORY = arguments[0] ) : REPOSITORY;} ),
 	fn( 'plugin', function(){for( var i = 0, j = arguments.length ; i < j ; i++ ) pque[pque.length] = arguments[i];} ),
-	fn( 'plugin~', (function(){
-		var types ={'method':bs.fn, 'class':bs.cls, 'static':bs.obj},
-		run = function( end, list ){
-			var isLoaded, i = 0, j = list.length, loader = function(){
-				var repo, t0, t1, k ,v;
-				if( i >= j ) return end();
-				console.log( list, i, j );
-				k = list[i++].toLowerCase(), v = list[i++];
-				if( depends[k] ) return loader();
-				( repo = function(){
-					bs.get( function(data){
-						var key, t0;
-						if( !data ) return err( 6001, k ), end();
-						console.log(data);
-						data = JSON.parse(data);
-						if( !v || v == 'last' ){
-							v = 0;
-							for( key in data ) if( ( key = parseFloat(key) ) > v ) v = key;
+	fn( 'plugin~', run = function( end, list ){
+		var i0 = 0, j0 = list.length, loader = function(){
+			var repo, k1 ,v1;
+			if( i0 >= j0 ) return end();
+			k1 = list[i0++], v1 = list[i0++];
+			if( depends[k1] ) return loader();
+			( repo = function(){
+				bs.get( function(data){
+					var info, add, t0, i, j, k, v;
+					if( !data ) return err( 6001, k1 ), end();
+					data = JSON.parse(data);
+					if( !v1 || v1 == 'last' ){
+						v1 = 0;
+						for( k in data ) if( ( k = parseFloat(k) ) > v1 ) v1 = k;
+					}
+					if( !(info = data[v1]) ) return err( 6002, data ), end();
+					if( typeof info == 'string' ) return k1 = info, repo();
+					add = function(){
+						bs.get( function(data){require( data, k1, info.type ), loader();}, info.uri );
+					};
+					if( info.depend && ( j = info.depend.length ) ){
+						t0 = [], i = 0;
+						while( i < j ){
+							k = info.depend[i++], v = info.depend[i++];
+							if( !depends[k] ) t0.push( k, v );
 						}
-						if( !(t0 = data[v]) ) return err( 6002, data ), end();
-						if( typeof t0 == 'string' ) return repo();
-						depends[k] = v, register[k] = function(arg){//type,key,target,dependency...
-							var t0, i, j, k, v, add = function(){
-								var t0 = types[arg[0]], t1 = arg[2];
-								t0 ? t0( arg[1], t1 ) : t1(), loader();
-							};
-							clearTimeout(isLoaded), isLoaded = -1, j = arg.length;
-							if( j > 3 ){//dependency
-								t0 = [], i = 3;
-								while( i < j ){
-									k = arguments[i++], v = arguments[i++];
-									if( !depends[k] ) t0.push( k, v );
-								}
-								if( t0.length > 1 ) run( add, t0 );
-							}else add();
-						},
-						isLoaded = setTimeout( function(){if( isLoaded > -1 ) err( 3002, k );}, timeout ),
-						bs.js( none, t0.uri );
-					}, REPOSITORY + k + '.json' );
-				} )();
-			};
-			loader();
+						if( t0.length > 1 ) run( add, t0 );
+					}else add();
+				}, REPOSITORY + k1 + '.json' );
+			} )();
 		};
-		return run;
-	})() ),
-	fn( 'plugin+', function( type, key ){
-		var t0, k = key.toLowerCase();
-		if( !register[k] ) return err( 3003, k );
-		t0 = register[k], delete register[k], t0(arguments);
+		loader();
 	} );
-})( {}, {} );
+})();
 EVENT:
 fn( 'ev', (function(){
 	var pool = {}, ev, on, fn, f
@@ -661,9 +628,15 @@ fn( 'ev', (function(){
 			fn.g = comp( mk, {r:'this[k]'}, t0 ), fn.s = comp( mk, {r:'s[k] = ( this[k] = v ) + u[k], v'}, t0 );
 		} ),
 		bs.cls( 'Css', function( fn, clsfn, bs ){
-			var sheet = doc.createElement('style'), ruleKey = {'keyframes':detect.keyframe}, keyframe = detect.keyframe, rule, ruleSet, idx, add, del;
+			var sheet = doc.createElement('style'), rule, ruleSet, ruleKey, idx, add, del;
 			doc.getElementsByTagName('head')[0].appendChild(sheet),
 			sheet = sheet.styleSheet || sheet.sheet, ruleSet = sheet.cssRules || sheet.rules,
+			ruleKey = {
+				'keyframes':(function(){
+					var i = W['CSSRule'], j = 'keyframes';
+					return i ? i.WEBKIT_KEYFRAME_RULE ? '-webkit-' + j : i.MOZ_KEYFRAME_RULE ? '-moz-' + j : i.KEYFRAME_RULE ? j : 0 : 0;
+				})()
+			},
 			idx = function(rule){
 				var i, j, k, l;
 				for( i = 0, j = ruleSet.length, k = parseInt( j * .5 ) + 1, j-- ; i < k ; i++ ) if( ruleSet[l = i] === rule || ruleSet[l = j - i] === rule ) return l;
@@ -680,13 +653,13 @@ fn( 'ev', (function(){
 						v = t0[1].split(' '), v = 'font-family:'+v[0]+";src:url('"+v[1]+".eot');src:"+
 							"url('"+v[1]+".eot?#iefix') format('embedded-opentype'),url('"+v[1]+".woff') format('woff'),"+
 							"url('"+v[1]+".ttf') format('truetype'),url('"+v[1]+".svg') format('svg');",
-						t0 = '@font-face', this.type = 5;
+						this.type = 5;
 						doc.getElementsByTagName('head')[0].appendChild( t0 = doc.createElement('style') ),
-						( t0.styleSheet || t0.sheet ).cssText = t0 + '{' + v + '}';
+						( t0.styleSheet || t0.sheet ).cssText = '@font-face{' + v + '}';
 						return;
 					}else if( t0[0] == 'keyframes' ){
-						if( !keyframe ) return this.type = -1;
-						else t0 = '@' + ( ruleKey[t0[0]] || t0[0] )+ ' ' + t0[1], this.type = 7;
+						if( !ruleKey[t0[0]] ) return this.type = -1;
+						else t0 = '@' + ruleKey[t0[0]] + ' ' + t0[1], this.type = 7;
 					}
 				}else t0 = key, this.type = 1;
 				this.r = add( t0, v ), this.style = this.r.style;
@@ -1324,7 +1297,7 @@ fn( 'ev', (function(){
 			que = null;
 			while( i < j ) t0[i++]();
 		},
-		bs.obj( 'DETECT', detectDOM( W, detect ) ), DOM(), bs.obj( 'ANI', ANIMATE() ), EXT(),
+		bs.obj( 'DETECT', detectDOM( W, detect ) ), DOM(), bs.obj( 'ANI', ANIMATE() ), EXT(), 
 		pque.length ? ( i = pque, pque = null, bs['plugin~']( start, i ) ) : start();
 	}, 1 ),
 	EXT = function(){
