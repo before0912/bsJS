@@ -89,10 +89,10 @@ detectDOM = function( W, detect ){
 			videoCaption:'track' in doc.createElement('track') ? 1 : 0,
 			videoPoster:v1 && 'poster' in v ? 1 : 0
 		} ) if( t0.hasOwnProperty(k) ) detect[k] = t0[k];	
-		if( a ) for( k in t0 = {Mp3:'mpeg',Ogg:'ogg',Wav:'wav',Mp4:'mp4'} ) detect['audio' + k] = a.canPlayType( 'audio/' + t0[k] + ';' ).indexOf('no') < 0 ? 1 : 0;
-		if( v )	for( k in t0 = {Webm:'/webm; codecs="vp8,mp4a.40.2"',H264:'mp4; codecs="avc1.42E01E,m4a.40.2"',Teora:'ogg; codecs="theora,vorbis"'} ) detect['video' + k] = a.canPlayType( 'video/' + t0[k] ).indexOf('no') < 0 ? 1 : 0;
+		if( a1 ) for( k in t0 = {Mp3:'mpeg',Ogg:'ogg',Wav:'wav',Mp4:'mp4'} ) detect['audio' + k] = a.canPlayType( 'audio/' + t0[k] + ';' ).indexOf('no') < 0 ? 1 : 0;
+		if( v1 ) for( k in t0 = {Webm:'/webm; codecs="vp8,mp4a.40.2"',H264:'mp4; codecs="avc1.42E01E,m4a.40.2"',Teora:'ogg; codecs="theora,vorbis"'} ) detect['video' + k] = a.canPlayType( 'video/' + t0[k] ).indexOf('no') < 0 ? 1 : 0;
 		keys = {premultipliedAlpha:1,stencil:1,preserveDrawingBuffer:1}, c = doc.createElement('canvas');
-		if( gl = c.getContext('webgl',keys) || c.getContext('experimental-webgl',keys) || c.getContext('webkit-3d',keys) || c.getContext('moz-webgl',keys) ){
+		if( c1 && ( gl = c.getContext('webgl',keys) || c.getContext('experimental-webgl',keys) || c.getContext('webkit-3d',keys) || c.getContext('moz-webgl',keys) ) ){
 			t0 = gl.getContextAttributes();
 			detect.glEnabled = 1;
 			t1 = 'alpha,antialias,depth,premultipliedAlpha,preserveDrawingBuffer,stencil'.split(',');
@@ -346,7 +346,7 @@ NET:
 			}
 			for( i in baseHeader ) if( httpH.indexOf(i) == -1 ) x.setRequestHeader( i, paramHeader(baseHeader[i]) );
 			x.send(arg);
-			if( !end ) return i = x.responseText, x.onreadystatechange = null, i;
+			if( !end ) return ( i = x.responseText ), delete x.onreadystatechange, i;
 		}
 	}, baseHeader = {};
 	fn( 'header', function( k, v ){baseHeader[k] ? err( 2200, k ) : baseHeader[k] = v;} ),
@@ -355,10 +355,9 @@ NET:
 })(trim);
 PLUGIN:
 (function(){
-	var required = {}, register = {}, depends = {},
-	types ={'method':bs.fn, 'class':bs.cls, 'static':bs.obj}, run,
+	var required = {}, types ={'method':bs.fn, 'class':bs.cls, 'static':bs.obj, 'require':function( k, v ){required[k] = v;}}, run,
 	require = function( data, key, type ){
-		var module = {exports:{}}, t0, t1 = data + ';return [module, exports];';
+		var module = {exports:{}}, t0, t1 = data + '\n\n;return [module, exports];';
 		try{
 			t0 = ( new Function( 'bs,module,exports', t1) )( bs, module, module.exports );
 		}catch(e){
@@ -374,8 +373,10 @@ PLUGIN:
 		}
 		err( 7001, t0 );
 	};
+	fn( 'required', function(k){return required[k];} ),
 	fn( 'require', function( end, url ){
-		return required[url] ? required[url] : end ? bs.get( function(data){end( required[url] = require(data) );}, url ) : required[url] = require(bs.get( null, url ));
+		if( required[url] ) return end ? end(required[url]) : required[url];
+		return  end ? bs.get( function(data){end( required[url] = require(data) );}, url ) : required[url] = require(bs.get( null, url ));
 	} ),
 	fn( 'repository', function(){return arguments[0] ? ( REPOSITORY = arguments[0] ) : REPOSITORY;} ),
 	fn( 'plugin', function(){for( var i = 0, j = arguments.length ; i < j ; i++ ) pque[pque.length] = arguments[i];} ),
@@ -384,7 +385,7 @@ PLUGIN:
 			var repo, k1 ,v1;
 			if( i0 >= j0 ) return end();
 			k1 = list[i0++], v1 = list[i0++];
-			if( depends[k1] ) return loader();
+			if( required[k1] ) return loader();
 			( repo = function(){
 				bs.get( function(data){
 					var info, add, t0, i, j, k, v;
@@ -403,7 +404,7 @@ PLUGIN:
 						t0 = [], i = 0;
 						while( i < j ){
 							k = info.depend[i++], v = info.depend[i++];
-							if( !depends[k] ) t0.push( k, v );
+							if( !required[k] ) t0.push( k, v );
 						}
 						if( t0.length > 1 ) run( add, t0 );
 					}else add();
