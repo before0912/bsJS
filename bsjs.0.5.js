@@ -8,7 +8,7 @@
 var VERSION = 0.5, REPOSITORY = 'http://projectbs.github.io/bsPlugin/js/',
 	CROSSPROXYKEY = 'CROSSPROXY_DEMO_ACCESS_KEY',
 	CROSSPROXY = 'http://api.bsplugin.com/bsNet/php/crossProxy.0.1.php',
-	none = function(){}, trim = /^\s*|\s*$/g, doc = W['document'], que = [], pque = [], timeout = 5000, mk, comp, detect, isDebug = 0,
+	none = function(){}, trim = /^\s*|\s*$/g, doc = W['document'], que = [], pque = [], plugin, timeout = 5000, mk, comp, detect, isDebug = 0,
 	bs = W[N = N || 'bs'] = function(f){que ? ( que[que.length] = f ) : f();},
 	err = function( num, msg ){console.log( num, msg ); if( isDebug ) throw new Error( num, msg );},
 	fn = bs.fn = function( key, v ){var t0 = key.replace( trim, '' ).toLowerCase(); t0 != key ? err( 1001, key ) : bs[t0] ? err( 2001, t0 ) : bs[t0] = v;};
@@ -356,37 +356,27 @@ NET:
 })(trim);
 PLUGIN:
 (function(){
-	var required = {}, types ={'method':bs.fn, 'class':bs.cls, 'static':bs.obj}, run,
-	require = function( data, key, type ){
-		var module = {exports:{}}, t0, t1 = data + '\n\n;return [module, exports];', k;
-		try{
-			t0 = ( new Function( 'bs,module,exports', t1) )( bs, module, module.exports );
-		}catch(e){
-			return err( 7000, e + '::' + t1 );
-		}
-		if( key ){
-			if( type == 'require' ){
-				t1 = {};
-				if( t0[0].exports ) for( k in t0[0].exports ) if( t0[0].exports.hasOwnProperty(k) ) t1[k] = t0[0].exports[k];
-				if( t0[1] ) for( k in t0[1] )if( t0[1].hasOwnProperty(k) && !t1[k] ) t1[k] = t0[1][k];	
-				return required[key] = t1;
-			}else if( ( type = types[type] ) && ( t1 = t0[0].exports[key] || t0[1][key] ) ) return type( key, t1 );
-		}else{
-			t1 = {};
-			if( t0[0].exports ) for( key in t0[0].exports ) if( t0[0].exports.hasOwnProperty(key) ) t1[key] = t0[0].exports[key];
-			if( t0[1] ) for( key in t0[1] )if( t0[1].hasOwnProperty(key) && !t1[key] ) t1[key] = t0[1][key];
-			return t1;
-		}
-		err( 7001, t0 );
+	var required = {}, types ={'method':bs.fn, 'class':bs.cls, 'static':bs.obj}, require = function( key, data, type ){
+		var module = {exports:{}}, t0, t1 = {}, k;
+		try{t0 = ( new Function( 'bs,module,exports', data + '\n\n;return [module, exports];' ) )( bs, module, module.exports );
+		}catch(e){return err( 7000, e + '::' + data );}
+		if( t0[0].exports ) for( k in t0[0].exports ) if( t0[0].exports.hasOwnProperty(k) ) t1[k] = t0[0].exports[k];
+		if( t0[1] ) for( k in t0[1] )if( t0[1].hasOwnProperty(k) && !t1[k] ) t1[k] = t0[1][k];
+		return ( t0 = types[type] ) ? ( required[key] = t1[key] )  ? t0( key, t1[key] ) : err( 7001, t1 ) : ( required[key] = t1 );
 	};
-	fn( 'required', function(k){return required[k];} ),
-	fn( 'require', function( end, url ){
-		if( required[url] ) return end ? end(required[url]) : required[url];
-		return  end ? bs.get( function(data){end( required[url] = require(data) );}, url ) : required[url] = require(bs.get( null, url ));
+	fn( 'require', function(){
+		var end, url, t0;
+		switch( arguments.length ){
+		case 1:return required[arguments[0]];
+		case 2:
+			end = arguments[0], t0 = required[url = arguments[1]];
+			if( t0 ) return end ? end(t0) : t0;
+			return  end ? bs.get( function(data){end(require( url, data ));}, url ) : require( url, bs.get( null, url ) );
+		}
 	} ),
 	fn( 'repository', function(){return arguments[0] ? ( REPOSITORY = arguments[0] ) : REPOSITORY;} ),
 	fn( 'plugin', function(){for( var i = 0, j = arguments.length ; i < j ; i++ ) pque[pque.length] = arguments[i];} ),
-	fn( 'plugin~', run = function( end, list ){
+	plugin = function( end, list ){
 		var i0 = 0, j0 = list.length, loader = function(){
 			var repo, k1 ,v1;
 			if( i0 >= j0 ) return end();
@@ -403,20 +393,20 @@ PLUGIN:
 					}
 					if( !(info = data[v1]) ) return err( 6002, data ), end();
 					if( typeof info == 'string' ) return k1 = info, repo();
-					add = function(){bs.get( function(data){require( data, k1, info.type ), loader();}, info.uri );};
+					add = function(){bs.get( function(data){require( k1, data, info.type ), loader();}, info.uri );};
 					if( info.depend && ( j = info.depend.length ) ){
 						t0 = [], i = 0;
 						while( i < j ){
 							k = info.depend[i++], v = info.depend[i++];
 							if( !required[k] ) t0.push( k, v );
 						}
-						if( t0.length > 1 ) run( add, t0 );
+						if( t0.length > 1 ) plugin( add, t0 );
 					}else add();
 				}, REPOSITORY + k1 + '.json' );
 			} )();
 		};
 		loader();
-	} );
+	};
 })();
 EVENT:
 fn( 'ev', (function(){
@@ -1303,7 +1293,7 @@ fn( 'ev', (function(){
 			while( i < j ) t0[i++]();
 		},
 		bs.obj( 'DETECT', detectDOM( W, detect ) ), DOM(), bs.obj( 'ANI', ANIMATE() ), EXT(), 
-		pque.length ? ( i = pque, pque = null, bs['plugin~']( start, i ) ) : start();
+		pque.length ? ( i = pque, pque = null, plugin( start, i ) ) : start();
 	}, 1 ),
 	EXT = function(){
 		var fn;
