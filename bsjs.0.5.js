@@ -8,6 +8,8 @@
 var VERSION = 0.5, REPOSITORY = 'http://projectbs.github.io/bsPlugin/js/',
 	CROSSPROXYKEY = 'CROSSPROXY_DEMO_ACCESS_KEY',
 	CROSSPROXY = 'http://api.bsplugin.com/bsNet/php/crossProxy.0.1.php',
+	NETWORKER = 'http://www.bsidesoft.com/bs/bsPHP/index.php/networker',
+	NETWORKERKEY = 'BSNETWORKER_20140707',
 	none = function(){}, trim = /^\s*|\s*$/g, doc = W['document'], que = [], pque = [], plugin, timeout = 5000, mk, comp, detect, isDebug = 0,
 	bs = W[N = N || 'bs'] = function(f){que ? ( que[que.length] = f ) : f();},
 	err = function( num, msg ){console.log( num, msg ); if( isDebug ) throw new Error( num, msg );},
@@ -142,8 +144,7 @@ if( !W['JSON'] ) W['JSON'] = {
 if( !W['console'] ) W['console'] = {log:none};
 CORE:
 (function(trim){
-	var rc = 0, rand, template,	js, head = doc.getElementsByTagName('head')[0], e = W['addEventListener'], id = 0, c = bs.__callback = {};
-	BASE:
+	var rc = 0, rand, template,	js, head = doc.getElementsByTagName('head')[0], e = W['addEventListener'], id = 0, c = bs.__callback = {}, slice = [].slice;
 	fn( 'obj', function( key, v ){var t0 = key.replace( trim, '' ).toUpperCase(); t0 != key ? err( 1002, key ) : bs[t0] ? err( 2002, t0 ) : bs[t0] = v;} ),
 	fn( 'cls', function( key, v ){
 		var t0 = key.replace( trim, '' ).toLowerCase(), t1, t2, cls, fn, k;
@@ -164,12 +165,10 @@ CORE:
 		}
 	} ),
 	fn( 'debug', function(v){return v === undefined ? isDebug : ( isDebug = v );} );
-	MATH:
 	rand = function(){return rc = ( ++rc ) % 1000, rand[rc] || ( rand[rc] = Math.random() );},
 	fn( 'rand', function( a, b ){return parseInt( rand() * ( b - a + 1 ) ) + a;} ), fn( 'randf', function( a, b ){return rand() * ( b - a ) + a;} ),
 	mk = function( t, m ){return function(r){return t[r] || t[r] == 0 ? 0 : ( t[r] = Math[m](r) );};},
 	fn( 'sin', mk( {}, 'sin' ) ), fn( 'cos', mk( {}, 'cos' ) ), fn( 'tan', mk( {}, 'tan' ) ), fn( 'atan', mk( {}, 'atan' ) );
-	STRING:
 	fn( 'trim', (function(trim){
 		var f = function(v){
 			var t0, i;
@@ -214,8 +213,7 @@ CORE:
 			if( opt ) for( i in opt ) if( opt.hasOwnProperty(i) ) param[param.length] = i, arg[arg.length] = opt[i];
 			return ( new Function( param.length ? param.join(',') : '', 'return ' + template( f.toString().replace( r0, re0 ), tmpl ) ) ).apply( null, arg );
 		};
-	})( /'@[^@]+@'/g, function(_0){return _0.substring( 1, _0.length - 1 );}, /^[^{]*\{|\}$/g, [], [] ) );
-	NETWORK:
+	})( /'@[^@]+@'/g, function(_0){return _0.substring( 1, _0.length - 1 );}, /^[^{]*\{|\}$/g, [], [] ) ),
 	fn( 'img', (function(c){
 		return function(end){
 			var progress, arg, t0, f, i, j;
@@ -264,7 +262,52 @@ CORE:
 		var arg = arguments, load, i = 1, j = arg.length;
 		if( end ) ( load = function(){i < j ? js( arg[i++], load, end ) : end();} )();
 		else while( i < j ) js( bs.get( null, arg[i++] ) );
-	});
+	}),
+	fn( 'worker', W['Worker'] ? (function(){
+		var worker = {}, body = [], type = {type:'application/javascript'}, blob, builder, url = W['URL'] || W['webkitURL'], toURL;
+		blob = W['Blob'] ? function(){
+			return new Blob( body, type );
+		} : ( builder = W['BlobBuilder'] || W['WebKitBlobBuilder'] || W['MozBlobBuilder'] ) ? function(){
+			var blob = new BlobBuilder();
+			return blob.append(body), blob.getBlob();
+		} : none,
+		toURL = function(f){return body[0] = 'onmessage=function(e){postMessage((' + f.toString() + ').apply(null,e.data));}', url.createObjectURL(blob());};
+		return function(){
+			var i = arguments.length, j = arguments[0];
+			if( i == 1 && ( i = worker[j] ) ) return i;
+			if( i == 2 && typeof (i = arguments[1] ) == 'function' ){
+				var u = toURL(i);
+				return worker[j] = function(end){
+					var worker = new Worker(u), isEnd = 0;
+					worker.onmessage = function(e){
+						if( isEnd++ ) return;
+						end(e.data);
+					},
+					worker.onerror = function(e){
+						if( isEnd++ ) return;
+						end( null, e );
+					},
+					worker.postMessage(slice.call( arguments, 1 ));
+				};
+			}
+			bs.err( 10001, arguments );
+		};
+	})() : none ),
+	fn( 'networker', (function(){
+		var worker = {};
+		return function(){
+			var i = arguments.length, j = arguments[0];
+			if( i == 1 && ( i = worker[j] ) ) return i;
+			if( i == 2 && typeof (i = arguments[1] ) == 'function' ){
+				return worker[j] = function(end){
+					bs.post( function( v, e ){end( v ? JSON.parse(v) : null, e || 'server error' );},
+						NETWORKER, 'BS', NETWORKERKEY, 'c', '(' + i.toString() + ').apply(null,' + JSON.stringify(slice.call( arguments, 1 )) + ')'
+					);
+				};
+			}
+			bs.err( 11001, arguments );
+		};
+	})() );
 })(trim);
 NET:
 (function( trim ){
@@ -364,18 +407,6 @@ PLUGIN:
 		if( t0[1] ) for( k in t0[1] )if( t0[1].hasOwnProperty(k) && !t1[k] ) t1[k] = t0[1][k];
 		return ( t0 = types[type] ) ? ( required[key] = t1[key] )  ? t0( key, t1[key] ) : err( 7001, t1 ) : ( required[key] = t1 );
 	};
-	fn( 'require', function(){
-		var end, url, t0;
-		switch( arguments.length ){
-		case 1:return required[arguments[0]];
-		case 2:
-			end = arguments[0], t0 = required[url = arguments[1]];
-			if( t0 ) return end ? end(t0) : t0;
-			return  end ? bs.get( function(data){end(require( url, data ));}, url ) : require( url, bs.get( null, url ) );
-		}
-	} ),
-	fn( 'repository', function(){return arguments[0] ? ( REPOSITORY = arguments[0] ) : REPOSITORY;} ),
-	fn( 'plugin', function(){for( var i = 0, j = arguments.length ; i < j ; i++ ) pque[pque.length] = arguments[i];} ),
 	plugin = function( end, list ){
 		var i0 = 0, j0 = list.length, loader = function(){
 			var repo, k1 ,v1;
@@ -406,7 +437,19 @@ PLUGIN:
 			} )();
 		};
 		loader();
-	};
+	},
+	fn( 'require', function(){
+		var end, url, t0;
+		switch( arguments.length ){
+		case 1:return required[arguments[0]];
+		case 2:
+			end = arguments[0], t0 = required[url = arguments[1]];
+			if( t0 ) return end ? end(t0) : t0;
+			return  end ? bs.get( function(data){end(require( url, data ));}, url ) : require( url, bs.get( null, url ) );
+		}
+	} ),
+	fn( 'repository', function(){return arguments[0] ? ( REPOSITORY = arguments[0] ) : REPOSITORY;} ),
+	fn( 'plugin', function(){for( var i = 0, j = arguments.length ; i < j ; i++ ) pque[pque.length] = arguments[i];} );
 })();
 EVENT:
 fn( 'ev', (function(){
