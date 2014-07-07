@@ -263,36 +263,38 @@ CORE:
 		if( end ) ( load = function(){i < j ? js( arg[i++], load, end ) : end();} )();
 		else while( i < j ) js( bs.get( null, arg[i++] ) );
 	}),
-	fn( 'worker', W['Worker'] ? (function(){
-		var worker = {}, body = [], type = {type:'application/javascript'}, blob, builder, url = W['URL'] || W['webkitURL'], toURL;
-		blob = W['Blob'] ? function(){
-			return new Blob( body, type );
-		} : ( builder = W['BlobBuilder'] || W['WebKitBlobBuilder'] || W['MozBlobBuilder'] ) ? function(){
-			var blob = new BlobBuilder();
-			return blob.append(body), blob.getBlob();
-		} : none,
-		toURL = function(f){return body[0] = 'onmessage=function(e){postMessage((' + f.toString() + ').apply(null,e.data));}', url.createObjectURL(blob());};
-		return function(){
-			var i = arguments.length, j = arguments[0];
-			if( i == 1 && ( i = worker[j] ) ) return i;
-			if( i == 2 && typeof (i = arguments[1] ) == 'function' ){
-				var u = toURL(i);
-				return worker[j] = function(end){
-					var worker = new Worker(u), isEnd = 0;
-					worker.onmessage = function(e){
-						if( isEnd++ ) return;
-						end(e.data);
-					},
-					worker.onerror = function(e){
-						if( isEnd++ ) return;
-						end( null, e );
-					},
-					worker.postMessage(slice.call( arguments, 1 ));
-				};
-			}
-			bs.err( 10001, arguments );
-		};
-	})() : none ),
+	fn( 'worker', (function(){
+		var worker, body, type, blob, builder, url, toURL;
+		if( W['Worker'] && ( blob = W['Blob'] ? function(){return new Blob( body, type );} :
+			( builder = W['BlobBuilder'] || W['WebKitBlobBuilder'] || W['MozBlobBuilder'] ) ? function(){
+				var blob = new BlobBuilder();
+				return blob.append(body), blob.getBlob();
+			} : 0 ) ){
+			worker = {}, body = [], type = {type:'application/javascript'}, url = W['URL'] || W['webkitURL'],
+			toURL = function(f){return body[0] = 'onmessage=function(e){postMessage((' + f.toString() + ').apply(null,e.data));}', url.createObjectURL(blob());}
+			return function(){
+				var i = arguments.length, j = arguments[0];
+				if( i == 1 && ( i = worker[j] ) ) return i;
+				if( i == 2 && typeof (i = arguments[1] ) == 'function' ){
+					var u = toURL(i);
+					return worker[j] = function(end){
+						var worker = new Worker(u), isEnd = 0;
+						worker.onmessage = function(e){
+							if( isEnd++ ) return;
+							end(e.data);
+						},
+						worker.onerror = function(e){
+							if( isEnd++ ) return;
+							end( null, e );
+						},
+						worker.postMessage(slice.call( arguments, 1 ));
+					};
+				}
+				bs.err( 10001, arguments );
+			};
+		}
+		return function(){return none;};
+	})() ),
 	fn( 'networker', (function(){
 		var worker = {};
 		return function(){
