@@ -8,9 +8,9 @@
 var VERSION = 0.5, REPOSITORY = 'http://projectbs.github.io/bsPlugin/js/',
 	CROSSPROXYKEY = 'CROSSPROXY_DEMO_ACCESS_KEY',
 	CROSSPROXY = 'http://api.bsplugin.com/bsNet/php/crossProxy.0.1.php',
-	NETWORKER = 'http://www.bsidesoft.com/bs/bsPHP/index.php/networker',
 	NETWORKERKEY = 'BSNETWORKER_20140707',
-	none = function(){}, trim = /^\s*|\s*$/g, doc = W['document'], que = [], pque = [], plugin, timeout = 5000, mk, comp, detect, isDebug = 0,
+	NETWORKER = 'http://www.bsidesoft.com/bs/bsPHP/index.php/networker',
+	log, none = function(){}, trim = /^\s*|\s*$/g, doc = W['document'], que = [], pque = [], plugin, timeout = 5000, mk, comp, detect, isDebug = 0,
 	bs = W[N = N || 'bs'] = function(f){que ? ( que[que.length] = f ) : f();},
 	err = function( num, msg ){console.log( num, msg ); if( isDebug ) throw new Error( num, msg );},
 	fn = bs.fn = function( key, v ){var t0 = key.replace( trim, '' ).toLowerCase(); t0 != key ? err( 1001, key ) : bs[t0] ? err( 2001, t0 ) : bs[t0] = v;};
@@ -34,11 +34,11 @@ detectWindow = function( W, detect ){
 	if( !detect ) detect = {};
 	if( agent.indexOf('android') > -1 ){
 		browser = os = 'android', device = agent.indexOf('mobile') == -1 ? ( browser += 'Tablet', 'tablet' ) : 'mobile',
-		osv = i = /android ([\d.]+)/.exec(agent) ? ( i = i[1].split('.'), parseFloat( i[0] + '.' + i[1] ) ) : 0,
+		osv = ( i = /android ([\d.]+)/.exec(agent) ) ? ( i = i[1].split('.'), parseFloat( i[0] + '.' + i[1] ) ) : 0,
 		naver() || opera() || chrome() || firefox() || ( bv = i = /safari\/([\d.]+)/.exec(agent) ? parseFloat(i[1]) : 0 );
 	}else if( agent.indexOf( i = 'ipad' ) > -1 || agent.indexOf( i = 'iphone' ) > -1 ){
-		device = i == 'ipad' ? 'tablet' : 'mobile', browser = os = i, osv = i = /os ([\d_]+)/.exec(agent) ? ( i = i[1].split('_'), parseFloat( i[0] + '.' + i[1] ) ) : 0,
-		naver() || opera() || chrome() || firefox() || ( bv = i = /mobile\/([\S]+)/.exec(agent) ? parseFloat(i[1]) : 0 );
+		device = i == 'ipad' ? 'tablet' : 'mobile', browser = os = i, osv = ( i = /os ([\d_]+)/.exec(agent) ) ? ( i = i[1].split('_'), parseFloat( i[0] + '.' + i[1] ) ) : 0,
+		naver() || opera() || chrome() || firefox() || ( bv = ( i = /mobile\/([\S]+)/.exec(agent) ) ? parseFloat(i[1]) : 0 );
 	}else if( platform.indexOf('win') > -1 ){
 		for( i in t0 = {'5.1':'xp', '6.0':'vista','6.1':'7','6.2':'8','6.3':'8.1'} ){
 			if( agent.indexOf( 'windows nt ' + i ) > -1 ){
@@ -141,7 +141,28 @@ if( !W['JSON'] ) W['JSON'] = {
 		};
 	})(/["]/g)
 };
-if( !W['console'] ) W['console'] = {log:none};
+fn( 'log', log = (function(){
+	var t0 = [], mode = 1;
+	return function(){
+		var i, j, k;
+		if( !doc.getElementById('BSCSE') ){
+			bs.Css('.BSCSE0').S('border-bottom','1px solid #ddd','padding','10px 0'),
+			bs.Css('.BSCSE1').S('font-size',8,'color','#777'),
+			bs.Css('.BSCSE2').S('float','left','margin',5,'border','1px dashed #aaa','padding',2),
+			bs.Dom('<div id="BSCSE" style="position:fixed;z-index:999999;width:100%;background:#fdfdfd;bottom:0;left:0"></div>').S( 'height',300,'<','body',
+				'>', bs.Dom('<div style="width:100%;background:#ccc;cursor:pointer;height:20px"></div>').S('down',function(e){
+					if( mode ) mode = 0, bs.ANI.style( bs.Dom('#BSCSE'), 'height', 20, 'time', .7 );
+					else mode = 1, bs.ANI.style( bs.Dom('#BSCSE'), 'height', 300, 'time', .7 );
+				}, 'this'),
+				'>', '<div id="BSCC" style="font-family:DotumChe,Courier;overflow-y:scroll;height:280px"></div>'
+			);
+		}
+		for( i = 0, j = arguments.length, t0.length = 0, t0[0] = '<div class="BSCSE1">' + Date.now() + '</div>' ; i < j ; i++ )
+			k = arguments[i], t0[t0.length] = '<div class="BSCSE2">' + (typeof k == 'object' ? JSON.stringify(k) : k + '' ) + '</div>';
+		bs.Dom('#BSCC').S( '>', '<div class="BSCSE0">'+t0.join('')+'<br clear="both"></div>' );
+	};
+})() );
+if( !W['console'] ) W['console'] = {log:log};
 CORE:
 (function(trim){
 	var rc = 0, rand, template,	js, head = doc.getElementsByTagName('head')[0], e = W['addEventListener'], id = 0, c = bs.__callback = {}, slice = [].slice;
@@ -346,7 +367,8 @@ NET:
 			clearTimeout(timeId), timeId = -1,
 			text = x.status == 200 || x.status == 0 ? x.responseText : null,
 			status = text ? x.getAllResponseHeaders() : x.status,
-			x.onreadystatechange = null, end( text, status );
+			xhrType ? delete x.onreadystatechange : x.onreadystatechange = null,
+			end( text, status );
 		};
 	},
 	head = [], paramBody = [], paramHeader = function(v){return typeof v == 'function' ? v(httpMethod) : v;},
@@ -594,10 +616,6 @@ fn( 'ev', (function(){
 						k = t1;
 					}
 					v ? t0.on( k, g, c, m, a ) : t0.off( k, g );
-				},
-				is:function(sel){
-					var t0 = query(sel);
-					return t0 && t0.length;
 				},
 				scroll:(function( W, doc, root, docEl ){
 					return function scroll(){
