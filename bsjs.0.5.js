@@ -142,24 +142,26 @@ if( !W['JSON'] ) W['JSON'] = {
 	})(/["]/g)
 };
 fn( 'log', log = (function(){
-	var t0 = [], mode = 1;
+	var t0 = [], mode = 1, base, prev;
 	return function(){
-		var i, j, k;
+		var i, j, k, l;
 		if( !doc.getElementById('BSCSE') ){
+			prev = base = Date.now();
 			bs.Css('.BSCSE0').S('border-bottom','1px solid #ddd','padding','10px 0'),
-			bs.Css('.BSCSE1').S('font-size',8,'color','#777'),
+			bs.Css('.BSCSE1').S('font-size',8,'color','#777', 'margin-left', 10),
 			bs.Css('.BSCSE2').S('float','left','margin',5,'border','1px dashed #aaa','padding',2),
 			bs.Dom('<div id="BSCSE" style="position:fixed;z-index:999999;width:100%;background:#fdfdfd;bottom:0;left:0"></div>').S( 'height',300,'<','body',
 				'>', bs.Dom('<div style="width:100%;background:#ccc;cursor:pointer;height:20px"></div>').S('down',function(e){
-					if( mode ) mode = 0, bs.ANI.style( bs.Dom('#BSCSE'), 'height', 20, 'time', .7 );
-					else mode = 1, bs.ANI.style( bs.Dom('#BSCSE'), 'height', 300, 'time', .7 );
+					if( mode ) mode = 0, bs.ANI.style( bs.Dom('#BSCSE'), 'height', 20, 'time', .6 );
+					else mode = 1, bs.ANI.style( bs.Dom('#BSCSE'), 'height', 300, 'time', .6 );
 				}, 'this'),
 				'>', '<div id="BSCC" style="font-family:DotumChe,Courier;overflow-y:scroll;height:280px"></div>'
 			);
 		}
-		for( i = 0, j = arguments.length, t0.length = 0, t0[0] = '<div class="BSCSE1">' + Date.now() + '</div>' ; i < j ; i++ )
+		for( i = 0, j = arguments.length, t0.length = 0, t0[0] = '<div class="BSCSE1">' + ( l = ( k = Date.now() ) - base ) + ' : ' + ( k - prev ) + '</div>', prev = k ; i < j ; i++ )
 			k = arguments[i], t0[t0.length] = '<div class="BSCSE2">' + (typeof k == 'object' ? JSON.stringify(k) : k + '' ) + '</div>';
 		bs.Dom('#BSCC').S( '>', '<div class="BSCSE0">'+t0.join('')+'<br clear="both"></div>' );
+		return l;
 	};
 })() );
 if( !W['console'] ) W['console'] = {log:log};
