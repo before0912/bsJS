@@ -175,7 +175,6 @@ CORE:
 			( fn = ( cls = function(arg){return this.__bsKey = arg[0], this.NEW.apply( this, arg );} ).prototype ).NEW = none,
 			v( t1 = {}, t2 = {}, bs ), f = bs[t0] = function(key){
 				var t0;
-				if( !key ) return f;
 				if( typeof key == 'string' && key ){
 					if( ( t0 = key.charAt(0) ) == '@' ) return cls[arguments[0] = key.substr(1)] = new cls(arguments);
 					else if( t0 != '<' ) return cls[key] || ( cls[key] = new cls(arguments) );
@@ -754,8 +753,11 @@ fn( 'ev', (function(){
 					return k == undefined ? data[t0] : k == null ? ( delete data[el.getAttribute('data-bs')], el.removeAttribute('data-bs') ) : v == undefined ? data[t0][k] : v === null ? delete data[t0][k] : ( data[t0][k] = v );
 				};
 			})(),
-			clsfn.fn = function( k, v ){attrs[k] = attrs[k] ? err( 2300, k ) : v;},
-			clsfn.first = function( k, v ){first[k] = first[k] ? err( 2301, k ) : v;},
+			clsfn.fn = function( type, k, v ){
+				console.log( type );
+				if( type == 'key' ) attrs[k] = attrs[k] ? err( 2300, k ) : v;
+				else if( type == 'first' ) first[k] = first[k] ? err( 2301, k ) : v;
+			},
 			clsfn.del = del = (function( domData, ev ){
 				var m = {'object':1, 'function':1};
 				return function(target){
@@ -1384,8 +1386,9 @@ fn( 'ev', (function(){
 			} );
 		}
 		DOM:
+		fn = bs.Dom.fn;
 		(function(trim){
-			var k, x, y, t = detect.text, nodes = [], ds0 = {}, del = bs.Dom.del, html = bs.Dom.html, dom = bs.Dom.dom, childNodes, t0;
+			var k, x, y, t = detect.text, nodes = [], ds0 = {}, del = bs.Dom.del, html = bs.Dom.html, dom = bs.Dom.dom, childNodes, t0, t1, t2;
 			childNodes = function(n){
 				var i, j;
 				for( nodes.length = i = 0, j = n.length ; i < j ; i++ ) if( n[i].nodeType == 1 ) nodes[nodes.length] = n[i];
@@ -1425,11 +1428,15 @@ fn( 'ev', (function(){
 					t0 = t0.split(' '); 
 					if( ( i = t0.indexOf(v) ) > -1 ) t0.splice( i, 1 );
 					return d.className = t0.join(' ');
-				},
-				text:function( d, k, v ){return v === undefined ? d[t] : ( d[t] = v );},
-				'text+':function( d, k, v ){return d[t] += v;},
-				'+text':function( d, k, v ){return d[t] = v + d[t];}
-			} )if( t0.hasOwnProperty(k) ) bs.Dom.fn( k, t0[k] );
+				}
+			} )if( t0.hasOwnProperty(k) ) fn( 'key', k, t0[k] );
+			fn( 'key', 'before', comp( t0 = function( d, k, v ){
+				var p, t0, i, j;
+				if( v === undefined ) return '@a@';
+				if( v === null ) return d.parentNode.removeChild('@a@');
+				if( ( p = d.parentNode ) && ( t0 = dom(v) ) && ( j = t0.length ) ) for( '@b@', i = 0 ; i < j ; i++ ) p.insertBefore( t0[i], d );
+			}, t1 = {a:'d.previousSibling', b:0}, t2 = {dom:dom} ) ),
+			fn( 'key', 'after', comp( t0, ( t1.a = 'd.nextSibling', t1.b = 'd = d.nextSibling', t1 ), t2 ) );
 			for( k in t0 = {
 				'@':(function(){
 					var key = {'value':1, 'checked':1, 'selected':1};
@@ -1486,7 +1493,7 @@ fn( 'ev', (function(){
 						else if( d.childNodes && childNodes(d.childNodes).length ) del(nodes);
 					}else return childNodes(d.childNodes), k ? ( nodes[0] = nodes[k], nodes.length = 1, nodes ) : nodes;
 				}
-			} )if( t0.hasOwnProperty(k) ) bs.Dom.first( k, t0[k] );
+			} )if( t0.hasOwnProperty(k) ) fn( 'first', k, t0[k] );
 		})(trim);
 		EVENT:
 		fn = bs.ev.dom.fn;
