@@ -754,7 +754,6 @@ fn( 'ev', (function(){
 				};
 			})(),
 			clsfn.fn = function( type, k, v ){
-				console.log( type );
 				if( type == 'key' ) attrs[k] = attrs[k] ? err( 2300, k ) : v;
 				else if( type == 'first' ) first[k] = first[k] ? err( 2301, k ) : v;
 			},
