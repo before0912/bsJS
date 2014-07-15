@@ -13,7 +13,7 @@ var VERSION = 0.5, REPOSITORY = 'http://projectbs.github.io/bsPlugin/js/',
 	log, none = function(){}, trim = /^\s*|\s*$/g, doc = W['document'], que = [], pque = [], plugin, timeout = 5000, mk, comp, detect, isDebug = 0,
 	bs = W[N = N || 'bs'] = function(f){que ? ( que[que.length] = f ) : f();},
 	err = function( num, msg ){console.log( num, msg ); if( isDebug ) throw new Error( num, msg );},
-	fn = bs.fn = function( key, v ){var t0 = key.replace( trim, '' ).toLowerCase(); t0 != key ? err( 1001, key ) : bs[t0] ? err( 2001, t0 ) : bs[t0] = v;};
+	fn = bs.fn = function( key, v ){var t0 = key.replace( trim, '' ).toLowerCase();( !arguments[2] && t0 != key ) ? err( 1001, key ) : bs[t0] ? err( 2001, t0 ) : bs[t0] = v;};
 DETECT:
 var detectWindow, detectDOM;
 detectWindow = function( W, detect ){
@@ -168,24 +168,24 @@ if( !W['console'] ) W['console'] = {log:log};
 CORE:
 (function(trim){
 	var rc = 0, rand, template,	js, head = doc.getElementsByTagName('head')[0], e = W['addEventListener'], id = 0, c = bs.__callback = {}, slice = [].slice;
-	fn( 'obj', function( key, v ){var t0 = key.replace( trim, '' ).toUpperCase(); t0 != key ? err( 1002, key ) : bs[t0] ? err( 2002, t0 ) : bs[t0] = v;} ),
+	fn( 'obj', function( key, v ){var t0 = key.replace( trim, '' ).toUpperCase();( !arguments[2] && t0 != key ) ? err( 1002, key ) : bs[t0] ? err( 2002, t0 ) : bs[t0] = v;} ),
 	fn( 'cls', function( key, v ){
-		var t0 = key.replace( trim, '' ).toLowerCase(), t1, t2, cls, fn, k;
-		t0 = t0.charAt(0).toUpperCase() + t0.substr(1), t0 != key ? err( 1003, key ) : bs[t0] ? err( 2003, t0 ) : (
-			( fn = ( cls = function(arg){return this.__bsKey = arg[0], this.NEW.apply( this, arg );} ).prototype ).NEW = none, fn.END = function(){delete cls[this.__bsKey];},
-			t0 = bs[t0] = fn.instanceOf = function(key){
+		var t0 = key.replace( trim, '' ).toLowerCase(), t1, t2, cls, fn, k, f;
+		t0 = t0.charAt(0).toUpperCase() + t0.substr(1), ( !arguments[2] && t0 != key ) ? err( 1003, key ) : bs[t0] ? err( 2003, t0 ) : (
+			( fn = ( cls = function(arg){return this.__bsKey = arg[0], this.NEW.apply( this, arg );} ).prototype ).NEW = none,
+			v( t1 = {}, t2 = {}, bs ), f = bs[t0] = function(key){
 				var t0;
+				if( !key ) return f;
 				if( typeof key == 'string' && key ){
 					if( ( t0 = key.charAt(0) ) == '@' ) return cls[arguments[0] = key.substr(1)] = new cls(arguments);
 					else if( t0 != '<' ) return cls[key] || ( cls[key] = new cls(arguments) );
 				}
 				return new cls(arguments);
-			}, v( t1 = {}, t2 = {}, bs )
+			}
 		);
-		if( fn ){
-			for( k in t1 ) if( t1.hasOwnProperty(k) ) fn[k] = t1[k];
-			for( k in t2 ) if( t2.hasOwnProperty(k) ) t0[k] = t2[k];
-		}
+		for( k in t1 ) if( t1.hasOwnProperty(k) ) fn[k] = t1[k];
+		for( k in t2 ) if( t2.hasOwnProperty(k) ) f[k] = t2[k];
+		fn.END = function(){delete cls[this.__bsKey];}, fn.instanceOf = f;
 	} ),
 	fn( 'debug', function(v){return v === undefined ? isDebug : ( isDebug = v );} );
 	rand = function(){return rc = ( ++rc ) % 1000, rand[rc] || ( rand[rc] = Math.random() );},
@@ -431,7 +431,7 @@ PLUGIN:
 		}catch(e){return err( 7000, e + '::' + data );}
 		if( t0[0].exports ) for( k in t0[0].exports ) if( t0[0].exports.hasOwnProperty(k) ) t1[k] = t0[0].exports[k];
 		if( t0[1] ) for( k in t0[1] )if( t0[1].hasOwnProperty(k) && !t1[k] ) t1[k] = t0[1][k];
-		return ( t0 = types[type] ) ? ( required[key] = t1[key] )  ? t0( key, t1[key] ) : err( 7001, t1 ) : ( required[key] = t1 );
+		return ( t0 = types[type] ) ? ( required[key] = t1[key] )  ? t0( key, t1[key], 1 ) : err( 7001, t1 ) : ( required[key] = t1 );
 	};
 	plugin = function( end, list ){
 		var i0 = 0, j0 = list.length, loader = function(){
@@ -744,8 +744,9 @@ fn( 'ev', (function(){
 		bs.cls( 'Dom', function( fn, clsfn, bs ){
 			var ev = bs.ev, del, dom, domData, first = {};
 			clsfn.data = domData = (function(){
-				var id = 1, data = {};
-				return detect.customData ? function( el, k, v ){
+				var id = 1, data = {}, t0 = doc.createElement('div');
+				t0.innerHTML = '<div data-test-aaa="3"></div>';
+				return t0.childNodes[0].dataset && t0.childNodes[0].dataset.testAaa == "3" ? function( el, k, v ){
 					var t0 = el.dataset.bs || ( data[id] = {}, el.dataset.bs = id++ );
 					return k == undefined ? data[t0] : k == null ? ( delete data[el.dataset.bs], delete el.dataset.bs ) : v == undefined ? data[t0][k] : v === null ? delete data[t0][k] : ( data[t0][k] = v );
 				}: function( el, k, v ){
