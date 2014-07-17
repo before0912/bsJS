@@ -1464,7 +1464,7 @@ fn( 'ev', (function(){
 						k = 'data-' + k.substr(1).toLowerCase();
 						if( v === undefined ) v = d.getAttribute(k);
 						else if( v === null ){
-							delete d.removeAttribute(k);
+							d.removeAttribute(k);
 						}else d.setAttribute( k, v );
 						return v;
 					};
