@@ -988,7 +988,7 @@ fn( 'ev', (function(){
 					if( !r ) r = R;
 					r.length = 0, doc ? ( DOC = doc ) : ( doc = DOC );
 					if( rClsTagId.test(query) ) switch( query.charAt(0) ){
-						case'#':return r[r.length++] = doc.getElementById(query.substr(1)), r;
+						case'#':return r[r.length + 1] = doc.getElementById(query.substr(1)), r;
 						case'.':return className(query.substr(1));
 						default:return tagName[query] || ( tagName[query] = doc.getElementsByTagName(query) );
 					}
@@ -1087,7 +1087,7 @@ fn( 'ev', (function(){
 							if( hit ) break;
 						}
 						if( i == j - 1 ) sels.length = 0, arrs[arrs._l++] = sels;
-						if( hit ) r[r.length++] = els[i];
+						if( hit ) r[r.length + 1] = els[i];
 					}
 					return r;
 				};
