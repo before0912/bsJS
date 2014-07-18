@@ -1480,18 +1480,25 @@ fn( 'ev', (function(){
 						return t0 = dom(v), t0[0].appendChild(d), t0;
 					}else return d.parentNode;
 				},
-				'>':function( d, k, v ){
-					var data, t0, t1, i, j, m, n;
-					k = k.substr(1);
-					if( v ){
-						if( k ) return bs.Dom(childNodes(d.childNodes)[k]).S(v);
-						else if( d.nodeName.toLowerCase() == 'table' ) html( v, d, '>' );
-						else for( t0 = dom(v), i = 0, j = t0.length ; i < j ; i++ ) d.appendChild(t0[i].cloneNode(true));
-					}else if( v === null ){
-						if( k ) nodes[0] = childNodes(d.childNodes)[k], nodes.length = 1, del(nodes);
-						else if( d.childNodes && childNodes(d.childNodes).length ) del(nodes);
-					}else return childNodes(d.childNodes), k ? ( nodes[0] = nodes[k], nodes.length = 1, nodes ) : nodes;
-				}
+				'>':(function(){
+					var r = [];
+					return function( d, k, v ){
+						var data, t0, t1, i, j, m, n;
+						k = k.substr(1);
+						if( v ){
+							if( k ) return bs.Dom(childNodes(d.childNodes)[k]).S(v);
+							else if( d.nodeName.toLowerCase() == 'table' ) return html( v, d, '>' );
+							else{
+								r.length = 0;
+								for( t0 = dom(v), i = 0, j = t0.length ; i < j ; i++ ) d.appendChild( t1 = t0[i].cloneNode(true) ), r.push(t1);
+								return r;
+							}
+						}else if( v === null ){
+							if( k ) nodes[0] = childNodes(d.childNodes)[k], nodes.length = 1, del(nodes);
+							else if( d.childNodes && childNodes(d.childNodes).length ) del(nodes);
+						}else return childNodes(d.childNodes), k ? ( nodes[0] = nodes[k], nodes.length = 1, nodes ) : nodes;
+					}
+				})()
 			} )if( t0.hasOwnProperty(k) ) fn( 'first', k, t0[k] );
 		})(trim);
 		EVENT:
