@@ -492,15 +492,15 @@ fn( 'ev', (function(){
 			while( i < j ) t0[t0.length] = arguments[i++];
 		}
 		return t0[t0.length] = this, t1;
-	}, fn['-'] = function( channel, type, group ){
+	}, fn['-'] = function( channel, type, group, listener ){
 		var t0 = this.o[channel], t1, i;
 		if( t0 && ( t0 = t0[t0[type]] ) ){
 			i = t0.length;
 			if( group ){
-				while( i-- ) if( ( t1 = t0[i] ).g == group ) on[on._l++] = ( t0.splice( i, 1 ), t1.c = t1.m = t1.g = null, t1.a.length = 0, t1 );
+				while( i-- ) if( ( t1 = t0[i] ).g == group && ( !listener || t1 == listener ) ) on[on._l++] = ( t0.splice( i, 1 ), t1.c = t1.m = t1.g = null, t1.a.length = 0, t1 );
 				return t0.length;
 			}else{
-				while( i-- ) on[on._l++] = ( t1 = t0[i] ).c = t1.m = t1.g = null, t1.a.length = 0, t1;
+				while( i-- ) if( !listener || t1 == listener ) on[on._l++] = ( t1 = t0[i] ).c = t1.m = t1.g = null, t1.a.length = 0, t1;
 				return t0.length = 0;
 			}
 		}else return -1;
