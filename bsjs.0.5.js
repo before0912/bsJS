@@ -1486,7 +1486,7 @@ fn( 'ev', (function(){
 					if( v ){
 						if( k ) return bs.Dom(childNodes(d.childNodes)[k]).S(v);
 						else if( d.nodeName.toLowerCase() == 'table' ) html( v, d, '>' );
-						else for( t0 = dom(v), i = 0, j = t0.length ; i < j ; i++ ) d.appendChild(t0[i]);
+						else for( t0 = dom(v), i = 0, j = t0.length ; i < j ; i++ ) d.appendChild(t0[i].cloneNode(true));
 					}else if( v === null ){
 						if( k ) nodes[0] = childNodes(d.childNodes)[k], nodes.length = 1, del(nodes);
 						else if( d.childNodes && childNodes(d.childNodes).length ) del(nodes);
