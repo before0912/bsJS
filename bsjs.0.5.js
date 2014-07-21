@@ -1258,7 +1258,7 @@ fn( 'ev', (function(){
 				if( pause == 1 && this.pause == 0 ) return this.pause = T, 0;
 				else if( pause == 2 && this.pause ) t0 = T - this.pause, this.stime += t0, this.etime += t0, this.pause = 0;
 			if( this.pause || ( term = T - this.stime ) < 0 ) return;
-			l = this.length, j = this.keyLen, circle = this.circle, bezier = this.bezier;
+			l = this.length, j = this.keyLen, circle = this.circle, bezier = this.bezier, e = this.ease;
 			if( term > ( time = this.time ) ){
 				if( bezier ) bt = this.bezier0, bl = bt.length;
 				if( --this.loopC ){
@@ -1277,7 +1277,7 @@ fn( 'ev', (function(){
 						cvy = circle.centerY + circle.offsetY + sin(circle.angle1) * circle.radius1, cky = circle.y
 					while( l-- ){
 						t0 = this[l], i = 2, t1 = t0[0], '@aniTarget@';
-						while( i < j ) k = t0[i++], v = t0[i++] + t0[i++], '@ani@';
+						while( i < j ) k = t0[i++], v = t0[i++] + e.roll ? 0 : t0[i], i++, '@ani@';
 						if( circle ) '@aniCircle@';
 						if( bezier ) for( i = 0 ; i < bl ; i += 5 ) k = bt[i], v = bt[i + 2][2], '@aniBezier@';
 					}
@@ -1286,7 +1286,7 @@ fn( 'ev', (function(){
 					return 1;
 				}
 			}
-			e = this.ease, rate = term * this.timeR;
+			rate = term * this.timeR;
 			if( circle ) i = e( rate, circle.angle0, circle.angle2, term, time ), j = e( rate, circle.radius0, circle.radius2, term, time ),
 				cvx = circle.centerX + circle.offsetX + cos(i) * j, ckx = circle.x, cvy = circle.centerY + circle.offsetY + sin(i) * j, cky = circle.y;
 			if( bezier ) bv1 = 2 * ( rate - ( bv0 = rate * rate ) ), bv2 = 1 - 2 * rate + bv0, bt = this.bezier0, bl = bt.length;
@@ -1342,7 +1342,7 @@ fn( 'ev', (function(){
 			pause:mk0( 1, 1 ), resume:mk0( 0, 2 ), tweenStop:mk1(0), tweenPause:mk1(1), tweenResume:mk1(2), tweenToggle:mk1(3),
 			toggle:function(){return isPause ? ANI.resume() : ANI.pause(), isPause;},
 			stop:function(){end();},
-			ease:function( k, v ){v ? ease[k] ? err( 2501, k ) : ease[k] = v : ease[k];}
+			ease:function( k, v, isRoll ){v ? ease[k] ? err( 2501, k ) : ease[k] = v : ease[k], v.roll = isRoll;}
 		};
 		return ANI;
 	},
