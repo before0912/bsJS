@@ -1166,7 +1166,7 @@ fn( 'ev', (function(){
 		})();
 	},
 	ANIMATE = function(){
-		var ani, time, timer, start, end, ltype, loop, ease, ex, tweenS, tweenANI, isLive, isPause, tween, ANI, mk0, mk1, i;
+		var ani, time, timer, start, end, ltype, loop, ease, ex, tweenS, tweenANI, isLive, isPause, tween, ANI, mk0, mk1, i, pool = {length:0};
 		ani = [], time = 0, timer = 'equestAnimationFrame';
 		if( timer = W['r' + timer] || W[bs.DETECT.stylePrefix + 'R' + timer] )
 			start = function(){if( !isLive ) isPause = 0, isLive = 1, loop();},
@@ -1219,7 +1219,7 @@ fn( 'ev', (function(){
 				if( tween[k] ){
 					k == 'time' ? ( tw.time = parseInt( v * 1000 ), tw.timeR = 1 / tw.time ) :
 					k == 'ease' ? tw.ease = ease[v] :
-					k == 'end' || k == 'update' ? tw[k] = v :
+					k == 'id' || k == 'end' || k == 'update' ? tw[k] = v :
 					k == 'loop' ? tw.loop = tw.loopC = v :
 					k == 'delay' ? tw.delay = parseInt( v * 1000 ) :
 					k == 'group' || k == 'yoyo' || k == 'bezier' || k == 'circle' ? tw[k] = v : 0
@@ -1324,7 +1324,7 @@ fn( 'ev', (function(){
 					var i = keyLen;
 					while( i-- ) if( !( keys[i] in tmpl ) ) return 0;
 					return 1;
-				}, pool = {length:0}, tween = function(){}, opt = {
+				}, tween = function(){}, opt = {
 					ease:ease, tween:tween, ex:ex, tweenANI:tweenANI,
 					toRadian:Math.PI/180, cos:bs.cos, sin:bs.sin,
 					style:bs.Style.keys, pool:pool
@@ -1387,7 +1387,7 @@ fn( 'ev', (function(){
 		DOM:
 		fn = bs.Dom.fn;
 		(function(trim){
-			var k, x, y, t = detect.text, nodes = [], ds0 = {}, del = bs.Dom.del, html = bs.Dom.html, dom = bs.Dom.dom, childNodes, t0, t1, t2;
+			var k, x, y, t = detect.text, nodes = [], ds0 = {}, del = bs.Dom.del, html = bs.Dom.html, dom = bs.Dom.dom, childNodes, ev = bs.ev.dom, t0, t1, t2;
 			childNodes = function(n){
 				var i, j;
 				for( nodes.length = i = 0, j = n.length ; i < j ; i++ ) if( n[i].nodeType == 1 ) nodes[nodes.length] = n[i];
@@ -1403,7 +1403,7 @@ fn( 'ev', (function(){
 					if( ds.length ) ( d.bsS || ( d.bsS = new style(d.style) ) ).S(ds);
 				},
 				style:function(d){return d.bsS;},
-				isCapture:function(d){return arguments.length == 1 ? d.bsE ? d.bsE.isCapture() : 0 : ( d.bsE || ev(d) ).isCapture(arguments[1]);},
+				isCapture:function(d){return arguments.length == 1 ? d.bsE ? d.bsE.isCapture : 0 : ( d.bsE || ev(d) ).isCapture = arguments[1];},
 				x:x = function(d){var i = 0; do i += d.offsetLeft; while( d = d.offsetParent ) return i;},
 				y:y = function(d){var i = 0; do i += d.offsetTop; while( d = d.offsetParent ) return i;},
 				lx:function(d){return x(d) - x(d.parentNode);},
