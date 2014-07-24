@@ -1,4 +1,4 @@
-/* bsJS v0.5
+/* bsJS v0.5.4
  * Copyright (c) 2013 by ProjectBS Committe and contributors. 
  * http://www.bsplugin.com All rights reserved.
  * Licensed under the BSD license. See http://opensource.org/licenses/BSD-3-Clause
@@ -343,10 +343,10 @@ NET:
 		return function(){return new ActiveXObject(j);};
 	})() : function(){return new XMLHttpRequest;},
 	cross = W['XDomainRequest'] ? (function(){
-		var mk = function( x, err ){return function(){x.ontimeout = x.onload = x.onerror = null, err ? ( x.abort(), end( null, err ) ) : end(x.responseText);};};//( x = JSON.parse(x.responseText), end( x.data, x.header ) );};};
+		var mk = function( x, err, end ){return function(){x.ontimeout = x.onload = x.onerror = null, err ? ( x.abort(), end( null, err ) ) : end(x.responseText);};};
 		return function( data, end ){
 			var x = new XDomainRequest;
-			x.ontimeout = mk( x, 'timeout'), x.timeout = timeout, x.onerror = mk( x, 'xdr error'), x.onload = mk(x), x.open( 'POST', CROSSPROXY ), x.send(data);
+			x.ontimeout = mk( x, 'timeout', end ), x.timeout = timeout, x.onerror = mk( x, 'xdr error', end ), x.onload = mk( x, 0, end ), x.open( 'POST', CROSSPROXY ), x.send(data);
 		};
 	})() : W['XMLHttpRequest'] ? function( data, end ){
 		var x = xhr();
@@ -402,7 +402,7 @@ NET:
 			k = i;
 			for( i in baseHeader ) if( httpH.indexOf(i) == -1 ) httpCross[k++] = i, httpCross[k++] = paramHeader(baseHeader[i]);
 			k = param( httpCross, 0 ), httpCross.length = 0,
-			httpCross.push( 'url', U, 'method', method, 'key', key, 'cookie', document.cookie, 'data', arg, 'header', k );
+			httpCross.push( 'url', U, 'method', method, 'key', key, 'data', arg, 'header', k );
 			cross( param(httpCross, 0), end );
 		}else{
 			x = xhr();
@@ -508,11 +508,11 @@ fn( 'ev', (function(){
 		var t0 = this.o[channel], i = 0, j, k;
 		t0 = t0[t0[type]], j = t0.length;
 		if( group ) while( i < j ){if( ( k = t0[i++] ).g == group && k.m.apply( k.c, k.a ) ) return;} else while( i < j ){if( ( k = t0[i++] ).m.apply( k.c, k.a ) ) return;}
-	},
+	}, fn.NEW = fn.END = none;
 	f = function( k, v ){
 		var cls, fn, t0, t1, i;
 		if( f[k] ) err( 0, k );
-		pool[k] = {_l:0}, cls = function(){this.o = {_l:0}}, fn = cls.prototype = new ev,
+		pool[k] = {_l:0}, cls = function(){this.o = {_l:0};}, fn = cls.prototype = new ev,
 		f[k] = function(v){
 			if( v instanceof ev ){
 				for( k in v.o ){
@@ -523,14 +523,73 @@ fn( 'ev', (function(){
 						t0[i].length = 0;
 					}
 				}
-				pool[k][pool[k]._l++] = v;
-			}else return t0 = pool[k], t0._l ? t0[--t0._l] : new cls;
+				pool[k][pool[k]._l++] = ( v.END(), v );
+			}else return t0 = pool[k], t0 = t0._l ? t0[--t0._l] : new cls, t0.NEW.apply( t0, arguments ), t0;
 		},
 		v( t0 = {}, t1 = {}, bs );
 		for( i in t0 ) if( t0.hasOwnProperty(i) ) fn[i] = t0[i];
 		for( i in t1 ) if( t1.hasOwnProperty(i) ) f[k][i] = t1[i];
 	};
 	return f;
+})() );
+fn( 'router', (function(){
+	var localKey = '@BSrouterCache', defaultC = 'index', defaultM = 'index', table = {}, path, isHash = 'onhashchange' in W, timer, history = [location.hash.substr(1)],
+	change = function(){
+		var last = history[history.length-1], curr = location.hash.substr(1);
+		if( last != curr ) curr == history[history.length-2] ? history.pop() : history[history.length] = curr;
+		route();
+	},
+	defaultEND = function(v){v && ( v = v.controller ) && ( v = v[defaultM] ) && typeof v == 'function' ? v() : err( 12003, '/' );},
+	route = function(){
+		var hash = history[history.length - 1], uri, id, end, t0, i, j, k;
+		if( !hash ) return hash = '/', ( t0 = table.index ) && typeof t0 == 'function' ? t0() : path ? bs.require( defaultEND, path.base + defaultC + '.js' ) : err( 12002, '/' );
+		for( id = ( hash.charAt(0) == '/' ? ( hash = hash.substr(1) ) : hash ).split('/'), t0 = table, i = 0, j = id.length ; i < j ; i++ )
+			if( t0[id[i]] ) t0 = t0[id[i]]; else break;
+		if( typeof t0 == 'function' ) return t0.apply( null, id.slice( i + 1 ) );
+		else if( path ){
+			for( t0 = path.base, k = path.folder, i = 0, j = id.length ; i < j ; i++ ) if( k = k[id[i]] ) t0 += id[i] + '/'; else break;
+			if( t0 && typeof t0 == 'string' ) return bs.require( end = function(v){
+				var f, idx = i + 1;
+				v && ( v = v.controller ) ? ( f = v[id[i]] || ( idx--, v[defaultM] ) ) ? f.apply( null, id.slice(idx) ) : err( 12004, hash ) :
+				uri.indexOf( defaultC + '.js' ) == -1 ? ( i--, bs.require( end, uri = t0 + defaultC + '.js' ) ) : err( 12003, hash );
+			}, uri = t0 + ( i < j ? id[i++] : defaultC ) + '.js' );
+		}
+		err( 12002, hash );
+	},
+	key = {}, t0 = 'start,stop,path,defaultController,defaultMethod'.split(','), i = t0.length,
+	router = function(){
+		var arg = arguments, t0, t1, t2, i = 0, j = arg.length, k, v, m, n;
+		while( i < j ){
+			k = arguments[i++], v = arguments[i++];
+			switch(key[k]){
+			case'defaultController':defaultC = v; break;
+			case'defaultMethod':defaultM = v; break;
+			case'start':isHash ? bs.WIN.on( 'hashchange', change ) : timer || ( timer = setInterval( change, 1 ) ), route(); break;
+			case'stop':isHash ? bs.WIN.on( 'hashchange', null ) : timer && ( clearInterval(timer), timer = 0 ); break;
+			case'path':
+				bs.get( function( v, e ){
+					if( v ) try{
+						path = JSON.parse(v);
+						if( path.base && typeof path.base == 'string' && path.folder && typeof path.folder == 'object' ){
+							if( path.base.charAt( path.base.length - 1 ) != '/' ) path.base += '/';
+						}else v = 0, e = 'invalid path';
+					}catch(ex){e = v + '::' + ex, v = 0;}
+					!v ? err( 12001, v + '::' + e ) : i < j ? router.apply( null, Array.prototype.slice.call( arg, i ) ) : 0;
+				}, v );
+				return;
+			default:
+				for( k = ( k.charAt(0) == '/' ? ( k = k.substr(1) ) : k ).split('/'), t0 = table, m = 0, n = k.length ; m < n ; m++ )
+					if( v ) t0 = t0[k[m]] || ( t0[k[m]] = {} );
+					else if( !( t1 = t0, t0 = t1[t2 = k[m]] ) ) break;
+				if( v === undefined ) return t0;
+				else if( v === null ){if( t0 ) delete t1[t2];
+				}else t0[k[n - 1]] = v;
+			}
+		}
+		return v;
+	};
+	while(i--) key[t0[i]] = t0[i];
+	return router;
 })() );
 (function(){
 	var DOM = function(){
@@ -564,13 +623,14 @@ fn( 'ev', (function(){
 				this['+']( false, type, group, context, method, arg, 2 ), this._on(type);},
 			fn.off = function( type, group ){
 				type = eName[type] || ( eName[type] = type );
-				if( !this['-']( false, type, group ) ) fn._off(type);
+				if( !this['-']( false, type, group ) ) this._off(type);
 			},
 			fn._on = W['addEventListener'] ? function(k){this.dom.addEventListener( k, this.handleEvent, this.isCapture );} :
 				W['attachEvent'] ? function(k){this.dom.attachEvent( 'on' + k, this.handleEvent );} : function(k){this.dom['on' + k] = this.handleEvent;},
 			fn._off = W['addEventListener'] ? function(k){this.dom.removeEventListener( k, this.handleEvent, this.isCapture );} :
 				W['attachEvent'] ? function(k){this.dom.detachEvent( 'on' + k, this.handleEvent );} : function(k){this.dom['on' + k] = null;},
-			fn.init = function(d){
+			fn.END = function(){this.dom = this.handleEvent = null;},
+			fn.NEW = function(d){
 				var self = this, t = trim;
 				this.dom = d, this.isCapture = false, this.handleEvent = function(e){
 					var e = self.event = e || event, type = self.type = e.type, typeCat = evCat[type], t0, t1, i, X, Y;
@@ -609,7 +669,7 @@ fn( 'ev', (function(){
 					( isDoc || k.substr(0,3) == 'key' ) ? ( data = ddata, d = doc ) : ( data = wdata, d = W );
 					if( 'on' + k in d || k.indexOf(':') > -1 ) attrs[k] = 2;
 					else return err( 4001, k );
-					if( !( t0 = data.BSdomE ) ) data.BSdomE = t0 = bs.ev.dom(), t0.init(d);
+					if( !( t0 = data.BSdomE ) ) data.BSdomE = t0 = bs.ev.dom(d);
 					g = ( t1 = k.indexOf(':') ) > -1 ? ( k = k.substring( 0, t1 ), k.substr( t1 + 1 ) ) : '';
 					if( v ) v.splice ? ( m = v[1], a = v, c = v[0] || d ) : v[k] ? ( m = v[k], c = v ) : ( m = v, c = d );
 					if( t1 = ev[k] ){
@@ -765,7 +825,7 @@ fn( 'ev', (function(){
 						t0 = target[i], t0.parentNode.removeChild(t0);
 						if( t0.nodeType == 3 ) continue;
 						if( data = t0.getAttribute('data-bs') ){
-							if( t1 = data.BSdomE ) data.BSdomE = t1.dom = t1.handleEvent = null, ev(t1);
+							if( t1 = data.BSdomE ) data.BSdomE = null, ev(t1);
 							domData( t0, null );
 						}
 						j = t0.attributes.length;
@@ -1117,7 +1177,7 @@ fn( 'ev', (function(){
 						if( ++i == j ) return arg.length ? '@sSet@' : 0, type == 1 ? '@sGet@' : type == 2 ? 0 : type == 3 ? this : '@tGet@';
 						v = arguments[i++];
 						if( type == 2 ){
-							if( !( t0 = data.BSdomE ) ) data.BSdomE = t0 = ev(), t0.init(d);
+							if( !( t0 = data.BSdomE ) ) data.BSdomE = t0 = ev(d);
 							if( k == 'event' ) for( i in v ) t0.on( k, '', v, v[i] );
 							else g = ( t1 = k.indexOf(':') ) > -1 ? ( k = k.substring( 0, t1 ), k.substr( t1 + 1 ) ) : '',
 								v ? t0.on( k, g, v.splice ? ( m = v[1], a = v, v[0] || d ) : v[k] ? ( m = v[k], v ) : ( m = v, d ), m, a ) : t0.off( k, g );
