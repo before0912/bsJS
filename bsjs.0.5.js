@@ -139,7 +139,7 @@ if( !W['JSON'] ) W['JSON'] = {
 				}
 			}
 		};
-	})(/["]/g)
+	})(/["]/g)//"
 };
 fn( 'log', log = (function(){
 	var t0 = [], mode = 1, base, prev;
@@ -585,7 +585,7 @@ fn( 'router', (function(){
 		}
 		err( 12002, hash );
 	},
-	key = {}, t0 = 'start,stop,path,defaultController,defaultMethod'.split(','), i = t0.length,
+	key = {}, t0 = 'start,stop,path,defaultController,defaultMethod,file,virtual,arguments,method'.split(','), i = t0.length,
 	router = function(){
 		var arg = arguments, t0, t1, t2, i = 0, j = arg.length, k, v, m, n;
 		while( i < j ){
@@ -606,6 +606,10 @@ fn( 'router', (function(){
 					!v ? err( 12001, v + '::' + e ) : i < j ? router.apply( null, Array.prototype.slice.call( arg, i ) ) : 0;
 				}, v );
 				return;
+			case'file':
+			case'virtual':
+			case'arguments':
+			case'method':
 			default:
 				for( k = ( k.charAt(0) == '/' ? ( k = k.substr(1) ) : k ).split('/'), t0 = table, m = 0, n = k.length ; m < n ; m++ )
 					if( v ) t0 = t0[k[m]] || ( t0[k[m]] = {} );
