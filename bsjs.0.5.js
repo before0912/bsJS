@@ -139,7 +139,7 @@ if( !W['JSON'] ) W['JSON'] = {
 				}
 			}
 		};
-	})(/["]/g)
+	})(/["]/g)//"
 };
 fn( 'log', log = (function(){
 	var t0 = [], mode = 1, base, prev;
@@ -561,30 +561,34 @@ fn( 'ev', (function(){
 	return f;
 })() );
 fn( 'router', (function(){
-	var defaultC = 'index', defaultM = 'index', table = {}, path, isHash = 'onhashchange' in W, timer, history = [location.hash.substr(1)],
+	var defaultC = 'index', defaultM = 'index', table = {}, path, rtInfo = {}, isHash = 'onhashchange' in W, timer,
+	t0 = location.hash, history = [t0.charAt(1) == '!' ? t0.substr(2) : t0.substr(1)],
 	change = function(){
-		var last = history[history.length-1], curr = location.hash.substr(1);
+		var t0 = history[history.length-1], t1 = location.hash,
+		last = t0.charAt(0) == '!' ? t0.substr(1) : t0, curr = t1.charAt(1) == '!' ? t1.substr(2) : t1.substr(1), k;
 		if( last != curr ) curr == history[history.length-2] ? history.pop() : history[history.length] = curr;
 		route();
 	},
-	defaultEND = function(v){v && ( v = v.controller ) && ( v = v[defaultM] ) ? v() : err( 12003, '/' );},
+	defaultEND = function(v){v && ( v = v.controller ) && ( v = v[defaultM] ) ? ( rtInfo['method'] = defaultM, v() ) : err( 12003, '/' );},
 	route = function(){
-		var hash = history[history.length - 1], uri, id, end, t0, i, j, k;
-		if( !hash ) return hash = '/', ( t0 = table.index ) ? t0() : path ? bs.require( defaultEND, path.base + defaultC + '.js' ) : err( 12002, '/' );
-		for( id = ( hash.charAt(0) == '/' ? ( hash = hash.substr(1) ) : hash ).split('/'), t0 = table, i = 0, j = id.length ; i < j ; i++ )
-			if( t0[id[i]] ) t0 = t0[id[i]]; else break;
-		if( typeof t0 == 'function' ) return t0.apply( null, id.slice( i + 1 ) );
+		var hash = history[history.length - 1], uri, id, end, t0, t1, i, j, k;
+		for(var k in rtInfo) rtInfo[k] = null;
+		if( !hash ) return hash = '/', ( t0 = table.index ) ? t0() : path ? ( t0 = rtInfo['file'] = path.base + defaultC + '.js', rtInfo['virtual'] = hash, bs.require( defaultEND, t0 ) ) : err( 12002, '/' );
+		for( id = ( hash.charAt(0) == '/' ? ( hash = hash.substr(1) ) : hash ).split('/'), t0 = table, i = 0, j = id.length; i < j; i++ )
+			if( t0[id[i]] ) t0 = t0[id[i]], rtInfo['method'] = id[i]; else break;
+		if( typeof t0 == 'function' ) return t0.apply( null, rtInfo['arguments'] = id.slice( i + 1 ) );
 		else if( path ){
-			for( t0 = path.base, k = path.folder, i = 0 ; i < j ; i++ ) if( k = k[id[i]] ) t0 += id[i] + '/'; else break;
+			for( t0 = '/', k = path.folder, i = 0; i < j; i++ ) if( k = k[id[i]] ) t0 += id[i] + '/'; else break;
+			t0 = path.base + ( rtInfo['virtual'] = t0 ).substr(1);
 			if( t0 && typeof t0 == 'string' ) return bs.require( end = function(v){
 				var f, idx = i + 1;
-				v && ( v = v.controller ) ? ( f = v[id[i]] || ( idx--, v[defaultM] ) ) ? f.apply( null, id.slice(idx) ) : err( 12004, hash ) :
-				uri.indexOf( defaultC + '.js' ) == -1 ? ( i--, bs.require( end, uri = t0 + defaultC + '.js' ) ) : err( 12003, hash );
-			}, uri = t0 + ( i < j ? id[i++] : defaultC ) + '.js' );
+				v && ( v = v.controller ) ? ( t1 = rtInfo['method'] = v[id[i]] ? id[i] : (idx--, defaultM), f = v[t1] ) ? f.apply( null, rtInfo['arguments'] = id.slice(idx) ) : err( 12004, hash ) :
+				uri.indexOf( defaultC + '.js' ) == -1 ? ( i--, bs.require( end, uri = rtInfo['file'] = t0 + defaultC + '.js' ) ) : err( 12003, hash );
+			}, uri = rtInfo['file'] = t0 + ( i < j ? id[i++] : defaultC ) + '.js' );
 		}
 		err( 12002, hash );
 	},
-	key = {}, t0 = 'start,stop,path,defaultController,defaultMethod'.split(','), i = t0.length,
+	key = {}, t0 = 'start,stop,path,defaultController,defaultMethod,file,virtual,arguments,method'.split(','), i = t0.length,
 	router = function(){
 		var arg = arguments, t0, t1, t2, i = 0, j = arg.length, k, v, m, n;
 		while( i < j ){
@@ -605,6 +609,7 @@ fn( 'router', (function(){
 					!v ? err( 12001, v + '::' + e ) : i < j ? router.apply( null, Array.prototype.slice.call( arg, i ) ) : 0;
 				}, v );
 				return;
+			case'file':case'virtual':case'arguments':case'method':return rtInfo[ key[k] ];
 			default:
 				for( k = ( k.charAt(0) == '/' ? ( k = k.substr(1) ) : k ).split('/'), t0 = table, m = 0, n = k.length ; m < n ; m++ )
 					if( v ) t0 = t0[k[m]] || ( t0[k[m]] = {} );

@@ -89,6 +89,9 @@ Push 권한을 얻으려면 <a href='https://www.facebook.com/photo.php?fbid=828
 
 <a href='https://github.com/projectBS/bsJS/wiki' target='_blank'>bsJS Wiki</a>
 
+## Error Code table
+<a href='https://docs.google.com/spreadsheet/ccc?key=0AhWfMzniSmaedDZPdUdRdEx2a3RhTjg0U0hEZXE2eEE&usp=drive_web#gid=0' target='_blank'>bsJS Error Code table</a>
+
 ## APIs
 
 - bs Core [<a href='https://github.com/projectBS/bsJS/wiki/doc1-core' target='_blank'>ko</a>][<a href='https://github.com/projectBS/bsJS/wiki/doc1-core-ja' target='_blank'>ja</a>]
