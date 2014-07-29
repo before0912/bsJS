@@ -1,4 +1,4 @@
-/* bsJS v0.5.41
+/* bsJS v0.5.42
  * Copyright (c) 2013 by ProjectBS Committe and contributors. 
  * http://www.bsplugin.com All rights reserved.
  * Licensed under the BSD license. See http://opensource.org/licenses/BSD-3-Clause
@@ -186,32 +186,31 @@ CORE:
 		for( k in t2 ) if( t2.hasOwnProperty(k) ) f[k] = t2[k];
 		fn.END = function(){delete cls[this.__bsKey];}, fn.instanceOf = f;
 	} ),
-	fn( 'data', (function(){
-		var data = {}, save,
-		LZString={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",_f:String.fromCharCode,compressToBase64:function(c){if(c==null){return""}var a="";var k,h,f,j,g,e,d;var b=0;c=LZString.compress(c);while(b<c.length*2){if(b%2==0){k=c.charCodeAt(b/2)>>8;h=c.charCodeAt(b/2)&255;if(b/2+1<c.length){f=c.charCodeAt(b/2+1)>>8}else{f=NaN}}else{k=c.charCodeAt((b-1)/2)&255;if((b+1)/2<c.length){h=c.charCodeAt((b+1)/2)>>8;f=c.charCodeAt((b+1)/2)&255}else{h=f=NaN}}b+=3;j=k>>2;g=((k&3)<<4)|(h>>4);e=((h&15)<<2)|(f>>6);d=f&63;if(isNaN(h)){e=d=64}else{if(isNaN(f)){d=64}}a=a+LZString._keyStr.charAt(j)+LZString._keyStr.charAt(g)+LZString._keyStr.charAt(e)+LZString._keyStr.charAt(d)}return a},decompressFromBase64:function(g){if(g==null){return""}var a="",d=0,e,o,m,k,n,l,j,h,b=0,c=LZString._f;g=g.replace(/[^A-Za-z0-9\+\/\=]/g,"");while(b<g.length){n=LZString._keyStr.indexOf(g.charAt(b++));l=LZString._keyStr.indexOf(g.charAt(b++));j=LZString._keyStr.indexOf(g.charAt(b++));h=LZString._keyStr.indexOf(g.charAt(b++));o=(n<<2)|(l>>4);m=((l&15)<<4)|(j>>2);k=((j&3)<<6)|h;if(d%2==0){e=o<<8;if(j!=64){a+=c(e|m)}if(h!=64){e=k<<8}}else{a=a+c(e|o);if(j!=64){e=m<<8}if(h!=64){a+=c(e|k)}}d+=3}return LZString.decompress(a)},compressToUTF16:function(d){if(d==null){return""}var b="",e,j,h,a=0,g=LZString._f;d=LZString.compress(d);for(e=0;e<d.length;e++){j=d.charCodeAt(e);switch(a++){case 0:b+=g((j>>1)+32);h=(j&1)<<14;break;case 1:b+=g((h+(j>>2))+32);h=(j&3)<<13;break;case 2:b+=g((h+(j>>3))+32);h=(j&7)<<12;break;case 3:b+=g((h+(j>>4))+32);h=(j&15)<<11;break;case 4:b+=g((h+(j>>5))+32);h=(j&31)<<10;break;case 5:b+=g((h+(j>>6))+32);h=(j&63)<<9;break;case 6:b+=g((h+(j>>7))+32);h=(j&127)<<8;break;case 7:b+=g((h+(j>>8))+32);h=(j&255)<<7;break;case 8:b+=g((h+(j>>9))+32);h=(j&511)<<6;break;case 9:b+=g((h+(j>>10))+32);h=(j&1023)<<5;break;case 10:b+=g((h+(j>>11))+32);h=(j&2047)<<4;break;case 11:b+=g((h+(j>>12))+32);h=(j&4095)<<3;break;case 12:b+=g((h+(j>>13))+32);h=(j&8191)<<2;break;case 13:b+=g((h+(j>>14))+32);h=(j&16383)<<1;break;case 14:b+=g((h+(j>>15))+32,(j&32767)+32);a=0;break}}return b+g(h+32)},decompressFromUTF16:function(d){if(d==null){return""}var b="",h,j,a=0,e=0,g=LZString._f;while(e<d.length){j=d.charCodeAt(e)-32;switch(a++){case 0:h=j<<1;break;case 1:b+=g(h|(j>>14));h=(j&16383)<<2;break;case 2:b+=g(h|(j>>13));h=(j&8191)<<3;break;case 3:b+=g(h|(j>>12));h=(j&4095)<<4;break;case 4:b+=g(h|(j>>11));h=(j&2047)<<5;break;case 5:b+=g(h|(j>>10));h=(j&1023)<<6;break;case 6:b+=g(h|(j>>9));h=(j&511)<<7;break;case 7:b+=g(h|(j>>8));h=(j&255)<<8;break;case 8:b+=g(h|(j>>7));h=(j&127)<<9;break;case 9:b+=g(h|(j>>6));h=(j&63)<<10;break;case 10:b+=g(h|(j>>5));h=(j&31)<<11;break;case 11:b+=g(h|(j>>4));h=(j&15)<<12;break;case 12:b+=g(h|(j>>3));h=(j&7)<<13;break;case 13:b+=g(h|(j>>2));h=(j&3)<<14;break;case 14:b+=g(h|(j>>1));h=(j&1)<<15;break;case 15:b+=g(h|j);a=0;break}e++}return LZString.decompress(b)},compress:function(e){if(e==null){return""}var h,l,n={},m={},o="",c="",r="",d=2,g=3,b=2,q="",a=0,j=0,p,k=LZString._f;for(p=0;p<e.length;p+=1){o=e.charAt(p);if(!Object.prototype.hasOwnProperty.call(n,o)){n[o]=g++;m[o]=true}c=r+o;if(Object.prototype.hasOwnProperty.call(n,c)){r=c}else{if(Object.prototype.hasOwnProperty.call(m,r)){if(r.charCodeAt(0)<256){for(h=0;h<b;h++){a=(a<<1);if(j==15){j=0;q+=k(a);a=0}else{j++}}l=r.charCodeAt(0);for(h=0;h<8;h++){a=(a<<1)|(l&1);if(j==15){j=0;q+=k(a);a=0}else{j++}l=l>>1}}else{l=1;for(h=0;h<b;h++){a=(a<<1)|l;if(j==15){j=0;q+=k(a);a=0}else{j++}l=0}l=r.charCodeAt(0);for(h=0;h<16;h++){a=(a<<1)|(l&1);if(j==15){j=0;q+=k(a);a=0}else{j++}l=l>>1}}d--;if(d==0){d=Math.pow(2,b);b++}delete m[r]}else{l=n[r];for(h=0;h<b;h++){a=(a<<1)|(l&1);if(j==15){j=0;q+=k(a);a=0}else{j++}l=l>>1}}d--;if(d==0){d=Math.pow(2,b);b++}n[c]=g++;r=String(o)}}if(r!==""){if(Object.prototype.hasOwnProperty.call(m,r)){if(r.charCodeAt(0)<256){for(h=0;h<b;h++){a=(a<<1);if(j==15){j=0;q+=k(a);a=0}else{j++}}l=r.charCodeAt(0);for(h=0;h<8;h++){a=(a<<1)|(l&1);if(j==15){j=0;q+=k(a);a=0}else{j++}l=l>>1}}else{l=1;for(h=0;h<b;h++){a=(a<<1)|l;if(j==15){j=0;q+=k(a);a=0}else{j++}l=0}l=r.charCodeAt(0);for(h=0;h<16;h++){a=(a<<1)|(l&1);if(j==15){j=0;q+=k(a);a=0}else{j++}l=l>>1}}d--;if(d==0){d=Math.pow(2,b);b++}delete m[r]}else{l=n[r];for(h=0;h<b;h++){a=(a<<1)|(l&1);if(j==15){j=0;q+=k(a);a=0}else{j++}l=l>>1}}d--;if(d==0){d=Math.pow(2,b);b++}}l=2;for(h=0;h<b;h++){a=(a<<1)|(l&1);if(j==15){j=0;q+=k(a);a=0}else{j++}l=l>>1}while(true){a=(a<<1);if(j==15){q+=k(a);break}else{j++}}return q},decompress:function(k){if(k==null){return""}if(k==""){return null}var o=[],j,d=4,l=4,h=3,q="",t="",g,p,r,s,a,b,n,m=LZString._f,e={string:k,val:k.charCodeAt(0),position:32768,index:1};for(g=0;g<3;g+=1){o[g]=g}r=0;a=Math.pow(2,2);b=1;while(b!=a){s=e.val&e.position;e.position>>=1;if(e.position==0){e.position=32768;e.val=e.string.charCodeAt(e.index++)}r|=(s>0?1:0)*b;b<<=1}switch(j=r){case 0:r=0;a=Math.pow(2,8);b=1;while(b!=a){s=e.val&e.position;e.position>>=1;if(e.position==0){e.position=32768;e.val=e.string.charCodeAt(e.index++)}r|=(s>0?1:0)*b;b<<=1}n=m(r);break;case 1:r=0;a=Math.pow(2,16);b=1;while(b!=a){s=e.val&e.position;e.position>>=1;if(e.position==0){e.position=32768;e.val=e.string.charCodeAt(e.index++)}r|=(s>0?1:0)*b;b<<=1}n=m(r);break;case 2:return""}o[3]=n;p=t=n;while(true){if(e.index>e.string.length){return""}r=0;a=Math.pow(2,h);b=1;while(b!=a){s=e.val&e.position;e.position>>=1;if(e.position==0){e.position=32768;e.val=e.string.charCodeAt(e.index++)}r|=(s>0?1:0)*b;b<<=1}switch(n=r){case 0:r=0;a=Math.pow(2,8);b=1;while(b!=a){s=e.val&e.position;e.position>>=1;if(e.position==0){e.position=32768;e.val=e.string.charCodeAt(e.index++)}r|=(s>0?1:0)*b;b<<=1}o[l++]=m(r);n=l-1;d--;break;case 1:r=0;a=Math.pow(2,16);b=1;while(b!=a){s=e.val&e.position;e.position>>=1;if(e.position==0){e.position=32768;e.val=e.string.charCodeAt(e.index++)}r|=(s>0?1:0)*b;b<<=1}o[l++]=m(r);n=l-1;d--;break;case 2:return t}if(d==0){d=Math.pow(2,h);h++}if(o[n]){q=o[n]}else{if(n===l){q=p+p.charAt(0)}else{return null}}t+=q;o[l++]=p+q.charAt(0);d--;p=q;if(d==0){d=Math.pow(2,h);h++}}}};if(typeof module!=="undefined"&&module!=null){module.exports=LZString};
-		save = detect.local ? function(){
-			var t0, k = arguments[0], v = arguments[1];
-			return v === undefined ? ( ( t0 = localStorage.getItem(k) ) && t0.charAt(0) == '@' ? JSON.parse( LZString.decompress(t0.substr(1)) ) : t0 ) :
-				v === null ? localStorage.removeItem( k ) :
-				( localStorage.setItem( k, typeof v == 'object' ? '@' + LZString.compress(JSON.stringify( v )) : v ), v );
-		} : function(){
-			var t0, k = arguments[0], v = arguments[1];
-			return v === undefined ? (t0 = bs.ck( k )).charAt(0) == '@' ? JSON.parse( LZString.decompress(t0.substr(1)) ) : t0 :
-				v === null ? bs.ck( k, null ) :
-				( bs.ck( k, typeof v == 'object' ? '@' + LZString.compress(JSON.stringify( v )) : v, 365 ), v );
-		};
+	fn( 'compress', (function(){
+		var own = Object.prototype.hasOwnProperty, _f = String.fromCharCode;
+		fn( 'decompress', function(e){if(e==null)return"";if(e=="")return null;var t=[],n,r=4,i=4,s=3,o="",u="",a,f,l,c,h,p,d,v=_f,m={string:e,val:e.charCodeAt(0),position:32768,index:1};for(a=0;a<3;a++){t[a]=a}l=0;h=Math.pow(2,2);p=1;while(p!=h){c=m.val&m.position;m.position>>=1;if(m.position==0){m.position=32768;m.val=m.string.charCodeAt(m.index++)}l|=(c>0?1:0)*p;p<<=1}switch(n=l){case 0:l=0;h=Math.pow(2,8);p=1;while(p!=h){c=m.val&m.position;m.position>>=1;if(m.position==0){m.position=32768;m.val=m.string.charCodeAt(m.index++)}l|=(c>0?1:0)*p;p<<=1}d=v(l);break;case 1:l=0;h=Math.pow(2,16);p=1;while(p!=h){c=m.val&m.position;m.position>>=1;if(m.position==0){m.position=32768;m.val=m.string.charCodeAt(m.index++)}l|=(c>0?1:0)*p;p<<=1}d=v(l);break;case 2:return""}t[3]=d;f=u=d;while(true){if(m.index>m.string.length){return""}l=0;h=Math.pow(2,s);p=1;while(p!=h){c=m.val&m.position;m.position>>=1;if(m.position==0){m.position=32768;m.val=m.string.charCodeAt(m.index++)}l|=(c>0?1:0)*p;p<<=1}switch(d=l){case 0:l=0;h=Math.pow(2,8);p=1;while(p!=h){c=m.val&m.position;m.position>>=1;if(m.position==0){m.position=32768;m.val=m.string.charCodeAt(m.index++)}l|=(c>0?1:0)*p;p<<=1}t[i++]=v(l);d=i-1;r--;break;case 1:l=0;h=Math.pow(2,16);p=1;while(p!=h){c=m.val&m.position;m.position>>=1;if(m.position==0){m.position=32768;m.val=m.string.charCodeAt(m.index++)}l|=(c>0?1:0)*p;p<<=1}t[i++]=v(l);d=i-1;r--;break;case 2:return u}if(r==0){r=Math.pow(2,s);s++}if(t[d]){o=t[d]}else{if(d===i){o=f+f.charAt(0)}else{return null}}u+=o;t[i++]=f+o.charAt(0);r--;f=o;if(r==0){r=Math.pow(2,s);s++}}} );
+		return function(e){if(e==null)return"";var t,n,r={},i={},s="",o="",u="",a=2,f=3,l=2,c="",h=0,p=0,d,v=_f;for(d=0;d<e.length;d+=1){s=e.charAt(d);if(!own.call(r,s)){r[s]=f++;i[s]=true}o=u+s;if(own.call(r,o)){u=o}else{if(own.call(i,u)){if(u.charCodeAt(0)<256){for(t=0;t<l;t++){h=h<<1;if(p==15){p=0;c+=v(h);h=0}else{p++}}n=u.charCodeAt(0);for(t=0;t<8;t++){h=h<<1|n&1;if(p==15){p=0;c+=v(h);h=0}else{p++}n=n>>1}}else{n=1;for(t=0;t<l;t++){h=h<<1|n;if(p==15){p=0;c+=v(h);h=0}else{p++}n=0}n=u.charCodeAt(0);for(t=0;t<16;t++){h=h<<1|n&1;if(p==15){p=0;c+=v(h);h=0}else{p++}n=n>>1}}a--;if(a==0){a=Math.pow(2,l);l++}delete i[u]}else{n=r[u];for(t=0;t<l;t++){h=h<<1|n&1;if(p==15){p=0;c+=v(h);h=0}else{p++}n=n>>1}}a--;if(a==0){a=Math.pow(2,l);l++}r[o]=f++;u=String(s)}}if(u!==""){if(own.call(i,u)){if(u.charCodeAt(0)<256){for(t=0;t<l;t++){h=h<<1;if(p==15){p=0;c+=v(h);h=0}else{p++}}n=u.charCodeAt(0);for(t=0;t<8;t++){h=h<<1|n&1;if(p==15){p=0;c+=v(h);h=0}else{p++}n=n>>1}}else{n=1;for(t=0;t<l;t++){h=h<<1|n;if(p==15){p=0;c+=v(h);h=0}else{p++}n=0}n=u.charCodeAt(0);for(t=0;t<16;t++){h=h<<1|n&1;if(p==15){p=0;c+=v(h);h=0}else{p++}n=n>>1}}a--;if(a==0){a=Math.pow(2,l);l++}delete i[u]}else{n=r[u];for(t=0;t<l;t++){h=h<<1|n&1;if(p==15){p=0;c+=v(h);h=0}else{p++}n=n>>1}}a--;if(a==0){a=Math.pow(2,l);l++}}n=2;for(t=0;t<l;t++){h=h<<1|n&1;if(p==15){p=0;c+=v(h);h=0}else{p++}n=n>>1}while(true){h=h<<1;if(p==15){c+=v(h);break}else p++}return c};
+	})() ),
+	fn( 'local', detect.local ? function(){
+		var t0, k = arguments[0], v = arguments[1];
+		return v === undefined ? ( ( t0 = localStorage.getItem(k) ) && t0.charAt(0) == '@' ? JSON.parse(bs.decompress(t0.substr(1))) : t0 ) :
+			v === null ? localStorage.removeItem(k) :
+			( localStorage.setItem( k, typeof v == 'object' ? '@' + bs.compress(JSON.stringify(v)) : v ), v );
+	} : function(){
+		var t0, k = arguments[0], v = arguments[1];
+		return v === undefined ? (t0 = bs.ck(k)).charAt(0) == '@' ? JSON.parse(bs.decompress(t0.substr(1))) : t0 :
+			v === null ? bs.ck( k, null ) :
+			( bs.ck( k, v && typeof v == 'object' ? '@' + bs.compress(JSON.stringify(v)) : v, 365 ), v );
+	} ),
+	fn( 'model', (function(){
+		var data = {};
 		return function(){
 			var i = 0, j = arguments.length, k, v;
 			while( i < j ){
 				k = arguments[i++], v = arguments[i++];
-				switch(k){
-				case'LOAD': l
-				case'SAVE':
-				default:
-					if( v === undefined ) return data[k];
-					else if ( v === null ) delete data[k];
-					else data[k] = v;
-				}
+				if( v === undefined ) return data[k];
+				else if ( v === null ) delete data[k];
+				else data[k] = v;
 			}
 		};
 	})() );
@@ -562,21 +561,21 @@ fn( 'ev', (function(){
 	return f;
 })() );
 fn( 'router', (function(){
-	var localKey = '@BSrouterCache', defaultC = 'index', defaultM = 'index', table = {}, path, isHash = 'onhashchange' in W, timer, history = [location.hash.substr(1)],
+	var defaultC = 'index', defaultM = 'index', table = {}, path, isHash = 'onhashchange' in W, timer, history = [location.hash.substr(1)],
 	change = function(){
 		var last = history[history.length-1], curr = location.hash.substr(1);
 		if( last != curr ) curr == history[history.length-2] ? history.pop() : history[history.length] = curr;
 		route();
 	},
-	defaultEND = function(v){v && ( v = v.controller ) && ( v = v[defaultM] ) && typeof v == 'function' ? v() : err( 12003, '/' );},
+	defaultEND = function(v){v && ( v = v.controller ) && ( v = v[defaultM] ) ? v() : err( 12003, '/' );},
 	route = function(){
 		var hash = history[history.length - 1], uri, id, end, t0, i, j, k;
-		if( !hash ) return hash = '/', ( t0 = table.index ) && typeof t0 == 'function' ? t0() : path ? bs.require( defaultEND, path.base + defaultC + '.js' ) : err( 12002, '/' );
+		if( !hash ) return hash = '/', ( t0 = table.index ) ? t0() : path ? bs.require( defaultEND, path.base + defaultC + '.js' ) : err( 12002, '/' );
 		for( id = ( hash.charAt(0) == '/' ? ( hash = hash.substr(1) ) : hash ).split('/'), t0 = table, i = 0, j = id.length ; i < j ; i++ )
 			if( t0[id[i]] ) t0 = t0[id[i]]; else break;
 		if( typeof t0 == 'function' ) return t0.apply( null, id.slice( i + 1 ) );
 		else if( path ){
-			for( t0 = path.base, k = path.folder, i = 0, j = id.length ; i < j ; i++ ) if( k = k[id[i]] ) t0 += id[i] + '/'; else break;
+			for( t0 = path.base, k = path.folder, i = 0 ; i < j ; i++ ) if( k = k[id[i]] ) t0 += id[i] + '/'; else break;
 			if( t0 && typeof t0 == 'string' ) return bs.require( end = function(v){
 				var f, idx = i + 1;
 				v && ( v = v.controller ) ? ( f = v[id[i]] || ( idx--, v[defaultM] ) ) ? f.apply( null, id.slice(idx) ) : err( 12004, hash ) :
@@ -599,7 +598,7 @@ fn( 'router', (function(){
 				bs.get( function( v, e ){
 					if( v ) try{
 						path = JSON.parse(v);
-						if( path.base && typeof path.base == 'string' && path.folder && typeof path.folder == 'object' ){
+						if( path.base && path.folder ){
 							if( path.base.charAt( path.base.length - 1 ) != '/' ) path.base += '/';
 						}else v = 0, e = 'invalid path';
 					}catch(ex){e = v + '::' + ex, v = 0;}
