@@ -564,7 +564,7 @@ fn( 'router', (function(){
 	var defaultC = 'index', defaultM = 'index', ex = '.js', table = {}, path, isHash = 'onhashchange' in W, timer, prevHash, currHash, file, arg, method,
 	hash = function(){
 		var t0 = location.hash, i = t0.charAt(1) == '!' ? 2 : 1;
-		return currHash = t0.substring( i + ( t0.charAt(i) == '/' ? 1 : 0 ), t0.length - ( t0.charAt( t0.length - 1 ) == '/' ? 2 : 1 ) );
+		return currHash = t0.substring( i + ( t0.charAt(i) == '/' ? 1 : 0 ), t0.length - ( t0.charAt( t0.length - 1 ) == '/' ? 1 : 0 ) );
 	},
 	change = function(){
 		if( prevHash != hash() ) route();
@@ -572,7 +572,7 @@ fn( 'router', (function(){
 	},
 	defaultUri, defaultEND = function(v){v && ( v = v.controller ) && ( v = v[defaultM] ) ? ( file = defaultUri, method = defaultM, v() ) : err( 12003, '/' );},
 	route = function(){
-		var uri, id, end, t0, t1, i, j, k;
+		var uri, id, end, t0, i, j, k;
 		file = arg = method = null;
 		if( !currHash ) return ( t0 = table.index ) ? t0() : path ? bs.require( defaultEND, defaultUri = path.base + defaultC + ex ) : err( 12002, '/' );
 		for( id = currHash.split('/'), t0 = table, i = 0, j = id.length; i < j; i++ )
@@ -589,9 +589,9 @@ fn( 'router', (function(){
 	},
 	key = {}, t0 = 'start,stop,path,change,defaultController,defaultMethod,file,virtual,arguments,method'.split(','), i = t0.length,
 	router = function(){
-		var arg = arguments, t0, t1, t2, i = 0, j = arg.length, k, v, m, n;
+		var args = arguments, t0, t1, t2, i = 0, j = args.length, k, v, m, n;
 		while( i < j ){
-			k = arguments[i++], v = arguments[i++];
+			k = args[i++], v = args[i++];
 			if( key[k] ) switch(k){
 			case'defaultController':defaultC = v; break;
 			case'defaultMethod':defaultM = v; break;
@@ -610,16 +610,16 @@ fn( 'router', (function(){
 							if( path.base.charAt( path.base.length - 1 ) != '/' ) path.base += '/';
 						}else v = 0, e = 'invalid path';
 					}catch(ex){e = v + '::' + ex, v = 0;}
-					!v ? err( 12001, v + '::' + e ) : i < j ? router.apply( null, Array.prototype.slice.call( arg, i ) ) : 0;
+					!v ? err( 12001, v + '::' + e ) : i < j ? router.apply( null, Array.prototype.slice.call( args, i ) ) : 0;
 				}, v );
 				return;
 			}else{
-				for( k = k.substring( k.charAt(0) == '/' ? 1 : 0, k.length - ( k.charAt( k.length - 1 ) == '/' ? 2 : 1 ) ).split('/'), t0 = table, m = 0, n = k.length ; m < n ; m++ )
-					if( v ) t0 = t0[k[m]] || ( t0[k[m]] = {} );
+				for( k = k.substring( k.charAt(0) == '/' ? 1 : 0, k.length - ( k.charAt( k.length - 1 ) == '/' ? 1 : 0 ) ).split('/'), t0 = table, m = 0, n = k.length; m < n; m++ )
+					if( v ) t0 = t0[k[m]] || ( t0[k[m]] = (m == n - 1) ? v : {} );
 					else if( !( t1 = t0, t0 = t1[t2 = k[m]] ) ) break;
 				if( v === undefined ) return t0;
 				else if( v === null ){if( t0 ) delete t1[t2];
-				}else t0[k[n - 1]] = v;
+				}//else t0[k[n - 1]] = v;
 			}
 		}
 		return v;
