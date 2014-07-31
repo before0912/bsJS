@@ -565,7 +565,7 @@ fn( 'router', (function(){
 	hashHead = '#!/', hashHeadLen = hashHead.length,
 	hash = function(h){
 		var t0 = h || location.hash, i = 0, j = 0;
-		while( j < hashHeadLen ) i += t0.charAt(i) == hashHead.chatAt(j++) ? 1 : 0;
+		while( j < hashHeadLen ) i += t0.charAt(i) == hashHead.charAt(j++) ? 1 : 0;
 		return currHash = t0.substring( i, t0.length - ( t0.charAt( t0.length - 1 ) == '/' ? 1 : 0 ) );
 	},
 	change = function(){
