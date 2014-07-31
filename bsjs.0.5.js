@@ -566,7 +566,10 @@ fn( 'router', (function(){
 	hash = function(h){
 		var t0 = h || location.hash, i = 0, j = 0;
 		while( j < hashHeadLen ) i += t0.charAt(i) == hashHead.charAt(j++) ? 1 : 0;
-		return currHash = t0.substring( i, t0.length - ( t0.charAt( t0.length - 1 ) == '/' ? 1 : 0 ) );
+		t0 = t0.substring( i, t0.length - ( t0.charAt( t0.length - 1 ) == '/' ? 1 : 0 ) );
+		if( t0 == '/' ) t0 = '';
+		if( !h ) currHash = t0; 
+		return t0;
 	},
 	change = function(){
 		if( prevHash != hash() ) route();
@@ -577,11 +580,9 @@ fn( 'router', (function(){
 		var uri, id, end, t0, i, j, k;
 		file = arg = method = null;
 		if( !currHash ) return ( t0 = table.index ) ? t0() : path ? bs.require( defaultEND, defaultUri = path.base + defaultC + ex ) : err( 12002, '/' );
-		for( id = currHash.split('/'), t0 = table, i = 0, j = id.length; i < j; i++ )
-			if( t0[id[i]] ) t0 = t0[k = id[i]]; else break;
-		if( typeof t0 == 'function' ) method = k, t0.apply( null, arg = id.slice( i + 1 ) );
+		if( typeof table[currHash] == 'function' ) ( method = table[currHash] )();
 		else if( path ){
-			for( t0 = path.base, k = path.folder, i = 0; i < j; i++ ) if( k = k[id[i]] ) t0 += id[i] + '/'; else break;
+			for( id = currHash.split('/'), t0 = path.base, k = path.folder, i = 0, j = id.length ; i < j ; i++ ) if( k = k[id[i]] ) t0 += id[i] + '/'; else break;
 			bs.require( end = function(v){
 				var f, idx = i + 1, t1;
 				v && ( v = v.controller ) ? ( f = v[t1 = v[id[i]] ? id[i] : (idx--, defaultM)] ) ? ( method = t1, file = uri, f.apply( null, arg = id.slice(idx) ) ) : err( 12004, currHash ) :
@@ -595,17 +596,8 @@ fn( 'router', (function(){
 		while( i < j ){
 			k = args[i++], v = args[i++];
 			if( key[k] ) switch(k){
-			case'defaultController':defaultC = v; break;
-			case'defaultMethod':defaultM = v; break;
-			case'file':return file;
-			case'virtual':return currHash;
-			case'arguments':return arg;
-			case'method':return method;
-			case'change':return change();
-			case'start':isHash ? bs.WIN.on( 'hashchange', change ) : timer || ( timer = setInterval( change, 1 ) ), change(); break;
-			case'stop':isHash ? bs.WIN.on( 'hashchange', null ) : timer && ( clearInterval(timer), timer = 0 ); break;
 			case'path':
-				bs.get( function( v, e ){
+				return bs.get( function( v, e ){
 					if( v ) try{
 						path = JSON.parse(v);
 						if( path.base && path.folder ){
@@ -614,16 +606,16 @@ fn( 'router', (function(){
 					}catch(ex){e = v + '::' + ex, v = 0;}
 					!v ? err( 12001, v + '::' + e ) : i < j ? router.apply( null, Array.prototype.slice.call( args, i ) ) : 0;
 				}, v );
-				return;
-			}else{
-				for( k = hash(k).split('/'), t0 = table, m = 0, n = k.length; m < n; m++ )
-					if( v ) t0 = t0[k[m]] || ( t0[k[m]] = (m == n - 1) ? v : {} );
-					else if( !( t1 = t0, t0 = t1[t2 = k[m]] ) ) break;
-				if( v === undefined ) return t0;
-				else if( v === null ){
-					if( t0 ) delete t1[t2];
-				}
-			}
+			case'start':isHash ? bs.WIN.on( 'hashchange', change ) : timer || ( timer = setInterval( change, 1 ) ), v && v(); break;
+			case'stop':isHash ? bs.WIN.on( 'hashchange', null ) : timer && ( clearInterval(timer), timer = 0 ); break;
+			case'file':return file;
+			case'virtual':return currHash;
+			case'arguments':return arg;
+			case'method':return method;
+			case'change':return change();
+			case'defaultController':v === undefined ? v = defaultC : defaultC = v; break;
+			case'defaultMethod':v === undefined ? v = defaultM : defaultM = v; break;
+			}else k = hash(k), typeof v == 'function' ? table[k] = v: v === undefined ? v = table[k] : v === null ? delete table[k] : err( 12004, k );
 		}
 		return v;
 	};
