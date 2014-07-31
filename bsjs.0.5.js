@@ -564,9 +564,9 @@ fn( 'router', (function(){
 	var defaultC = 'index', defaultM = 'index', ex = '.js', table = {}, path, isHash = 'onhashchange' in W, timer, prevHash, currHash, 
 	file, arg, method,
 	methodHash = {}, uuid = 1, methodId,
-	methodReg = function(v){
+	methodReg = function( v, h ){
 		if( !v.uuid ) v.uuid = uuid++;
-		methodHash[methodId = v.uuid] = currHash;
+		methodHash[methodId = v.uuid] = h;
 		return v;
 	},
 	hashHead = '#!/', hashHeadLen = hashHead.length,
@@ -582,20 +582,22 @@ fn( 'router', (function(){
 		if( prevHash != hash() ) route();
 		prevHash = currHash;
 	},
-	defaultUri, defaultEND = function(v){v && ( v = v.controller ) && ( v = v[defaultM] ) ? ( file = defaultUri, method = defaultM, methodReg(v)() ) : err( 12003, '/' );},
 	route = function(){
-		var uri, id, end, t0, i, j, k;
+		var runHash, uri, id, end, t0, i, j, k;
 		file = arg = method = null;
-		if( !currHash ) return ( t0 = table.index ) ? t0() : path ? bs.require( defaultEND, defaultUri = path.base + defaultC + ex ) : err( 12002, '/' );
-		if( typeof table[currHash] == 'function' ) methodReg( method = table[currHash] )();
+		runHash = currHash;
+		if( !runHash ) return ( t0 = table.index ) ? t0() : path ? bs.require( function(v){
+				v && ( v = v.controller ) && ( v = v[defaultM] ) ? ( file = uri, method = defaultM, methodReg( v, runHash )() ) : err( 12003, '/' );
+			}, uri = path.base + defaultC + ex ) : err( 12002, '/' );
+		if( typeof table[runHash] == 'function' ) methodReg( method = table[runHash], runHash )();
 		else if( path ){
-			for( id = currHash.split('/'), t0 = path.base, k = path.folder, i = 0, j = id.length ; i < j ; i++ ) if( k = k[id[i]] ) t0 += id[i] + '/'; else break;
+			for( id = runHash.split('/'), t0 = path.base, k = path.folder, i = 0, j = id.length ; i < j ; i++ ) if( k = k[id[i]] ) t0 += id[i] + '/'; else break;
 			bs.require( end = function(v){
 				var f, idx = i + 1, t1;
-				v && ( v = v.controller ) ? ( f = v[t1 = v[id[i]] ? id[i] : (idx--, defaultM)] ) ? ( method = t1, file = uri, methodReg(f).apply( null, arg = id.slice(idx) ) ) : err( 12004, currHash ) :
-				uri.indexOf( defaultC + ex ) == -1 ? ( i--, bs.require( end, uri = t0 + defaultC + ex ) ) : err( 12003, currHash );
+				v && ( v = v.controller ) ? ( f = v[t1 = v[id[i]] ? id[i] : (idx--, defaultM)] ) ? ( method = t1, file = uri, methodReg( f, runHash ).apply( null, arg = id.slice(idx) ) ) : err( 12004, runHash ) :
+				uri.indexOf( defaultC + ex ) == -1 ? ( i--, bs.require( end, uri = t0 + defaultC + ex ) ) : err( 12003, runHash );
 			}, uri = t0 + ( i < j ? id[i++] : defaultC ) + ex );
-		}else err( 12002, currHash );
+		}else err( 12002, runHash );
 	},
 	key = {}, t0 = 'start,stop,path,change,defaultController,defaultMethod,file,current,virtual,arguments,method'.split(','), i = t0.length,
 	router = function(){
