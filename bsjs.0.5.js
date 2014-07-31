@@ -561,7 +561,14 @@ fn( 'ev', (function(){
 	return f;
 })() );
 fn( 'router', (function(){
-	var defaultC = 'index', defaultM = 'index', ex = '.js', table = {}, path, isHash = 'onhashchange' in W, timer, prevHash, currHash, file, arg, method,
+	var defaultC = 'index', defaultM = 'index', ex = '.js', table = {}, path, isHash = 'onhashchange' in W, timer, prevHash, currHash, 
+	file, arg, method,
+	methodHash = {}, uuid = 1, methodId,
+	methodReg = function(v){
+		if( !v.uuid ) v.uuid = uuid++;
+		methodHash[methodId = v.uuid] = currHash;
+		return v;
+	},
 	hashHead = '#!/', hashHeadLen = hashHead.length,
 	hash = function(h){
 		var t0 = h || location.hash, i = 0, j = 0;
@@ -575,22 +582,22 @@ fn( 'router', (function(){
 		if( prevHash != hash() ) route();
 		prevHash = currHash;
 	},
-	defaultUri, defaultEND = function(v){v && ( v = v.controller ) && ( v = v[defaultM] ) ? ( file = defaultUri, method = defaultM, v() ) : err( 12003, '/' );},
+	defaultUri, defaultEND = function(v){v && ( v = v.controller ) && ( v = v[defaultM] ) ? ( file = defaultUri, method = defaultM, methodReg(v)() ) : err( 12003, '/' );},
 	route = function(){
 		var uri, id, end, t0, i, j, k;
 		file = arg = method = null;
 		if( !currHash ) return ( t0 = table.index ) ? t0() : path ? bs.require( defaultEND, defaultUri = path.base + defaultC + ex ) : err( 12002, '/' );
-		if( typeof table[currHash] == 'function' ) ( method = table[currHash] )();
+		if( typeof table[currHash] == 'function' ) methodReg( method = table[currHash] )();
 		else if( path ){
 			for( id = currHash.split('/'), t0 = path.base, k = path.folder, i = 0, j = id.length ; i < j ; i++ ) if( k = k[id[i]] ) t0 += id[i] + '/'; else break;
 			bs.require( end = function(v){
 				var f, idx = i + 1, t1;
-				v && ( v = v.controller ) ? ( f = v[t1 = v[id[i]] ? id[i] : (idx--, defaultM)] ) ? ( method = t1, file = uri, f.apply( null, arg = id.slice(idx) ) ) : err( 12004, currHash ) :
+				v && ( v = v.controller ) ? ( f = v[t1 = v[id[i]] ? id[i] : (idx--, defaultM)] ) ? ( method = t1, file = uri, methodReg(f).apply( null, arg = id.slice(idx) ) ) : err( 12004, currHash ) :
 				uri.indexOf( defaultC + ex ) == -1 ? ( i--, bs.require( end, uri = t0 + defaultC + ex ) ) : err( 12003, currHash );
 			}, uri = t0 + ( i < j ? id[i++] : defaultC ) + ex );
 		}else err( 12002, currHash );
 	},
-	key = {}, t0 = 'start,stop,path,change,defaultController,defaultMethod,file,virtual,arguments,method'.split(','), i = t0.length,
+	key = {}, t0 = 'start,stop,path,change,defaultController,defaultMethod,file,current,virtual,arguments,method'.split(','), i = t0.length,
 	router = function(){
 		var args = arguments, t0, t1, t2, i = 0, j = args.length, k, v, m, n;
 		while( i < j ){
@@ -609,7 +616,8 @@ fn( 'router', (function(){
 			case'start':isHash ? bs.WIN.on( 'hashchange', change ) : timer || ( timer = setInterval( change, 1 ) ), v && v(); break;
 			case'stop':isHash ? bs.WIN.on( 'hashchange', null ) : timer && ( clearInterval(timer), timer = 0 ); break;
 			case'file':return file;
-			case'virtual':return currHash;
+			case'current':return currHash;
+			case'virtual':return methodHash[methodId];
 			case'arguments':return arg;
 			case'method':return method;
 			case'change':return change();
