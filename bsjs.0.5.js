@@ -562,9 +562,11 @@ fn( 'ev', (function(){
 })() );
 fn( 'router', (function(){
 	var defaultC = 'index', defaultM = 'index', ex = '.js', table = {}, path, isHash = 'onhashchange' in W, timer, prevHash, currHash, file, arg, method,
-	hash = function(){
-		var t0 = location.hash, i = t0.charAt(1) == '!' ? 2 : 1;
-		return currHash = t0.substring( i + ( t0.charAt(i) == '/' ? 1 : 0 ), t0.length - ( t0.charAt( t0.length - 1 ) == '/' ? 1 : 0 ) );
+	hashHead = '#!/', hashHeadLen = hashHead.length,
+	hash = function(h){
+		var t0 = h || location.hash, i = 0, j = 0;
+		while( j < hashHeadLen ) i += t0.charAt(i) == hashHead.chatAt(j++) ? 1 : 0;
+		return currHash = t0.substring( i, t0.length - ( t0.charAt( t0.length - 1 ) == '/' ? 1 : 0 ) );
 	},
 	change = function(){
 		if( prevHash != hash() ) route();
@@ -614,12 +616,13 @@ fn( 'router', (function(){
 				}, v );
 				return;
 			}else{
-				for( k = k.substring( k.charAt(0) == '/' ? 1 : 0, k.length - ( k.charAt( k.length - 1 ) == '/' ? 1 : 0 ) ).split('/'), t0 = table, m = 0, n = k.length; m < n; m++ )
+				for( k = hash(k).split('/'), t0 = table, m = 0, n = k.length; m < n; m++ )
 					if( v ) t0 = t0[k[m]] || ( t0[k[m]] = (m == n - 1) ? v : {} );
 					else if( !( t1 = t0, t0 = t1[t2 = k[m]] ) ) break;
 				if( v === undefined ) return t0;
-				else if( v === null ){if( t0 ) delete t1[t2];
-				}//else t0[k[n - 1]] = v;
+				else if( v === null ){
+					if( t0 ) delete t1[t2];
+				}
 			}
 		}
 		return v;
