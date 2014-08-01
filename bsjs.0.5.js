@@ -565,8 +565,8 @@ fn( 'router', (function(){
 	file, arg, method,
 	methodHash = {}, uuid = 1, methodId,
 	methodReg = function( v, h ){
-		if( !v.uuid ) v.uuid = uuid++;
-		methodHash[methodId = v.uuid] = h;
+		if( !v.bsrouter_uuid ) v.bsrouter_uuid = uuid++;
+		methodHash[methodId = v.bsrouter_uuid] = h;
 		return v;
 	},
 	hashHead = '#!/', hashHeadLen = hashHead.length,
