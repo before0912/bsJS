@@ -583,15 +583,22 @@ fn( 'router', (function(){
 		prevHash = currHash;
 	},
 	route = function(){
-		var runHash, uri, id, end, t0, i, j, k;
+		var runHash, uri, id, end, t0, t1, i, j, k;
 		file = arg = method = null;
 		runHash = currHash;
-		if( !runHash ) return ( t0 = table.index ) ? t0() : path ? bs.require( function(v){
+		if( t0 = table['*'] ) return methodReg( method = t0, runHash ).apply( null, arg = runHash.split('/') );
+		if( !runHash ) return path ? bs.require( function(v){
 				v && ( v = v.controller ) && ( v = v[defaultM] ) ? ( file = uri, method = defaultM, methodReg( v, runHash )() ) : err( 12003, '/' );
 			}, uri = path.base + defaultC + ex ) : err( 12002, '/' );
-		if( typeof table[runHash] == 'function' ) methodReg( method = table[runHash], runHash )();
+		
+		id = runHash.split('/'), j = id.length;
+		for( t0 = [], i = 0 ; i < j ; i++ ){
+			t0[t0.length] = id[i];
+			if( t1 = table[t0.join('/') + '*'] ) return methodReg( method = t1, runHash ).apply( null, arg = id.slice( i + 1 ) );
+		}
+		if( typeof table[t0] == 'function' ) methodReg( method = table[t0], runHash )();
 		else if( path ){
-			for( id = runHash.split('/'), t0 = path.base, k = path.folder, i = 0, j = id.length ; i < j ; i++ ) if( k = k[id[i]] ) t0 += id[i] + '/'; else break;
+			for( t0 = path.base, k = path.folder, i = 0 ; i < j ; i++ ) if( k = k[id[i]] ) t0 += id[i] + '/'; else break;
 			bs.require( end = function(v){
 				var f, idx = i + 1, t1;
 				v && ( v = v.controller ) ? ( f = v[t1 = v[id[i]] ? id[i] : (idx--, defaultM)] ) ? ( method = t1, file = uri, methodReg( f, runHash ).apply( null, arg = id.slice(idx) ) ) : err( 12004, runHash ) :
