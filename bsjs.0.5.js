@@ -56,7 +56,11 @@ detectWindow = function( W, detect ){
 		else if( ( t0 = plug['Shockwave Flash 2.0'] ) || ( t0 = plug['Shockwave Flash'] ) ) t0 = t0.description.split(' ')[2].split('.'), flash = parseFloat( t0[0] + '.' + t0[1] );
 		else if( agent.indexOf('webtv') > -1 ) flash = agent.indexOf('webtv/2.6') > -1 ? 4 : agent.indexOf("webtv/2.5") > -1 ? 3 : 2;
 	})();
-	for( i in t0 = {device:device, browser:browser, browserVer:bv, os:os, osVer:osv, flash:flash, sony:agent.indexOf('sony') > -1 ? 1 : 0} ) if( t0.hasOwnProperty(i) ) detect[i] = t0[i];
+	for( i in t0 = {
+		file:W['FileReader'] ? 1 : 0, message:W['postMessage'] ? 1 : 0, local:( W['localStorage'] && 'setItem' in localStorage ) ? 1 : 0,
+		db:W['openDatabase'] ? 1 : 0, socket:W['WebSocket'] ? 1 : 0, geo:( navigator['geolocation'] ) ? 1 : 0, history:( 'pushState' in history ) ? 1 : 0, offline:W['applicationCache'] ? 1 : 0,
+		device:device, browser:browser, browserVer:bv, os:os, osVer:osv, flash:flash, sony:agent.indexOf('sony') > -1 ? 1 : 0
+	} ) if( t0.hasOwnProperty(i) ) detect[i] = t0[i];
 	return detect;
 },
 detectDOM = function( W, detect ){
@@ -82,11 +86,7 @@ detectDOM = function( W, detect ){
 		var c = doc.createElement('canvas'), a = doc.createElement('audio'), v = doc.createElement('video'), r, re, gl, keys, t0, t1, i, j, k,
 		c1 = c && c['getContext'] && c.getContext('2d') ? 1 : 0, a1 = a && a['canPlayType'] ? 1 : 0, v1 = v && v['canPlayType'] ? 1 : 0;
 		for( k in t0 = {
-			canvas:c1, audio:a1, video:v1, worker:W['Worker'] ? 1 : 0, file:W['FileReader'] ? 1 : 0, message:W['postMessage'] ? 1 : 0,
-			local:( W['localStorage'] && 'setItem' in localStorage ) ? 1 : 0,
-			geo:( navigator['geolocation'] ) ? 1 : 0, 
-			history:( 'pushState' in history ) ? 1 : 0, offline:W['applicationCache'] ? 1 : 0,
-			db:W['openDatabase'] ? 1 : 0, socket:W['WebSocket'] ? 1 : 0,
+			canvas:c1, audio:a1, video:v1, worker:W['Worker'] ? 1 : 0,
 			canvasText:c1 && c.getContext('2d').fillText ? 1 : 0,
 			videoCaption:'track' in doc.createElement('track') ? 1 : 0,
 			videoPoster:v1 && 'poster' in v ? 1 : 0
@@ -193,12 +193,12 @@ CORE:
 	})() ),
 	fn( 'local', detect.local ? function(){
 		var t0, k = arguments[0], v = arguments[1];
-		return v === undefined ? ( ( t0 = localStorage.getItem(k) ) && t0.charAt(0) == '@' ? JSON.parse(bs.decompress(t0.substr(1))) : t0 ) :
+		return v === undefined ? ( ( t0 = localStorage.getItem(k) || '' ) && t0.charAt(0) == '@' ? JSON.parse(bs.decompress(t0.substr(1))) : t0 ) :
 			v === null ? localStorage.removeItem(k) :
 			( localStorage.setItem( k, typeof v == 'object' ? '@' + bs.compress(JSON.stringify(v)) : v ), v );
 	} : function(){
 		var t0, k = arguments[0], v = arguments[1];
-		return v === undefined ? (t0 = bs.ck(k)).charAt(0) == '@' ? JSON.parse(bs.decompress(t0.substr(1))) : t0 :
+		return v === undefined ? (t0 = bs.ck(k) || '').charAt(0) == '@' ? JSON.parse(bs.decompress(t0.substr(1))) : t0 :
 			v === null ? bs.ck( k, null ) :
 			( bs.ck( k, v && typeof v == 'object' ? '@' + bs.compress(JSON.stringify(v)) : v, 365 ), v );
 	} ),
@@ -212,6 +212,7 @@ CORE:
 				else if ( v === null ) delete data[k];
 				else data[k] = v;
 			}
+			return v;
 		};
 	})() );
 	fn( 'debug', function(v){return v === undefined ? isDebug : ( isDebug = v );} );
