@@ -459,7 +459,7 @@ PLUGIN:
 		}catch(e){return err( 7000, e + '::' + data );}
 		if( t0[0].exports ) for( k in t0[0].exports ) if( t0[0].exports.hasOwnProperty(k) ) t1[k] = t0[0].exports[k];
 		if( t0[1] ) for( k in t0[1] )if( t0[1].hasOwnProperty(k) && !t1[k] ) t1[k] = t0[1][k];
-		return ( t0 = types[type] ) ? ( required[key] = t1[key] )  ? t0( key, t1[key], 1 ) : err( 7001, t1 ) : ( required[key] = t1 );
+		return ( t0 = types[type] ) ? ( required[key] = t1[key] ) ? t0( key, t1[key], 1 ) : err( 7001, t1 ) : ( required[key] = t1 );
 	};
 	plugin = function( end, list ){
 		var i0 = 0, j0 = list.length, loader = function(){
@@ -1202,8 +1202,10 @@ fn( 'router', (function(){
 				};
 			})( doc, trim ),
 			clsfn.dom = dom = (function( query, html ){
-				var n = {length:0}, dom = function( sel, isSub ){
-					return typeof sel == 'string' ? sel.charAt(0) == '<' ? html(sel) : query(sel) : sel['nodeType'] == 1 ? ( n[0] = sel, n.length = 1, n ) : sel['instanceOf'] == bs.Dom || sel.length ? sel : null;
+				var n = {length:0}, dom = function( sel ){
+					return typeof sel == 'string' ? sel.charAt(0) == '<' ? html(sel) : query(sel) : 
+						sel['nodeType'] == 1 ? ( n[0] = sel, n.length = 1, n ) : 
+						sel['instanceOf'] == bs.Dom || sel.length ? sel : null;
 				};
 				return dom;
 			})( clsfn.query, clsfn.html );
@@ -1213,7 +1215,7 @@ fn( 'router', (function(){
 				while( i-- ) this[i] = t0[i];
 			},
 			fn.S = comp( function(){
-				var d, data, target, type, t0, t1, t2, l, i0, i, j, k, v, k0, v0, m, a, g;
+				var ktype = ktypes._l ? ktypes[--ktypes._l] : [], d, data, target, type, t0, t1, t2, l, i0, i, j, k, v, k0, v0, m, a, g;
 				if( arguments[0] === null ) return del(this);
 				typeof ( i = arguments[0] ) == 'number' ? ( i0 = l = 1, target = d = this[i], data = this[i + 'data'] || ( this[i + 'data'] = domData(target) ) ) : ( l = this.length, i0 = 0 ),
 				j = arguments.length, ktype.length = 0;
@@ -1223,7 +1225,7 @@ fn( 'router', (function(){
 					while( i < j ){
 						k = arguments[i];
 						if( !( type = ktype[i] ) ) type = ktype[i] = attrs[k] || first[k.charAt(0)] || ( 'on' + k in d ? attrs[k] = 2 : k.indexOf(':') > -1 ? 2 : 1 );
-						if( ++i == j ) return arg.length ? '@sSet@' : 0, type == 1 ? '@sGet@' : type == 2 ? 0 : type == 3 ? this : '@tGet@';
+						if( ++i == j ) return '@pool@', arg.length ? '@sSet@' : 0, type == 1 ? '@sGet@' : type == 2 ? 0 : type == 3 ? this : '@tGet@';
 						v = arguments[i++];
 						if( type == 2 ){
 							if( !( t0 = data.BSdomE ) ) data.BSdomE = t0 = ev(d);
@@ -1244,12 +1246,12 @@ fn( 'router', (function(){
 					}
 					'@sSet@';
 				}
-				return v;
+				return '@pool@', v;
 			}, {
-				sGet:'data.BSdomS ? data.BSdomS.g( d.style, k ) : d.style[style[k]]',
+				sGet:'data.BSdomS ? data.BSdomS.g( d.style, k ) : d.style[style[k]]', tGet:'type( d, k )',
 				sSet:'arg.length ? ( data.BSdomS || ( data.BSdomS = bs.Style() ) ).S( d.style, arg, 0 ) : 0',
-				tGet:'type( d, k )'
-			}, {ev:bs.ev.dom, domData:domData, style:bs.Style.keys, attrs:attrs, first:first, ktype:[], arg:{length:0}, del:del, exop:{'+':1,'-':1,'*':1,'/':1,'=':1} } );
+				pool:'ktypes[ktypes._l++] = ktype'
+			}, {ev:bs.ev.dom, domData:domData, style:bs.Style.keys, attrs:attrs, first:first, ktypes:{_l:0}, arg:{length:0}, del:del, exop:{'+':1,'-':1,'*':1,'/':1,'=':1} } );
 		} ),
 		fn( 'css', (function(trim){
 			var r = /^[0-9.-]+$/, parser = function(data){
