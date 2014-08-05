@@ -70,7 +70,7 @@ detectDOM = function( W, detect ){
 	case'ie':
 		cssPrefix = '-ms-', stylePrefix = 'ms', docMode = doc['documentMode'] || 0;
 		if( detect.browserVer == 6 ) doc.execCommand( 'BackgroundImageCache', false, true ), bStyle.position = 'relative';
-		else if( detect.browserVer == -1 ) detect.browserVer = !doc.createElement('canvas')['getContext'] ? 8 : !( 'msTransition' in bStyle ) && !( 'transition' in bStyle ) ? 9 : c.getContext('webgl') ? 11 : 10;
+		else if( detect.browserVer == -1 ) detect.browserVer = !( t0 = doc.createElement('canvas') )['getContext'] ? 8 : !( 'msTransition' in bStyle ) && !( 'transition' in bStyle ) ? 9 : t0.getContext('webgl') ? 11 : 10;
 		break;
 	case'firefox': cssPrefix = '-moz-', stylePrefix = 'Moz';break;
 	case'opera': cssPrefix = '-o-', stylePrefix = 'O';break;
