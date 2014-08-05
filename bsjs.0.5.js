@@ -119,7 +119,8 @@ if( !Array.prototype.indexOf ) Array.prototype.indexOf = function( v, I ){
 };
 if( !W['JSON'] ) W['JSON'] = {
 	parse:function(v){return ( new Function( '', 'return ' + v ) )();},
-	stringify:(function( r, f ){
+	stringify:(function(){
+		var r = /["]/g, f;
 		return f = function(o){
 			var t0, i, j;
 			if( !o ) return 'null';
@@ -139,7 +140,7 @@ if( !W['JSON'] ) W['JSON'] = {
 				}
 			}
 		};
-	})(/["]/g)//"
+	})()
 };
 fn( 'log', log = (function(){
 	var t0 = [], mode = 1, base, prev;
@@ -150,13 +151,15 @@ fn( 'log', log = (function(){
 			bs.Css('.BSCSE0').S('border-bottom','1px solid #ddd','padding','10px 0'),
 			bs.Css('.BSCSE1').S('font-size',8,'color','#777', 'margin-left', 10),
 			bs.Css('.BSCSE2').S('float','left','margin',5,'border','1px dashed #aaa','padding',2),
-			bs.Dom('<div id="BSCSE" style="position:fixed;z-index:999999;width:100%;background:#fdfdfd;bottom:0;left:0"></div>').S( 'height',300,'<','body',
-				'>', bs.Dom('<div style="width:100%;background:#ccc;cursor:pointer;height:20px"></div>').S('down',function(e){
-					if( mode ) mode = 0, bs.ANI.style( bs.Dom('#BSCSE'), 'height', 20, 'time', .6 );
-					else mode = 1, bs.ANI.style( bs.Dom('#BSCSE'), 'height', 300, 'time', .6 );
-				}, 'this'),
-				'>', '<div id="BSCC" style="font-family:DotumChe,Courier;overflow-y:scroll;height:280px"></div>'
-			);
+			bs.Dom('<div id="BSCSE" style="position:fixed;z-index:999999;width:100%;background:#fdfdfd;bottom:0;left:0"></div>').S( 'height',300,
+				'<','body',
+				'>', '<div id="BSCSE_bar" style="width:100%;background:#ccc;cursor:pointer;height:20px"></div>'+
+					'<div id="BSCC" style="font-family:DotumChe,Courier;overflow-y:scroll;height:280px"></div>'
+			),
+			bs.Dom('#BSCSE_bar').S( 'down', function(e){
+				if( mode ) mode = 0, bs.ANI.style( bs.Dom('#BSCSE'), 'height', 20, 'time', .4 );
+				else mode = 1, bs.ANI.style( bs.Dom('#BSCSE'), 'height', 300, 'time', .4 );
+			} );
 		}
 		for( i = 0, j = arguments.length, t0.length = 0, t0[0] = '<div class="BSCSE1">' + ( l = ( k = Date.now() ) - base ) + ' : ' + ( k - prev ) + '</div>', prev = k ; i < j ; i++ )
 			k = arguments[i], t0[t0.length] = '<div class="BSCSE2">' + (typeof k == 'object' ? JSON.stringify(k) : k + '' ) + '</div>';
@@ -1388,7 +1391,7 @@ fn( 'router', (function(){
 						cvy = circle.centerY + circle.offsetY + sin(circle.angle1) * circle.radius1, cky = circle.y
 					while( l-- ){
 						t0 = this[l], i = 2, t1 = t0[0], '@aniTarget@';
-						while( i < j ) k = t0[i++], v = t0[i++] + e.roll ? 0 : t0[i], i++, '@ani@';
+						while( i < j ) k = t0[i++], v = t0[i++] + ( e.roll ? 0 : t0[i] ), i++, '@ani@';
 						if( circle ) '@aniCircle@';
 						if( bezier ) for( i = 0 ; i < bl ; i += 5 ) k = bt[i], v = bt[i + 2][2], '@aniBezier@';
 					}
