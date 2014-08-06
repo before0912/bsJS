@@ -143,27 +143,28 @@ if( !W['JSON'] ) W['JSON'] = {
 	})()
 };
 fn( 'log', log = (function(){
-	var t0 = [], mode = 1, base, prev;
+	var t0 = [], mode = 1, base, prev, mobile = detect.device == 'mobile' ? 1 : 0;
 	return function(){
 		var i, j, k, l;
 		if( !doc.getElementById('BSCSE') ){
 			prev = base = Date.now();
-			bs.Css('.BSCSE0').S('border-bottom','1px solid #ddd','padding','10px 0'),
-			bs.Css('.BSCSE1').S('font-size',8,'color','#777', 'margin-left', 10),
-			bs.Css('.BSCSE2').S('float','left','margin',5,'border','1px dashed #aaa','padding',2),
-			bs.Dom('<div id="BSCSE" style="position:fixed;z-index:999999;width:100%;background:#fdfdfd;bottom:0;left:0"></div>').S( 'height',300,
-				'<','body',
-				'>', '<div id="BSCSE_bar" style="width:100%;background:#ccc;cursor:pointer;height:20px"></div>'+
-					'<div id="BSCC" style="font-family:DotumChe,Courier;overflow-y:scroll;height:280px"></div>'
-			),
-			bs.Dom('#BSCSE_bar').S( 'down', function(e){
-				if( mode ) mode = 0, bs.ANI.style( bs.Dom('#BSCSE'), 'height', 20, 'time', .4 );
-				else mode = 1, bs.ANI.style( bs.Dom('#BSCSE'), 'height', 300, 'time', .4 );
-			} );
+			bs.Css('.BSCSE0').S( 'border-bottom', '1px solid #ddd', 'padding', '10px 0' ),
+			bs.Css('.BSCSE1').S( 'font-size', 8, 'color', '#777', 'margin-left', 10),
+			bs.Css('.BSCSE2').S( 'float', 'left', 'margin', 5, 'border', '1px dashed #aaa', 'padding', 2 ),
+			bs.Css('#BSCSE').S( 'position', 'fixed', 'z-index', 999999, 'width', '100%', 'background', '#fdfdfd', 'bottom', 0, 'left', 0 ),
+			bs.Css('#BSCC').S( 'font-size', mobile ? 10 : 11, 'font-family', 'DotumChe,Courier', 'overflow-y', 'scroll', 'height', mobile ? 180 : 280 ),
+			bs.Dom('<div id="BSCSE"></div>').S(
+				'height', mobile ? 200 : 300, '<','body',
+				'>', bs.Dom('<div style="width:100%;background:#ccc;cursor:pointer;height:20px"></div>').S( 'down', function(e){
+						mode?(mode=0,bs.ANI.style(bs.Dom('#BSCSE'),'height',20,'time',.4)):
+						(mode=1,bs.ANI.style(bs.Dom('#BSCSE'),'height',mobile?200:300,'time',.4));
+					}, 'this' ),
+				'>', '<div id="BSCC"></div>'
+			);
 		}
 		for( i = 0, j = arguments.length, t0.length = 0, t0[0] = '<div class="BSCSE1">' + ( l = ( k = Date.now() ) - base ) + ' : ' + ( k - prev ) + '</div>', prev = k ; i < j ; i++ )
 			k = arguments[i], t0[t0.length] = '<div class="BSCSE2">' + (typeof k == 'object' ? JSON.stringify(k) : k + '' ) + '</div>';
-		bs.Dom('#BSCC').S( '>', '<div class="BSCSE0">'+t0.join('')+'<br clear="both"></div>' );
+		bs.Dom('#BSCC').S( '>', '<div class="BSCSE0">' + t0.join('') + '<br clear="both"></div>' );
 		return l;
 	};
 })() );
@@ -799,7 +800,22 @@ fn( 'router', (function(){
 			fn.g = comp( mk, {r:'this[k]'}, t0 ), fn.s = comp( mk, {r:'s[k] = ( this[k] = v ) + u[k], v'}, t0 );
 		} ),
 		bs.cls( 'Css', function( fn, clsfn, bs ){
-			var sheet = doc.createElement('style'), rule, ruleSet, ruleKey, idx, add, del;
+			var sheet = doc.createElement('style'), rule, ruleSet, ruleKey, idx, add, del, r = /^[0-9.-]+$/,
+			parser = function(data){
+				var t0, t1, t2, t3, c, i, j, k, v, m, sel, val;
+				t2 = [], t0 = data.split('}');
+				for( i = 0, j = t0.length ; i < j ; i++ ){
+					if( t0[i].replace( trim, '' ) ){
+						t1 = t0[i], sel = t1.substring( 0, m = t1.indexOf('{') ).replace( trim, '' ), val = t1.substr( m + 1 );
+						if( sel.indexOf('@') == -1 ){
+							c = bs.Css(sel), t1 = val.split(';'), k = t1.length, t2.length = 0;
+							while( k-- ) t3 = t1[k], t2[t2.length] = t3.substring( 0, m = t3.indexOf(':') ).replace( trim, '' ), t2[t2.length] = r.test( v = t3.substr( m + 1 ).replace( trim, '') ) ? parseFloat(v) : v;
+							c.S.apply( c, t2 );
+						}else if( sel.substr( 0, 9 ) == 'font-face' ) bs.Css( sel + ' ' + val.replace( trim, '' ) );
+					}
+				}
+			};
+			bs.fn( 'css', function(v){v.substr( v.length - 4 ) == '.css' ? bs.get( parser, v ) : parser(v);} );
 			doc.getElementsByTagName('head')[0].appendChild(sheet),
 			sheet = sheet.styleSheet || sheet.sheet, ruleSet = sheet.cssRules || sheet.rules,
 			ruleKey = {
@@ -850,7 +866,7 @@ fn( 'router', (function(){
 					arguments[1] == null ? this[t0].s.init() : this[t0].s.S( this[t0].style, arguments, 1 );
 				}
 				return this;
-			}
+			};
 		} ),
 		bs.cls( 'Dom', function( fn, clsfn, bs ){
 			var ev = bs.ev, del, dom, domData, first = {};
@@ -1256,23 +1272,6 @@ fn( 'router', (function(){
 				pool:'ktypes[ktypes._l++] = ktype'
 			}, {ev:bs.ev.dom, domData:domData, style:bs.Style.keys, attrs:attrs, first:first, ktypes:{_l:0}, arg:{length:0}, del:del, exop:{'+':1,'-':1,'*':1,'/':1,'=':1} } );
 		} ),
-		fn( 'css', (function(trim){
-			var r = /^[0-9.-]+$/, parser = function(data){
-				var t0, t1, t2, t3, c, i, j, k, v, m, sel, val;
-				t2 = [], t0 = data.split('}');
-				for( i = 0, j = t0.length ; i < j ; i++ ){
-					if( t0[i].replace( trim, '' ) ){
-						t1 = t0[i], sel = t1.substring( 0, m = t1.indexOf('{') ).replace( trim, '' ), val = t1.substr( m + 1 );
-						if( sel.indexOf('@') == -1 ){
-							c = bs.Css(sel), t1 = val.split(';'), k = t1.length, t2.length = 0;
-							while( k-- ) t3 = t1[k], t2[t2.length] = t3.substring( 0, m = t3.indexOf(':') ).replace( trim, '' ), t2[t2.length] = r.test( v = t3.substr( m + 1 ).replace( trim, '') ) ? parseFloat(v) : v;
-							c.S.apply( c, t2 );
-						}else if( sel.substr( 0, 9 ) == 'font-face' ) bs.Css( sel + ' ' + val.replace( trim, '' ) );
-					}
-				}
-			}
-			return function(v){v.substr( v.length - 4 ) == '.css' ? bs.get( parser, v ) : parser(v);};
-		})(trim) ),
 		(function(){
 			var downed = bs.KEY.downed, code2name = bs.KEY.code2name;
 			bs.WIN.on( 'keydown', function(e){downed[code2name[e.keyCode]] = 1;}),
@@ -1312,7 +1311,7 @@ fn( 'router', (function(){
 			var t0;
 			if( ( t0 = typeof v ) == 'number' ) return v;
 			else if( t0 == 'string' ){
-				if( v.charAt(0) == '{' ){ // && v.charAt(v.length - 1) == '}'
+				if( v.charAt(0) == '{' ){
 					v = ( t0 = v.charAt(1) ) == '=' ? v0 : (
 						v = parseFloat(v.substring( 2, v.length - 1 )),
 						t0 == '+' ? v0 + v : t0 == '-' ? v0 - v : t0 == '*' ? v0 * v : t0 == '/' ? v0 / v : 0
@@ -1484,20 +1483,33 @@ fn( 'router', (function(){
 		fn( 'Content-Type', function(type){return ( type == 'GET' ? 'text/plain' : 'application/x-www-form-urlencoded' ) + '; charset=UTF-8';} );
 		STYLE:
 		fn = bs.Style.fn;
-		fn( 'nopx', 'opacity', 1 ), fn( 'nopx', 'zIndex', 1 ),
-		fn( 'key', 'float', 'styleFloat' in doc.body.style ? 'styleFloat' : 'cssFloat' in doc.body.style ? 'cssFloat' : 'float' );
-		if( !( 'opacity' in doc.body.style ) ){
-			fn( 'key', 'opacity', function( self, style, v ){
-				if( v === undefined ) return self.opacity;
-				else if( v === null ) return delete self.opacity, style.filter = '', v;
-				else return style.filter = 'alpha(opacity=' + parseInt( v * 100 ) + ')', self.opacity = v;
+		(function(trim){
+			var r = /^[0-9.-]+$/, arg = {length:0};
+			fn( 'key', 'style', function( self, style, v ){
+				var t0, i, j, k, v, v0;
+				if( v ){
+					v = v.split(';'), i = v.length, arg.length = 0;
+					while( i-- )
+						arg[arg.length++] = ( t0 = v[i] ).substring( 0, j = t0.indexOf(':') ).replace( trim, '' ),
+						arg[arg.length++] = r.test( t0 = t0.substr( j + 1 ).replace( trim, '') ) ? parseFloat(t0) : t0;
+					self.S( style, arg, 0 );
+				}
 			} ),
-			fn( 'val', 'rgba', function(v){
-				var t0 = v.substring( v.indexOf('(') + 1, v.indexOf(')') ).split(',');
-				t0[3] = parseFloat(t0[3]);
-				return 'rgb('+parseInt((255+t0[0]*t0[3])*.5)+','+parseInt((255+t0[1]*t0[3])*.5)+','+parseInt((255+t0[2]*t0[3])*.5)+')';
-			} );
-		}
+			fn( 'nopx', 'opacity', 1 ), fn( 'nopx', 'zIndex', 1 ),
+			fn( 'key', 'float', 'styleFloat' in doc.body.style ? 'styleFloat' : 'cssFloat' in doc.body.style ? 'cssFloat' : 'float' );
+			if( !( 'opacity' in doc.body.style ) ){
+				fn( 'key', 'opacity', function( self, style, v ){
+					if( v === undefined ) return self.opacity;
+					else if( v === null ) return delete self.opacity, style.filter = '', v;
+					else return style.filter = 'alpha(opacity=' + parseInt( v * 100 ) + ')', self.opacity = v;
+				} ),
+				fn( 'val', 'rgba', function(v){
+					var t0 = v.substring( v.indexOf('(') + 1, v.indexOf(')') ).split(',');
+					t0[3] = parseFloat(t0[3]);
+					return 'rgb('+parseInt((255+t0[0]*t0[3])*.5)+','+parseInt((255+t0[1]*t0[3])*.5)+','+parseInt((255+t0[2]*t0[3])*.5)+')';
+				} );
+			}
+		})(trim);
 		DOM:
 		fn = bs.Dom.fn;
 		(function(trim){
@@ -1516,7 +1528,6 @@ fn( 'router', (function(){
 					for( k in v ) ds[ds.length++] = k, ds[ds.length++] = v[k];
 					if( ds.length ) ( d.bsS || ( d.bsS = new style(d.style) ) ).S(ds);
 				},
-				style:function(d){return d.bsS;},
 				isCapture:function(d){return arguments.length == 1 ? d.bsE ? d.bsE.isCapture : 0 : ( d.bsE || ev(d) ).isCapture = arguments[1];},
 				x:x = function(d){var i = 0; do i += d.offsetLeft; while( d = d.offsetParent ) return i;},
 				y:y = function(d){var i = 0; do i += d.offsetTop; while( d = d.offsetParent ) return i;},
@@ -1595,17 +1606,16 @@ fn( 'router', (function(){
 					}else return d.parentNode;
 				},
 				'>':(function(){
-					var r = [];
 					return function( d, k, v ){
-						var data, t0, t1, i, j, m, n;
+						var data, r, i, j, m, n;
 						k = k.substr(1);
 						if( v ){
 							if( k ) return bs.Dom(childNodes(d.childNodes)[k]).S(v);
 							else if( d.nodeName.toLowerCase() == 'table' ) return html( v, d, '>' );
 							else{
-								r.length = 0;
-								for( t0 = dom(v), i = 0, j = t0.length ; i < j ; i++ ) d.appendChild( t1 = t0[i].cloneNode(true) ), r.push(t1);
-								return r;
+								console.log(v);
+								for( t0 = dom(v), i = 0, j = t0.length ; i < j ; i++ ) d.appendChild(t0[i]);
+								return t0;
 							}
 						}else if( v === null ){
 							if( k ) nodes[0] = childNodes(d.childNodes)[k], nodes.length = 1, del(nodes);
