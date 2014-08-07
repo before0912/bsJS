@@ -1488,10 +1488,16 @@ fn( 'router', (function(){
 			fn( 'key', 'style', function( self, style, v ){
 				var t0, i, j, k, v, v0;
 				if( v ){
-					v = v.split(';'), i = v.length, arg.length = 0;
-					while( i-- )
-						arg[arg.length++] = ( t0 = v[i] ).substring( 0, j = t0.indexOf(':') ).replace( trim, '' ),
-						arg[arg.length++] = r.test( t0 = t0.substr( j + 1 ).replace( trim, '') ) ? parseFloat(t0) : t0;
+					if( typeof v == 'string' ){
+						v = v.split(';'), i = v.length, arg.length = 0;
+						while( i-- )
+							arg[arg.length++] = ( t0 = v[i] ).substring( 0, j = t0.indexOf(':') ).replace( trim, '' ),
+							arg[arg.length++] = r.test( t0 = t0.substr( j + 1 ).replace( trim, '') ) ? parseFloat(t0) : t0;
+					}else if( v.splice ) arg = v;
+					else{
+						arg.length = 0;
+						for( i in v ) arg[arg.length++] = i, arg[arg.length++] = v[i];
+					}
 					self.S( style, arg, 0 );
 				}
 			} ),
@@ -1522,12 +1528,6 @@ fn( 'router', (function(){
 			for( k in t0 = {
 				'event':2,
 				'this':3,
-				cssObject:function( d, v ){
-					var k;
-					ds.length = 0;
-					for( k in v ) ds[ds.length++] = k, ds[ds.length++] = v[k];
-					if( ds.length ) ( d.bsS || ( d.bsS = new style(d.style) ) ).S(ds);
-				},
 				isCapture:function(d){return arguments.length == 1 ? d.bsE ? d.bsE.isCapture : 0 : ( d.bsE || ev(d) ).isCapture = arguments[1];},
 				x:x = function(d){var i = 0; do i += d.offsetLeft; while( d = d.offsetParent ) return i;},
 				y:y = function(d){var i = 0; do i += d.offsetTop; while( d = d.offsetParent ) return i;},
