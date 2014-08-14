@@ -802,14 +802,16 @@ fn( 'router', (function(){
 		bs.cls( 'Css', function( fn, clsfn, bs ){
 			var sheet = doc.createElement('style'), rule, ruleSet, ruleKey, idx, add, del, r = /^[0-9.-]+$/,
 			parser = function(data){
-				var t0, t1, t2, t3, c, i, j, k, v, m, sel, val;
+				var t0, t1, t2, t3, c, i, j, k, l, v, m, sel, val;
 				t2 = [], t0 = data.split('}');
 				for( i = 0, j = t0.length ; i < j ; i++ ){
 					if( t0[i].replace( trim, '' ) ){
 						t1 = t0[i], sel = t1.substring( 0, m = t1.indexOf('{') ).replace( trim, '' ), val = t1.substr( m + 1 );
 						if( sel.indexOf('@') == -1 ){
-							c = bs.Css(sel), t1 = val.split(';'), k = t1.length, t2.length = 0;
-							while( k-- ) t3 = t1[k], t2[t2.length] = t3.substring( 0, m = t3.indexOf(':') ).replace( trim, '' ), t2[t2.length] = r.test( v = t3.substr( m + 1 ).replace( trim, '') ) ? parseFloat(v) : v;
+							c = bs.Css(sel), t1 = val.split(';'), t2.length = 0;
+							for (k = 0, l = t1.length; k < l ; k++) {
+								t3 = t1[k], t2[t2.length] = t3.substring( 0, m = t3.indexOf(':') ).replace( trim, '' ), t2[t2.length] = r.test( v = t3.substr( m + 1 ).replace( trim, '') ) ? parseFloat(v) : v;
+							};
 							c.S.apply( c, t2 );
 						}else if( sel.substr( 0, 9 ) == 'font-face' ) bs.Css( sel + ' ' + val.replace( trim, '' ) );
 					}
