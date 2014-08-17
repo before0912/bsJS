@@ -1281,12 +1281,11 @@ fn( 'router', (function(){
 		})();
 	},
 	ANIMATE = function(){
-		var ani, time, timer, start, end, ltype, loop, ease, ex, tweenS, tweenANI, isLive, isPause, tween, ANI, mk0, mk1, i, pool = {length:0};
-		ani = [], time = 0, timer = 'equestAnimationFrame';
+		var start, end, ltype, loop, ease, ex, tweenS, tweenANI, isLive, isPause, tween, ANI, mk0, mk1, i, 
+			ani = [], time = 0, timer = 'equestAnimationFrame', pool = {length:0};
 		if( timer = W['r' + timer] || W[bs.DETECT.stylePrefix + 'R' + timer] )
 			start = function(){if( !isLive ) isPause = 0, isLive = 1, loop();},
 			end = function(){ani.length = isLive = 0;},
-			timer( function(T){time = Date.now() - T;} ),
 			ltype = 1;
 		else
 			start = function start(){if( !isLive ) isLive = setInterval( loop, 16 );},
@@ -1295,7 +1294,7 @@ fn( 'router', (function(){
 			var t, t0, i, j, k;
 			if( isPause ) return;
 			if( isLive ){
-				t = ltype ? T + time || 0 : +new Date, 
+				t = ltype ? time ? T + time : ( time = Date.now() - T, time + T ) : +new Date, 
 				j = ( k = i = ani.length ) % 8;
 				while( j-- ) if( ani[--k].ANI(t) ) ani.splice( k, 1 );
 				j = ( i * 0.125 ) ^ 0;
