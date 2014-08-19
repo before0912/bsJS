@@ -787,7 +787,6 @@ fn( 'router', (function(){
 						if( t0 = typeof v == 'string' ) if( t1 = vals[v.substr(0,4)] ) v = t1(v);
 						if( u[k] === undefined ) u[k] = t0 ? ( t0 = v.indexOf( ':' ) ) == -1 ? '' : ( t1 = v.substr( t0 + 1 ), v = parseFloat( v.substr( 0, t0 ) ), t1 ) : nopx[k] ? '' : 'px';
 						s[k] = ( this[k] = v ) + u[k];
-						if( k == 'fontWeight' ) console.log( k, v, u[k],nopx );
 					}else if( v === null ) delete this[k], delete u[k], s[k] = '';
 					else v = this[k];
 				}
