@@ -787,6 +787,7 @@ fn( 'router', (function(){
 						if( t0 = typeof v == 'string' ) if( t1 = vals[v.substr(0,4)] ) v = t1(v);
 						if( u[k] === undefined ) u[k] = t0 ? ( t0 = v.indexOf( ':' ) ) == -1 ? '' : ( t1 = v.substr( t0 + 1 ), v = parseFloat( v.substr( 0, t0 ) ), t1 ) : nopx[k] ? '' : 'px';
 						s[k] = ( this[k] = v ) + u[k];
+						if( k == 'fontWeight' ) console.log( k, v, u[k],nopx );
 					}else if( v === null ) delete this[k], delete u[k], s[k] = '';
 					else v = this[k];
 				}
@@ -1487,13 +1488,12 @@ fn( 'router', (function(){
 		(function(trim){
 			var r = /^[0-9.-]+$/, arg = {length:0};
 			fn( 'key', 'style', function( self, style, v ){
-				var t0, i, j, k, v, v0;
+				var t0, t1, i, j, k, v, v0;
 				if( v ){
 					if( typeof v == 'string' ){
-						v = v.split(';'), i = v.length, arg.length = 0;
-						while( i-- )
-							arg[arg.length++] = ( t0 = v[i] ).substring( 0, j = t0.indexOf(':') ).replace( trim, '' ),
-							arg[arg.length++] = r.test( t0 = t0.substr( j + 1 ).replace( trim, '') ) ? parseFloat(t0) : t0;
+						for( v = v.split(';'), i = 0, j = v.length, arg.length = 0 ; i < j ; i++ )
+							arg[arg.length++] = ( t0 = v[i] ).substring( 0, t1 = t0.indexOf(':') ).replace( trim, '' ),
+							arg[arg.length++] = r.test( t0 = t0.substr( t1 + 1 ).replace( trim, '') ) ? parseFloat(t0) : t0;
 					}else if( v.splice ) arg = v;
 					else{
 						arg.length = 0;
@@ -1502,7 +1502,7 @@ fn( 'router', (function(){
 					self.S( style, arg, 0 );
 				}
 			} ),
-			fn( 'nopx', 'opacity', 1 ), fn( 'nopx', 'zIndex', 1 ),
+			fn( 'nopx', 'opacity', 1 ), fn( 'nopx', 'zIndex', 1 ), fn( 'nopx', 'fontWeight', 1 ),
 			fn( 'key', 'float', 'styleFloat' in doc.body.style ? 'styleFloat' : 'cssFloat' in doc.body.style ? 'cssFloat' : 'float' );
 			if( !( 'opacity' in doc.body.style ) ){
 				fn( 'key', 'opacity', function( self, style, v ){
