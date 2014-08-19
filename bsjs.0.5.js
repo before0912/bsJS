@@ -1,4 +1,4 @@
-/* bsJS v0.5.5
+/* bsJS v0.5.51
  * Copyright (c) 2013 by ProjectBS Committe and contributors. 
  * http://www.bsplugin.com All rights reserved.
  * Licensed under the BSD license. See http://opensource.org/licenses/BSD-3-Clause
@@ -1094,12 +1094,12 @@ fn( 'router', (function(){
 				rTag = /^[a-z]+[0-9]*$/i, rAlpha = /[a-z]/i, rClsTagId = /^[.#]?[a-z0-9]+$/i,
 				DOC = document, tagName = {}, clsName = {},
 				className = (function( tagName, clsName ){
-					var reg = {}, r = [];
+					var r = [];
 					return DOC['getElementsByClassName'] ? function(cls){return clsName[cls] || ( clsName[cls] = DOC.getElementsByClassName(cls) );} : 
 					function(cls){
-						var t0 = tagName['*'] || ( tagName['*'] = DOC.getElementsByTagName('*') ), t1 = reg[cls] || ( reg[cls] = new RegExp( '\\b' + cls + '\\b', 'g' ) ), i = t0.length;
-						r.length = 0;
-						while( i-- ) if( t1.test( t0[i].className ) ) r[r.length] = t0[i];
+						var t0 = tagName['*'] || ( tagName['*'] = DOC.getElementsByTagName('*') ), t1, i = t0.length;
+						r.length = 0; 
+						while( i-- ) if( cls == ( t1 = t0[i].className ) || t1.indexOf( cls + ' ' ) > -1 || t1.indexOf( ' ' + cls ) > -1 ) r[r.length] = t0[i];
 						return r;
 					};
 				})( tagName, clsName ),
@@ -1552,7 +1552,23 @@ fn( 'router', (function(){
 					t0 = t0.split(' '); 
 					if( ( i = t0.indexOf(v) ) > -1 ) t0.splice( i, 1 );
 					return d.className = t0.join(' ');
-				}
+				},
+				dispatch:(function(){
+					var mk = doc.createEvent ? function(v){
+						var e = doc.createEvent('HTMLEvents');
+						return e.initEvent(v,true,true), e;
+					} : doc.createEventObject ? function(v){
+						var e = doc.createEventObject();
+						return e.eventType = v, e;
+					} : function(){},
+					fire = doc.dispatchEvent ? function( d, e ){d.dispatchEvent(e);} : doc.fireEvent ? function( d, e ){d.fireEvent( 'on' + e.eventType, e );} : 0;
+					return function( d, k, v ){
+						if( k = mk(v) ){
+							k.eventName = v;
+							fire( d, k );
+						}
+					};
+				})()
 			} )if( t0.hasOwnProperty(k) ) fn( 'key', k, t0[k] );
 			fn( 'key', 'before', comp( t0 = function( d, k, v ){
 				var p, t0, i, j;
@@ -1613,7 +1629,6 @@ fn( 'router', (function(){
 							if( k ) return bs.Dom(childNodes(d.childNodes)[k]).S(v);
 							else if( d.nodeName.toLowerCase() == 'table' ) return html( v, d, '>' );
 							else{
-								console.log(v);
 								for( t0 = dom(v), i = 0, j = t0.length ; i < j ; i++ ) d.appendChild(t0[i]);
 								return t0;
 							}
@@ -1648,23 +1663,23 @@ fn( 'router', (function(){
 		ANI:
 		fn = bs.ANI.ease,
 		(function(){
-			var PI = Math.PI, HPI = PI * .5, bio, qui, quo;
+			var PI = Math.PI, HPI = PI * .5, bio;
 			//rate,start,term
 			fn( 'linear', function(a,c,b){return b*a+c} ),
 			fn( 'backIn', function(a,c,b){return b*a*a*(2.70158*a-1.70158)+c} ),
 			fn( 'backOut', function(a,c,b){a-=1;return b*(a*a*(2.70158*a+1.70158)+1)+c} ),
 			fn( 'backInOut', bio = function(a,c,b){a*=2;if(1>a)return 0.5*b*a*a*(3.5949095*a-2.5949095)+c;a-=2;return 0.5*b*(a*a*(3.70158*a+2.70158)+2)+c} ),
-			fn( 'bounceIn', function(a,c,b,d,e){return b-bio((e-d)/e,0,b)+c} ),
+			//fn( 'bounceIn', function(a,c,b,d,e){return b-bio((e-d)/e,0,b)+c} ),
 			fn( 'bounceOut', function(a,c,b){if(0.363636>a)return 7.5625*b*a*a+c;if(0.727272>a)return a-=0.545454,b*(7.5625*a*a+0.75)+c;if(0.90909>a)return a-=0.818181,b*(7.5625*a*a+0.9375)+c;a-=0.95454;return b*(7.5625*a*a+0.984375)+c} ),
-			fn( 'bounceInOut', function(a,c,b,d,e){if(d<0.5*e)return d*=2,0.5*qui(d/e,0,b,d,e)+c;d=2*d-e;return 0.5*quo(d/e,0,b,d,e)+0.5*b+c} ),
+			//fn( 'bounceInOut', function(a,c,b,d,e){if(d<0.5*e)return d*=2,0.5*ease[13](d/e,0,b,d,e)+c;d=2*d-e;return 0.5*ease[14](d/e,0,b,d,e)+0.5*b+c} ),
 			fn( 'sineIn', function(a,c,b){return -b*Math.cos(a*HPI)+b+c} ),
 			fn( 'sineOut', function(a,c,b){return b*Math.sin(a*HPI)+c} ),
 			fn( 'sineInOut', function(a,c,b){return 0.5*-b*(Math.cos(PI*a)-1)+c} ),
 			fn( 'circleIn', function(a,c,b){return -b*(Math.sqrt(1-a*a)-1)+c} ),
 			fn( 'circleOut', function(a,c,b){a-=1;return b*Math.sqrt(1-a*a)+c} ),
 			fn( 'circleInOut', function(a,c,b){a*=2;if(1>a)return 0.5*-b*(Math.sqrt(1-a*a)-1)+c;a-=2;return 0.5*b*(Math.sqrt(1-a*a)+1)+c} ),
-			fn( 'quadraticIn', qui = function(a,c,b){return b*a*a+c} ),
-			fn( 'quadraticOut', quo = function(a,c,b){return -b*a*(a-2)+c} );
+			fn( 'quadraticIn', function(a,c,b){return b*a*a+c} ),
+			fn( 'quadraticOut', function(a,c,b){return -b*a*(a-2)+c} );
 		})(),
 		bs.ANI.fn( 'style', {
 			target:'arg[0].instanceOf == bs.Dom ? arg[0] : bs.Dom(arg[0])',
