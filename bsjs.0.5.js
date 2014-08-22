@@ -955,12 +955,28 @@ fn( 'router', (function(){
 					'[':(function(){
 						var mT0 = {'~':1, '|':1, '!':1, '^':1, '$':1, '*':1};
 						return function(el, token){
-							var t0, t1, i, v;
+							var t0, t1, i, v, j, k;
 							if( ( i = token.indexOf('=') ) == -1 ) return el.getAttribute(token.substr(1)) === null ? 0 : 1;
 							if( ( t0 = el.getAttribute( token.substring( 1, i - ( mT0[t1 = token.charAt( i - 1 )] ? 1 : 0 ) ) ) ) === null ) return;
 							v = token.substr( i + 1 );
 							switch( t1 ){
-							case'~':return t0.split(' ').indexOf(v) > -1;
+							case'~':
+								t0 = t0.split(' ');
+								if( v.indexOf(' ') > -1 ){
+									v = v.split(' '), i = t0.length, k = v.length;
+									while(i--){
+										j = k;
+										while( j-- ) if( t0[i] != v[j] ) return 0;
+									}
+									return 1;
+								}else if( v.indexOf('|') > -1 ){
+									v = v.split('|'), i = t0.length, k = v.length;
+									while(i--){
+										j = k;
+										while( j-- ) if( t0[i] == v[j] ) return 1;
+									}
+									return 0;
+								}return t0.indexOf(v) > -1;
 							case'|':return t0.split('-').indexOf(v) > -1;
 							case'^':return t0.indexOf(v) == 0;
 							case'$':return t0.lastIndexOf(v) == ( t0.length - v.length );
@@ -1254,7 +1270,7 @@ fn( 'router', (function(){
 							else g = ( t1 = k.indexOf(':') ) > -1 ? ( k = k.substring( 0, t1 ), k.substr( t1 + 1 ) ) : '',
 								v ? t0.on( k, g, v.splice ? ( m = v[1], a = v, v[0] || d ) : v[k] ? ( m = v[k], v ) : ( m = v, d ), m, a ) : t0.off( k, g );
 						}else{
-							if( ( t0 = typeof v ) == 'function' ) v = v( type == 1 ? '@sGet@' : '@tGet@' );
+							if( ( t0 = typeof v ) == 'function' ) v = v( type == 1 ? '@sGet@' : '@tGet@', d );
 							else if( t0 == 'string' && v.charAt(0) == '{' && exop[v.charAt(1)] && v.charAt( t1 = v.length - 1 ) == '}' ){
 								v0 = type == 1 ? '@sGet@' : '@tGet@',
 								v = ( k0 = v.charAt(1) ) == '=' ? v0 : (
@@ -1308,7 +1324,7 @@ fn( 'router', (function(){
 			}
 		},
 		ease = {},
-		ex = function( v, v0 ){
+		ex = function( v, v0, t ){
 			var t0;
 			if( ( t0 = typeof v ) == 'number' ) return v;
 			else if( t0 == 'string' ){
@@ -1318,7 +1334,7 @@ fn( 'router', (function(){
 						t0 == '+' ? v0 + v : t0 == '-' ? v0 - v : t0 == '*' ? v0 * v : t0 == '/' ? v0 / v : 0
 					);
 				}else return parseFloat(v);
-			}else if( t0 == 'function' ) return v( v, v0 );
+			}else if( t0 == 'function' ) return v( v0, t );
 			return v;
 		},
 		tweenS = function( tw, arg ){
@@ -1342,7 +1358,7 @@ fn( 'router', (function(){
 					while( l-- ){
 						t0 = tw[l], t0[t0.length] = '@key@', v0 = '@from@';
 						if( typeof v == 'string' && v.indexOf(',') > -1 ) v = v.split(','), t0[t0.length] = v1 = ex( v[0], v0 ), t0[t0.length] = ex( v[1], v0 ) - v1;
-						else t0[t0.length] = v0, t0[t0.length] = ex( v, v0 ) - v0;
+						else t0[t0.length] = v0, t0[t0.length] = ex( v, v0, tw.t[l] ) - v0;
 						t0[t0.length] = '@option@';
 					}
 				}
@@ -1528,7 +1544,10 @@ fn( 'router', (function(){
 			for( k in t0 = {
 				'event':2,
 				'this':3,
-				isCapture:function(d){return arguments.length == 1 ? d.bsE ? d.bsE.isCapture : 0 : ( d.bsE || ev(d) ).isCapture = arguments[1];},
+				isCapture:function(d){
+					var t0 = bs.Dom.data(d), t1 = t0.BSdomE;
+					return arguments.length == 1 ? t1 ? t1.isCapture : 0 : ( t1 || ( t0.BSdomE = ev(d) ) ).isCapture = arguments[1];
+				},
 				x:x = function(d){var i = 0; do i += d.offsetLeft; while( d = d.offsetParent ) return i;},
 				y:y = function(d){var i = 0; do i += d.offsetTop; while( d = d.offsetParent ) return i;},
 				lx:function(d){return x(d) - x(d.parentNode);},
@@ -1591,24 +1610,29 @@ fn( 'router', (function(){
 					};
 				})(),
 				'*':(function(){
-					var r, re;
-					return detect.customData ? (
-					r = /-[a-zA-Z]/g, re = function(_0){return _0.charAt(1).toUpperCase();},
-					function( d, k, v ){
-						k = k.substr(1).toLowerCase().replace( r, re );
-						if( v === undefined ) v = d.dataset[k];
-						else if( v === null ){
-							delete d.dataset[k];
-						}else d.dataset[k] = v;
+					return comp( function( d, k, v ){
+						var t0, i;
+						k = '@k@',
+						t0 = bs.Dom.data(d).BSdataset || ( bs.Dom.data(d).BSdataset = {} );
+						if( v === undefined ) v = '@get@' || t0[k];
+						else if( v === null ) '@del@', delete t0[k];
+						else type[typeof v] ? ( t0[k] = v ) : ( '@set@' );
 						return v;
-					} ) : function( d, k, v ){
-						k = 'data-' + k.substr(1).toLowerCase();
-						if( v === undefined ) v = d.getAttribute(k);
-						else if( v === null ){
-							d.removeAttribute(k);
-						}else d.setAttribute( k, v );
-						return v;
-					};
+					}, detect.customData ? {
+						k:'k.substr(1).toLowerCase().replace( r, re )', 
+						get:'d.dataset[k]',
+						del:'d.dataset[k]',
+						set:'d.dataset[k] = v'
+					} : {
+						k:"'data-' + k.substr(1).toLowerCase()", 
+						get:'d.getAttribute(k)',
+						del:'d.removeAttribute(k)',
+						set:'d.setAttribute( k, v )'
+					}, {
+						r:/-[a-zA-Z]/g,
+						re:function(_0){return _0.charAt(1).toUpperCase();},
+						type:{'function':1, 'object':1}
+					} );
 				})(),
 				'_':( function( view, key ){
 					return detect.cstyle ? function( d, k ){return view.getComputedStyle( d, '' ).getPropertyValue(k.substr(1));} :
