@@ -976,23 +976,34 @@ fn( 'router', (function(){
 					}
 				},
 				compare = {
-					// id
-					'#':function( el, token ){
-						return token.substr(1) == el.id;
-					},
-					// class
-					'.':function( el, token ){
+					'#':function(el, token){return token.substr(1) == el.id;},
+					'.':function(el, token){
 						var t0, k;
 						return !( t0 = el.className ) ? 0 : ( k = token.substr(1), t0.indexOf(' ') > -1 ? k == t0 : t0.split(' ').indexOf(k) > -1 );
 					},
-					// Attribute
-					'[':function( el, token ){
-						var t0, k, v, s, t2;
+					'[':function(el, token){
+						var t0, t1, t2, i, v, j, k, s;
 						t2 = subTokens[token], k = t2[0], s = t2[1], v = t2[2];
 						if( !s ) return el.getAttribute( k ) === null ? 0 : 1;
 						if( ( t0 = el.getAttribute( k ) ) === null ) return;
 						switch( s ){
-						case'~':return t0.split(' ').indexOf(v) > -1;
+						case'~':
+							t0 = t0.split(' ');
+							if( v.indexOf(' ') > -1 ){
+								v = v.split(' '), i = t0.length, k = v.length;
+								while(i--){
+									j = k;
+									while( j-- ) if( t0[i] != v[j] ) return 0;
+								}
+								return 1;
+							}else if( v.indexOf('|') > -1 ){
+								v = v.split('|'), i = t0.length, k = v.length;
+								while(i--){
+									j = k;
+									while( j-- ) if( t0[i] == v[j] ) return 1;
+								}
+								return 0;
+							}return t0.indexOf(v) > -1;
 						case'|':return t0.split('-').indexOf(v) > -1;
 						case'^':return t0.indexOf(v) == 0;
 						case'$':return t0.lastIndexOf(v) == ( t0.length - v.length );
@@ -1001,13 +1012,12 @@ fn( 'router', (function(){
 						default:return t0 === v;
 						}
 					},
-					// pseudo
 					':':(function( domData ){
 						var mTag = {'first-of-type':1, 'last-of-type':1, 'only-of-type':1},
 						nChild = {'first-child':'firstElementChild', 'last-child':'lastElementChild'},
 						enabled = {INPUT:1, BUTTON:1, SELECT:1, OPTION:1, TEXTAREA:1},
 						checked = {INPUT:1, radio:1, checkbox:1, OPTION:2};
-						return function filters( el, token ){
+						return function filters(el, token){
 							var parent, childs, tag, dir, t0, t1, t2, k, v, i, j, m, dd, tname, ename, lname;
 							t0 = subTokens[token], k = t0[0], v = t0[1];
 							if( !k ) return;
@@ -1030,15 +1040,15 @@ fn( 'router', (function(){
 							case'first-child':case'first-of-type':dir = 1;case'last-child':case'last-of-type':
 								if( isElCld && ( t1 = nChild[k] ) ) return el.parentNode[t1] == el;
 								dd = domData( parent = el.parentNode ), tag = el.tagName;
-								(t1 = mTag[k]) ? dir ? ( tname = 'DQseqFCT' + tag, ename = 'DQFCTEl' + tag ) : ( tname = 'DQseqLCT' + tag, ename = 'DQLCTEl' + tag ):
+								(t1 = mTag[k]) ? dir ? ( tname = 'DQseqFCT', ename = 'DQFCTEl' ) : ( tname = 'DQseqLCT', ename = 'DQLCTEl' ):
 									dir ? ( tname = 'DQseqFC', ename = 'DQFCEl' ) : ( tname = 'DQseqLC', ename = 'DQLCEl' );
-								if( !dd[tname] || dd[tname] != bsRseq ){
+								if( !dd[tname] || dd[tname] != ( t1 ? tag : '' ) + bsRseq ){
 									if( ( childs = isElCld ? parent.children : parent.childNodes ) && ( i = j = childs.length ) ){
 										m = 0;
 										while( i-- ){
 											t0 = childs[dir ? j - i - 1 : i];
 											if( ( isElCld ? 1 : t0.nodeType == 1 ) && ( t1 ? tag == t0.tagName : 1 ) && !m++ ){
-												dd[tname] = bsRseq,
+												dd[tname] = ( t1 ? tag : '' ) + bsRseq,
 												dd[ename] = t0;break;
 											}
 										}
@@ -1049,90 +1059,74 @@ fn( 'router', (function(){
 								if( isElCld && k == 'only-child' ) return el.parentNode.children.length == 1;
 								dd = domData( parent = el.parentNode ),
 								t1 = mTag[k], tag = el.tagName;
-								k == 'only-of-type' ? ( tname = 'DQseqOT' + tag, lname = 'DQTChElLen' + tag ) : ( tname = 'DQseqOCH', lname = 'DQChElLen' );
-								if( !dd[tname] || dd[tname] != bsRseq ){
+								k == 'only-of-type' ? ( tname = 'DQseqOT', lname = 'DQTChElLen' ) : ( tname = 'DQseqOCH', lname = 'DQChElLen' );
+								if( !dd[tname] || dd[tname] != ( t1 ? tag : '' ) + bsRseq ){
 									if( ( childs = isElCld ? parent.children : parent.childNodes ) && ( i = childs.length ) ){
 										m = 0;
 										while( i-- ){
 											t0 = childs[i];
 											if( ( isElCld ? 1 : t0.nodeType == 1 ) && ( t1 ? tag == t0.tagName : 1 ) && !m++ );
 										}
-										dd[tname] = bsRseq,
+										dd[tname] = ( t1 ? tag : '' ) + bsRseq,
 										dd[lname] = m;
 									}
 								}
 								return dd[lname] == 1;
 							default:
-								if( !( parent = el.parentNode ) || parent.tagName == 'HTML' || !( childs = isElCld ? parent.children : parent.childNodes ) || !( j = i = childs.length ) )
-									return;
+								if( !( parent = el.parentNode ) || parent.tagName == 'HTML' || !( childs = isElCld ? parent.children : parent.childNodes ) || !( j = i = childs.length ) ) return;
 								if( v == 'n' ) return 1;
 								t1 = 1, dd = domData(el);
 								switch( k ){
 								case'nth-child':
-									if( !dd.DQseq || dd.DQseq != bsRseq ){
-										for( i = 0; i < j; i++ ){
-											t0 = childs[i];
-											if( isElCld ? 1 : t0.nodeType == 1 ){
-												( t2 = domData(t0) ).DQseq = bsRseq,
-												t2.DQindex = t1++;
-											}
+									if( !dd.DQseq || dd.DQseq != bsRseq ) for( i = 0; i < j; i++ ){
+										t0 = childs[i];
+										if( isElCld ? 1 : t0.nodeType == 1 ){
+											( t2 = domData(t0) ).DQseq = bsRseq,
+											t2.DQindex = t1++;
 										}
 									}
 									return t0 = dd.DQindex, v == 'even' || v == '2n' ? t0 % 2 == 0 :
 									v == 'odd' || v == '2n+1' ? t0 % 2 == 1 :
 									t0 == v;
 								case'nth-last-child':
-									if( !dd.DQseqL || dd.DQseqL != bsRseq ){
-										while( i-- ){
-											t0 = childs[i];
-											if( isElCld ? 1 : t0.nodeType == 1 ){
-												( t2 = domData(t0) ).DQseqL = bsRseq,
-												t2.DQindexL = t1++;
-											}
+									if( !dd.DQseqL || dd.DQseqL != bsRseq ) while( i-- ){
+										t0 = childs[i];
+										if( isElCld ? 1 : t0.nodeType == 1 ){
+											( t2 = domData(t0) ).DQseqL = bsRseq,
+											t2.DQindexL = t1++;
 										}
 									}
 									return t0 = dd.DQindexL, v == 'even' || v == '2n' ? t0 % 2 == 0 :
 									v == 'odd' || v == '2n+1' ? t0 % 2 == 1 :
 									t0 == v;
 								case'nth-of-type':
-									tag = el.tagName, tname = 'DQseqT' + tag, lname = 'DQindexT' + tag;
-									if( !dd[tname] || dd[tname] != bsRseq ){
-										for( i = 0; i < j; i++ ){
-											t0 = childs[i];
-											if( ( isElCld ? 1 : t0.nodeType == 1 ) && t0.tagName == tag ){
-												( t2 = domData(t0) )[tname] = bsRseq,
-												t2[lname] = t1++;
-											}
+									tag = el.tagName;
+									if( !dd.DQseqT || dd.DQseqT != tag + bsRseq ) for( i = 0 ; i < j ; i++ ){
+										t0 = childs[i];
+										if( ( isElCld ? 1 : t0.nodeType == 1 ) && t0.tagName == tag ){
+											( t2 = domData(t0) ).DQseqT = tag + bsRseq,
+											t2.DQindexT = t1++;
 										}
 									}
-									return t0 = dd[lname], v == 'even' || v == '2n' ? t0 % 2 == 0 :
+									return t0 = dd.DQindexT, v == 'even' || v == '2n' ? t0 % 2 == 0 :
 									v == 'odd' || v == '2n+1' ? t0 % 2 == 1 :
 									t0 == v;
 								case'nth-last-of-type':
-									tag = el.tagName, tname = 'DQseqTL' + tag, lname = 'DQindexTL' + tag;
-									if( !dd[tname] || dd[tname] != bsRseq ){
-										while( i-- ){
-											t0 = childs[i];
-											if( ( isElCld ? 1 : t0.nodeType == 1 ) && t0.tagName == tag ){
-												( t2 = domData(t0) )[tname] = bsRseq,
-												t2[lname] = t1++;
-											}
+									tag = el.tagName;
+									if( !dd.DQseqTL || dd.DQseqTL != tag + bsRseq ) while( i-- ){
+										t0 = childs[i];
+										if( ( isElCld ? 1 : t0.nodeType == 1 ) && t0.tagName == tag ){
+											( t2 = domData(t0) ).DQseqTL = tag + bsRseq,
+											t2.DQindexTL = t1++;
 										}
 									}
-									return t0 = dd[lname], v == 'even' || v == '2n' ? t0 % 2 == 0 :
+									return t0 = dd.DQindexTL, v == 'even' || v == '2n' ? t0 % 2 == 0 :
 									v == 'odd' || v == '2n+1' ? t0 % 2 == 1 :
 									t0 == v;
 								}
-							}//
+							}
 						};
-					})( domData || (function(){
-							var id = 1, data = {};
-							return function domData( el, k, v ){
-								var t0;
-								if( !( t0 = el['data-bs'] ) ) el['data-bs'] = t0 = id++, data[t0] = {};
-								return k == undefined ? data[t0] : v == undefined ? data[t0][k] : v === null ? delete data[t0][k] : ( data[t0][k] = v );
-							};
-						})() )
+					})( domData )
 				},
 				rTag = /^[a-z]+[0-9]*$/i, rAlpha = /[a-z]/i, rClsTagId = /^[.#]?[a-z0-9]+$/i,
 				DOC = document, tagName = {}, clsName = {},
@@ -1141,35 +1135,23 @@ fn( 'router', (function(){
 					return DOC['getElementsByClassName'] ? function(cls){return clsName[cls] || ( clsName[cls] = DOC.getElementsByClassName(cls) );} : 
 					function(cls){
 						var t0 = tagName['*'] || ( tagName['*'] = DOC.getElementsByTagName('*') ), t1, i = t0.length;
-						r.length = 0;
+						r.length = 0; 
 						while( i-- ) if( cls == ( t1 = t0[i].className ) || t1.indexOf( cls + ' ' ) > -1 || t1.indexOf( ' ' + cls ) > -1 ) r[r.length] = t0[i];
 						return r;
 					};
 				})( tagName, clsName ),
-				bsRseq = 0,
-				navi,
+				bsRseq = 0, navi, aPsibl = ['previousSibling', 'previousElementSibling'], tEl = DOC.createElement('ul'), isElCld, isQSA,
 				chrome = ( navi = window['navigator'].userAgent.toLowerCase() ).indexOf('chrome') > -1 || navi.indexOf('crios') ? 1 : 0,
 				mQSA = {' ':1,'+':1,'~':1,':':1,'[':1},
 				mParent = {' ':1, '>':1}, mBracket = {'[':1, '(':1, ']':2, ')':2},
 				mEx = {' ':1, '*':1, ']':1, '>':1, '+':1, '~':1, '^':1, '$':1},
 				mT0 = {' ':1, '*':2, '>':2, '+':2, '~':2, '#':3, '.':3, ':':3, '[':3}, mT1 = {'>':1, '+':1, '~':1},
-				R = [], arrs = {_l:0},
-				aPsibl = ['previousSibling', 'previousElementSibling'],
-				tEl = DOC.createElement('ul'), isElCld, isQSA;
-				if( !Array.prototype.indexOf ) Array.prototype.indexOf = function( v, I ){
-					var i, j, k, l;
-					if( j = this.length ) for( I = I || 0, i = I, k = parseInt( ( j - i ) * .5 ) + i + 1, j--; i < k; i++ ) if( this[l = i] === v || this[l = j - i + I] === v ) return l;
-					return -1;
-				};
+				R = [], arrs = {_l:0};
 				tEl.innerHTML = '<li>1</li>',
 				isElCld = tEl['firstElementChild'] && tEl['lastElementChild'] && tEl['children'] ? 1 : 0,
 				isQSA = isElCld && DOC['querySelectorAll'] ? 1 : 0;
 				return function selector( query, doc, r ){
-					var sels, sel,
-						hasParent, hasQSAErr, hasQS,
-						t0, t1, t2, t3, i, j, k, l, m, n,
-						el, els, hit, token, tokens;
-
+					var sels, sel, hasParent, hasQSAErr, hasQS, el, els, hit, token, tokens, t0, t1, t2, t3, i, j, k, l, m, n;
 					if( !r ) r = R;
 					r.length = 0, doc ? ( DOC = doc ) : ( doc = DOC );
 					if( rClsTagId.test(query) ) switch( query.charAt(0) ){
@@ -1177,11 +1159,7 @@ fn( 'router', (function(){
 						case'.':return className(query.substr(1));
 						default:return tagName[query] || ( tagName[query] = doc.getElementsByTagName(query) );
 					}
-					if( chrome && isQSA ){
-						if( ( t0 = query.toLowerCase() ).indexOf(':contains') < 0 && t0.indexOf('!') < 0 ){
-							return doc.querySelectorAll(query);
-						}
-					}
+					if( chrome && isQSA && ( t0 = query.toLowerCase() ).indexOf(':contains') < 0 && t0.indexOf('!') < 0 ) return doc.querySelectorAll(query);
 					if( isQSA && ( i = query.indexOf(',') ) > -1 && query.indexOf('!') < 0 ) return doc.querySelectorAll(query);
 					if( i == -1 ) sels = arrs._l ? arrs[--arrs._l] : [], sels[0] = query, i = 1;
 					else sels = query.split(','), i = sels.length;
@@ -1246,7 +1224,6 @@ fn( 'router', (function(){
 					if( !els ) els = tagName['*'] || ( tagName['*'] = doc.getElementsByTagName('*') );
 					if( !sels[0].length ) return arrs[arrs._l++] = sels[0], sels.length = 0, arrs[arrs._l++] = sels, els;
 					subTokener(sels);
-					//return;
 					bsRseq++;
 					for( i = 0, j = els.length; i < j; i++ ){
 						l = sels.length;
@@ -1262,7 +1239,7 @@ fn( 'router', (function(){
 									hit = ( ( t0 = compare[tokens[++m].charAt(0)] ) ? t0( el = el.parentNode, tokens[m] ) :
 									( tokens[m] == ( el = el.parentNode ).tagName || tokens[m] == '*' ) );
 								else if( k == '+' ){
-									while( el = el[aPsibl[isElCld]] ) if( ( isElCld ? 1 : el.nodeType == 1 ) ) break;
+									while( el = el[ aPsibl[isElCld] ] ) if( ( isElCld ? 1 : el.nodeType == 1 ) ) break;
 									hit = el && ( ( t0 = compare[tokens[++m].charAt(0)] ) ? t0( el, tokens[m] ) : ( tokens[m] == el.tagName || tokens[m] == '*' ) );
 								}else if( k == '~' ){
 									m++;
