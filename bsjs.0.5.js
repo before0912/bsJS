@@ -1673,7 +1673,7 @@ fn( 'router', (function(){
 						k = k.substr(1);
 						if( v ){
 							if( k ) return bs.Dom(childNodes(d.childNodes)[k]).S(v);
-							else if( d.nodeName.toLowerCase() == 'table' ) return html( v, d, '>' );
+							else if( d.nodeName.toLowerCase() == 'table' && typeof v == 'string' ) return html( v, d, '>' );
 							else{
 								for( t0 = dom(v), i = 0, j = t0.length ; i < j ; i++ ) d.appendChild(t0[i]);
 								return t0;
