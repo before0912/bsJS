@@ -1,4 +1,4 @@
-/* bsJS v0.5.51
+/* bsJS v0.5.52
  * Copyright (c) 2013 by ProjectBS Committe and contributors. 
  * http://www.bsplugin.com All rights reserved.
  * Licensed under the BSD license. See http://opensource.org/licenses/BSD-3-Clause
@@ -7,7 +7,7 @@
 'use strict';
 var VERSION = 0.5, REPOSITORY = 'http://projectbs.github.io/bsPlugin/js/',
 	CROSSPROXYKEY = 'CROSSPROXY_DEMO_ACCESS_KEY',
-	CROSSPROXY = 'http://api.bsplugin.com/bsNet/php/crossProxy.0.1.php',
+	CROSSPROXY = 'http://api.bsplugin.com/bsNet/php/crossProxy.0.2.php',
 	NETWORKERKEY = 'BSNETWORKER_20140707',
 	NETWORKER = 'http://www.bsidesoft.com/bs/bsPHP/index.php/networker',
 	log, none = function(){}, trim = /^\s*|\s*$/g, doc = W['document'], que = [], pque = [], plugin, timeout = 5000, mk, comp, detect, isDebug = 0,
@@ -718,12 +718,12 @@ fn( 'router', (function(){
 			win = {
 				ev:function( k, v ){ev[k] ? err( 2401, k ) : ev[k] = v;},
 				on:function( k, v, isDoc ){
-					var data, t0, t1, k, g, c, m, a, d;
+					var data, t0, t1, k, k0, g, c, m, a, d;
 					( isDoc || k.substr(0,3) == 'key' ) ? ( data = ddata, d = doc ) : ( data = wdata, d = W );
 					if( 'on' + k in d || k.indexOf(':') > -1 ) attrs[k] = 2;
 					else return err( 4001, k );
 					if( !( t0 = data.BSdomE ) ) data.BSdomE = t0 = bs.ev.dom(d);
-					g = ( t1 = k.indexOf(':') ) > -1 ? ( k = k.substring( 0, t1 ), k.substr( t1 + 1 ) ) : '';
+					k0 = k, g = ( t1 = k0.indexOf(':') ) > -1 ? ( k = k0.substring( 0, t1 ), k0.substr( t1 + 1 ) ) : '';
 					if( v ) v.splice ? ( m = v[1], a = v, c = v[0] || d ) : v[k] ? ( m = v[k], c = v ) : ( m = v, c = d );
 					if( t1 = ev[k] ){
 						if( typeof t1 == 'function' ) return t1( t0, k, g, c, m, a );
@@ -734,10 +734,10 @@ fn( 'router', (function(){
 				scroll:(function( W, doc, root, docEl ){
 					return function scroll(){
 						switch( arguments[0] ){
-						case'w': return Math.max( root.scrollWidth, root.clientWidth );
-						case'h': return Math.max( root.scrollHeight, root.clientHeight );
-						case'l': return docEl.scrollLeft || W.pageXOffset || 0;
-						case't': return docEl.scrollTop || W.pageYOffset || 0;
+						case'w':case'width':return Math.max( root.scrollWidth, root.clientWidth );
+						case'h':case'height':return Math.max( root.scrollHeight, root.clientHeight );
+						case'l':case'left':return docEl.scrollLeft || W.pageXOffset || 0;
+						case't':case'top':return docEl.scrollTop || W.pageYOffset || 0;
 						}
 						W.scrollTo( arguments[0], arguments[1] );
 					};
@@ -745,23 +745,29 @@ fn( 'router', (function(){
 			},
 			win.sizer = (function( W, doc ){
 				var t0 = {w:0, h:0}, t1, size, docEl, docBody;
-				size = W['innerHeight'] === undefined ? (
+				win.size = size = W['innerHeight'] === undefined ? (
 					docEl = doc.documentElement, docBody = doc.body, t1 = {w:'clientWidth', h:'clientHeight'}, t1.width = t1.w, t1.height = t1.h,
 					function(k){return k = t1[k] ? docEl[k] || docBody[k] : ( t0.w = docEl[t1.w] || docBody[t1.w], t0.h = docEl[t1.h] || docBody[t1.h], t0 );}
 				) : ( t1 = {w:'innerWidth', h:'innerHeight'}, t1.width = t1.w, t1.height = t1.h,
 					function(k){return k = t1[k] ? W[k] : ( t0.w = W[t1.w], t0.h = W[t1.h], t0 );}
 				);
 				return function(end){
-					var f = function(){size(), end( t0.w, t0.h );};
+					var f = function(){size(), end( t0.w, t0.h );}, id;
 					win.on( 'resize', f );
 					if( 'onorientationchange' in W ) win.on( 'orientationchange', f );
-					f();
+					size();
+					if( t0.w && t0.h ) end( t0.w, t0.h );
+					else id = setInterval( function(){
+						size();
+						if( t0.w && t0.h ) clearInterval(id), end( t0.w, t0.h );
+					}, 1 );
 				};
 			})( W, doc );
 			return win;
 		})() ),
 		bs.cls( 'Style', function( fn, clsfn, bs ){
 			var r = /-[a-z]/g, re = function(_0){return _0.charAt(1).toUpperCase();},
+			rn = /^([-]?[.0-9]+)([^-.0-9]*)$/g, rno = [], rne = function( $0, $1, $2){rno[0] = $1, rno[1] = $2;},
 			b = doc.body.style, pf = detect.stylePrefix, key, conf = {nopx:{}, key:{}, val:{}}, nopx = conf.nopx, keys = conf.key, vals = conf.val, t0;
 			clsfn.keys = keys,
 			clsfn.fn = function( type, key, val ){
@@ -788,16 +794,18 @@ fn( 'router', (function(){
 						if( u[k] === undefined ) u[k] = t0 ? ( t0 = v.indexOf( ':' ) ) == -1 ? '' : ( t1 = v.substr( t0 + 1 ), v = parseFloat( v.substr( 0, t0 ) ), t1 ) : nopx[k] ? '' : 'px';
 						s[k] = ( this[k] = v ) + u[k];
 					}else if( v === null ) delete this[k], delete u[k], s[k] = '';
-					else v = this[k];
+					else v = this[k] === undefined ? rn.test( t0 = s[k] ) ? ( t0.replace( rn, rne ), u[k] = rno[1], this[k] = parseFloat(rno[0]) ) : ( u[k] = '', this[k] = t0 ) : this[k];
 				}
 				return v;
 			},
 			mk = function( s, k, v ){
-				if( k = keys[k] ){if( typeof k == 'function' ) return k( this, s, v );}else if( !( k = key(k) ) ) return 0;
+				var t0;
+				if( k = keys[t0 = k] ){if( typeof k == 'function' ) return k( this, s, v );}else if( !( k = key(t0) ) ) return 0;
 				return '@r@';
 			},
-			t0 = {keys:keys, key:key},
-			fn.g = comp( mk, {r:'this[k]'}, t0 ), fn.s = comp( mk, {r:'s[k] = ( this[k] = v ) + u[k], v'}, t0 );
+			t0 = {keys:keys, key:key, rn:rn, rno:rno, rne:rne},
+			fn.g = comp( mk, {r:"this[k] === undefined ? rn.test( v = s[k] ) ? ( v.replace( rn, rne ), this.u[k] = rno[1], this[k] = parseFloat(rno[0]) ) : ( this.u[k] = '', this[k] = v ) : this[k]"}, t0 ), 
+			fn.s = comp( mk, {r:'s[k] = ( this[k] = v ) + u[k], v'}, t0 );
 		} ),
 		bs.cls( 'Css', function( fn, clsfn, bs ){
 			var sheet = doc.createElement('style'), rule, ruleSet, ruleKey, idx, add, del, r = /^[0-9.-]+$/,
@@ -1307,7 +1315,7 @@ fn( 'router', (function(){
 				}
 				return '@pool@', v;
 			}, {
-				sGet:'data.BSdomS ? data.BSdomS.g( d.style, k ) : d.style[style[k]]', tGet:'type( d, k )',
+				sGet:'( data.BSdomS || ( data.BSdomS = bs.Style() ) ).g( d.style, k )', tGet:'type( d, k )',
 				sSet:'arg.length ? ( data.BSdomS || ( data.BSdomS = bs.Style() ) ).S( d.style, arg, 0 ) : 0',
 				pool:'ktypes[ktypes._l++] = ktype'
 			}, {ev:bs.ev.dom, domData:domData, style:bs.Style.keys, attrs:attrs, first:first, ktypes:{_l:0}, arg:{length:0}, del:del, exop:{'+':1,'-':1,'*':1,'/':1,'=':1} } );
@@ -1704,6 +1712,19 @@ fn( 'router', (function(){
 						if( old != location.hash ) e.type = 'hashchange', old = location.hash, e['~']( false, 'hashchange' );
 					}, 1 );
 				}else if( e['-']( false, 'hashchange', g ) == 0 ) clearInterval(id), id = -1;
+			};
+		})() );
+		if( !'onscroll' in W ) fn( 'scroll', (function(){
+			var id = -1;
+			return function( e, k, g, c, m, a ){
+				var t0, oldX = bs.WIN.scroll('l'), oldY = bs.WIN.scroll('t');
+				if( v ){
+					e['+']( false, 'scroll', g, c, m, a, 2 );
+					if( id == -1 ) id = setInterval( function(){
+						var x = bs.WIN.scroll('l'), y = bs.WIN.scroll('t');
+						if( oldX != x || oldY != y ) oldX = x, oldY = y, e['~']( false, 'scroll' );
+					}, 1 );
+				}else if( e['-']( false, 'scroll', g ) == 0 ) clearInterval(id), id = -1;
 			};
 		})() );
 		ANI:
