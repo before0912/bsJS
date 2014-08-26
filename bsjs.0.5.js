@@ -1,4 +1,4 @@
-/* bsJS v0.5.52
+/* bsJS v0.5.6
  * Copyright (c) 2013 by ProjectBS Committe and contributors. 
  * http://www.bsplugin.com All rights reserved.
  * Licensed under the BSD license. See http://opensource.org/licenses/BSD-3-Clause
