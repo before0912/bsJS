@@ -1,4 +1,4 @@
-/* bsJS v0.6.1
+/* bsJS v0.6.2
  * Copyright (c) 2013 by ProjectBS Committe and contributors. 
  * http://www.bsplugin.com All rights reserved.
  * Licensed under the BSD license. See http://opensource.org/licenses/BSD-3-Clause
@@ -125,19 +125,18 @@ if( !W['JSON'] ) W['JSON'] = {
 		var r = /["]/g, f;
 		return f = function(o){
 			var t0, i, j;
-			if( !o ) return 'null';
 			switch( t0 = typeof o ){
 			case'string':return '"' + o.replace( r, '\\"' ) + '"';
 			case'number':case'boolean':return o.toString();
 			case'undefined':return t0;
 			case'object':
+				if( !o ) return 'null';
 				t0 = '';
 				if( o.splice ){
 					for( i = 0, j = o.length ; i < j ; i++ ) t0 += ',' + f(o[i]);
 					return '[' + t0.substr(1) + ']';
 				}else{
-					for( i in o ) if( o.hasOwnProperty(i) && o[i] !== undefined && typeof o[i] != 'function' )
-						t0 += ',"'+i+'":' + f(o[i]);
+					for( i in o ) if( o.hasOwnProperty(i) && o[i] !== undefined && typeof o[i] != 'function' ) t0 += ',"'+i+'":' + f(o[i]);
 					return '{' + t0.substr(1) + '}';
 				}
 			}
@@ -145,28 +144,41 @@ if( !W['JSON'] ) W['JSON'] = {
 	})()
 };
 fn( 'log', log = (function(){
-	var t0 = [], mode = 1, base, prev, mobile = detect.device == 'mobile' ? 1 : 0;
+	var t0 = [], mode = 1, base, prev, mobile = detect.device == 'mobile' ? 1 : 0, r = /[<]/g;
 	return function(){
 		var i, j, k, l;
 		if( !doc.getElementById('BSCSE') ){
 			prev = base = Date.now();
 			bs.Css('.BSCSE0').S( 'style', 'border-bottom:1px solid #ddd;padding:10px 0' ),
-			bs.Css('.BSCSE1').S( 'font-size', 8, 'color', '#777', 'margin-left', 10),
-			bs.Css('.BSCSE2').S( 'float', 'left', 'margin', 5, 'border', '1px dashed #aaa', 'padding', 2 ),
-			bs.Css('#BSCSE').S( 'position', 'fixed', 'z-index', 999999, 'width', '100%', 'background', '#fdfdfd', 'bottom', 0, 'left', 0 ),
+			bs.Css('.BSCSE1').S( 'style', 'font-size:8;color:#777;margin-left:10' ),
+			bs.Css('.BSCSE2').S( 'style', 'float:left;margin:5;border:1px dashed #aaa;padding:2' ),
+			bs.Css('#BSCSE').S( 'style', 'position:fixed;z-index:999999;width:100%;background:#fdfdfd;bottom:0;left:0' ),
 			bs.Css('#BSCC').S( 'font-size', mobile ? 10 : 11, 'font-family', 'DotumChe,Courier', 'overflow-y', 'scroll', 'height', mobile ? 180 : 280 ),
+			bs.Css('#BSCCctab,#BSCCetab').S( 'style', 'font-size:11;cursor:pointer;margin:2;padding:0 10px;border-radius:30;float:left;border:1px solid #666' ),
 			bs.Dom('<div id="BSCSE"></div>').S(
 				'height', mobile ? 200 : 300, '<','body',
-				'>', bs.Dom('<div style="width:100%;background:#ccc;cursor:pointer;height:20px"></div>').S( 'down', function(e){
-						mode?(mode=0,bs.ANI.style(bs.Dom('#BSCSE'),'height',20,'time',.4)):
-						(mode=1,bs.ANI.style(bs.Dom('#BSCSE'),'height',mobile?200:300,'time',.4));
+				'>', bs.Dom('<div style="width:100%;background:#ccc;cursor:pointer;height:20px"></div>').S( 
+					'>', bs.Dom('<div id="BSCCctab">Console</div>').S( 'background', '#fff', 'down', function(e){
+						bs.Dom('#BSCCctab').S( 'background', '#fff' ), bs.Dom('#BSCCetab').S( 'background', '#bbb' ),
+						bs.Dom('#BSCcon').S( 'display', 'block' ), bs.Dom('#BSCele').S( 'display', 'none' ),
+						e.prevent();
 					}, 'this' ),
-				'>', '<div id="BSCC"></div>'
+					'>', bs.Dom('<div id="BSCCetab">Elements</div>').S( 'background', '#bbb', 'down', function(e){
+						bs.Dom('#BSCCctab').S( 'background', '#bbb' ), bs.Dom('#BSCCetab').S( 'background', '#fff' ),
+						bs.Dom('#BSCcon').S( 'display', 'none' ), bs.Dom('#BSCele').S( 'display', 'block' ),
+						bs.Dom('#BSCele').S( 'html', '' ), bs.Dom('#BSCele').S( 'html', '<pre>' + ( '<html>\n' + bs.Dom('html').S('html') + '\n</html>' ).replace( r, '&lt;' ) + '</pre>' );
+						e.prevent();
+					}, 'this' ),
+					'down', function(e){
+						mode ? ( mode = 0, bs.ANI.style( bs.Dom('#BSCSE'), 'height', 20, 'time', .4 ) ) :
+						( mode = 1, bs.ANI.style( bs.Dom('#BSCSE'),'height', mobile ? 200 : 300, 'time', .4 ) );
+					}, 'this' ),
+				'>', '<div id="BSCC"><div id="BSCcon"></div><div id="BSCele" style="display:none"></div></div>'
 			);
 		}
 		for( i = 0, j = arguments.length, t0.length = 0, t0[0] = '<div class="BSCSE1">' + ( l = ( k = Date.now() ) - base ) + ' : ' + ( k - prev ) + '</div>', prev = k ; i < j ; i++ )
 			k = arguments[i], t0[t0.length] = '<div class="BSCSE2">' + (typeof k == 'object' ? JSON.stringify(k) : k + '' ) + '</div>';
-		bs.Dom('#BSCC').S( '>', '<div class="BSCSE0">' + t0.join('') + '<br clear="both"></div>' );
+		bs.Dom('#BSCcon').S( '>', '<div class="BSCSE0">' + t0.join('') + '<br clear="both"></div>' );
 		return l;
 	};
 })() );
@@ -968,8 +980,8 @@ fn( 'router', (function(){
 				return this;
 			};
 		} ),
-		fn( 'css', (function(trim){
-			var rNum = /^[-]?[0-9.]+$/, rSel = /[};][^};]+$/g, rParent = /[&]/g,
+		fn( 'css', (function( trim, css ){
+			var rSel = /[};][^};]+$/g, rParent = /[&]/g,
 			VAR = {}, rVAL = /\$[^;:]+[:][^;:]+;/g, fVAL = function(v){return v = v.substring( 0, v.length - 1 ).split(':'), VAR[v[0]] = pVal(v[1]), '';},
 			MIX = {}, rMIX = /[@]mixin [^@{]+[{][^}]+[}]/g, fMIX = function(v){
 				var n, arg = '', b, i;
@@ -993,13 +1005,74 @@ fn( 'router', (function(){
 			},
 			extend, rExtend = /[@]extend (.+)[;]/g, fExtend = function( g, v ){return extend[v] || '';},
 			placeholder = {},
-			pVal = function(v){
-				var i, j;
-				v = ( i = v.indexOf('(') ) > -1 && ( FUNC[j = v.substring( 0, i )] ) ?
-					FUNC[j]( v.substring( i + 1, v.lastIndexOf(')') ).split(',') ) :
-					VAR[v] === undefined ? v : VAR[v];
-				return rNum.test(v) ? parseFloat(v) : v;
-			},
+			pEx = (function(){
+				var rnum = /^[-]?[0-9.]+$/, rstr = /^(["][^"]*["]|['][^']*['])$/, rkey = /^[a-zA-z0-9 ]+$/,
+				rvar = /^[$]\S+$/, runit = /^([-]?[0-9.]+)([^-0-9.]+)$/, rcolor = /(.)/g,
+				ra = /\[[^\[\]]*\]/g, rf = /[a-zA-z$_][a-zA-z0-9$_]*[ ]*[(][^)]*[)]/g, rp = /[(][^)]*[)]/,
+				rarr = /^[@]A[0-9]+[:][0-9]+[@]$/, rfunc = /^[@]F[0-9]+[:][0-9]+[@]$/, rparen = /^[@]P[0-9]+[:][0-9]+[@]$/,
+				val = {'true':true,'false':false,'null':null,'undefined':undefined},
+				op = {'+':1,'-':1,'*':2,'/':2},
+				opf = {'+':function(a,b){return a+b;},'-':function(a,b){return a-b;},'*':function(a,b){return a*b;},'/':function(a,b){return a/b;}},
+				Value = (function(){
+					var v = function(){
+						var i = 0, j = arguments.length;
+						while( i < j ) this[arguments[i++]] = arguments[i++];
+					}, fn = v.prototype;
+					fn.value = 0, fn.string = '', fn.toString = fn.valueOf = function(){return this.value;};
+					return v;
+				})(),
+				ex = function( v, f, p, a ){
+					var depth, ff, fp, fa, arg, t0, t1, i, j, k;
+					if( i = val[v = v.replace( trim, '' )]) return i;
+					if( v.charAt(0) == '#' ){
+						if( v.length == 4 ) v = '#' + v.substr(1).replace( rcolor, '$1$1');
+						return new Value( 'value', v, 'r', parseInt( '0x' + v.substr( 1, 2 ) ), 'g', parseInt( '0x' + v.substr( 3, 2 ) ), 'b', parseInt( '0x' + v.substr( 5, 2 ) ) );
+					}
+					if( rvar.test(v) ) return VAR[v];
+					if( rnum.test(v) ) return parseFloat(v);
+					if( runit.test(v) ) return new Value( 'value', v, 'unit', ( t1 = v.match(runit), t1[2] ), 'v', parseFloat(t1[1]) );
+					if( rstr.test(v) ) return v.substring( 1, v.length - 1 );
+					if( rkey.test(v) ) return v;
+					if( rarr.test(v) ){
+						for( t0 = a[v.substring( 2, i = v.indexOf(':') )][v.substring( i + 1, v.length - 1 )].split(','), i = 0, j = t0.length ; i < j ; i++ ) t0[i] = ex( t0[i], f, p, a );
+						return t0;
+					}
+					if( rfunc.test(v) ){
+						v = f[v.substring( 2, i = v.indexOf(':') )][v.substring( i + 1, v.length - 1 )], t0 = FUNC[k = v.substring( 0, i = v.indexOf('(') )];
+						for( t1 = v.substring( i + 1, v.length - 1 ).split(','), i = 0, j = t1.length ; i < j ; i++ ) t1[i] = ex( t1[i], f, p, a );
+						return t0 ? t0.apply( t0, t1 ) : k + '(' + t1.join(',') + ')';
+					}
+					if( rparen.test(v) ) return ex( p[v.substring( 2, i = v.indexOf(':') )][v.substring( i + 1, v.length - 1 )], f, p );
+					if( v.indexOf('(') > -1 ){
+						f = [], ff = function(v){
+							var t0 = f[depth] || ( f[depth] = [] ), i = t0.length;
+							return t0[i] = v, '@F' + depth + ':' + i + '@';
+						},
+						p = [], fp = function(v){
+							var t0 = p[depth] || ( p[depth] = [] ), i = t0.length;
+							return t0[i] = v.substring( 1, v.length - 1 ).replace( trim, '' ), '@P' + depth + ':' + i + '@';
+						},
+						depth = 0;while( rf.test(v) ) v = v.replace( rf, ff ), depth++;
+						depth = 0;while( rp.test(v) ) v = v.replace( rp, fp ), depth++;
+					}
+					if( v.indexOf('[') > -1 ){
+						a = [], fa = function(v){
+							var t0 = a[depth] || ( a[depth] = [] ), i = t0.length;
+							return t0[i] = v.substring( 1, v.length - 1 ).replace( trim, '' ), '@A' + depth + ':' + i + '@';
+						},
+						depth = 0;while( ra.test(v) ) v = v.replace( ra, fa ), depth++;
+					}
+					for( arg = [], i = k = 0, j = v.length ; i < j ; i++ ) if( op[t0 = v.charAt(i)] ) arg[arg.length] = ex( v.substring( k, i ), f, p, a ), arg[arg.length] = t0, k = i + 1;
+					arg[arg.length] = ex( v.substr(k), f, p, a );
+					i = 3;
+					while( i-- > 1 ){
+						j = 1;
+						while( j < arg.length ) if( op[arg[j]] == i ) arg.splice( j - 1, 3, opf[arg[j]]( arg[j - 1], arg[j + 1] ) ); else j += 2;
+					}
+					return arg[0];
+				};
+				return ex;
+			})(),
 			pAdd = function( v, arg, bodys ){
 				var i, j;
 				if( v.indexOf('@include') === 0 ){
@@ -1009,7 +1082,7 @@ fn( 'router', (function(){
 					for( v = v.split(';'), i = 0, j = v.length ; i < j ; i++ ) pAdd( v[i], arg, bodys );
 				}else if( v = v.replace( trim, '' ) ){
 					arg[arg.length] = v.substring( 0, i = v.indexOf(':') ).replace( trim, '' ),
-					arg[arg.length] = pVal(v.substr( i + 1 ).replace( trim, ''));
+					arg[arg.length] = pEx(v.substr( i + 1 ).replace( trim, ''));
 				}
 			},
 			pData = function( v, depth, sels, bodys ){
@@ -1056,18 +1129,19 @@ fn( 'router', (function(){
 							continue;
 						}
 						for( v = bodys[k].split(';'), sels.length = i = 0, j = v.length; i < j ; i++ ) if( t0 = v[i].replace( trim, '' ) ) pAdd( t0, sels, bodys );
-						if( isDebug ) console.log( k, '{', sels, '}' );
+						if( isDebug ) console.log( k, '{', sels.join(','), '}' );
 						w0 += k + '{' + css(sels) + '}\n';
-					}else w0 += k + '{' + bodys[k] + '}\n';
+					}else w0 += k + '{' + bodys[k] + '}';
 				}
-				doc.getElementsByTagName('head')[0].appendChild( w1 = doc.createElement('style') ),
+				document.getElementsByTagName('head')[0].appendChild( w1 = document.createElement('style') ),
 				w1['styleSheet'] ? ( w1['styleSheet'].cssText = w0 ) : ( w1.innerHTML = w0 );
 			},
-			css = (function(){
-				var s = bs.Style(), c = bs.Css('.BSCSS000').style;
-				return function(v){return c.cssText = '', s.S( c, v, 0 ), c.cssText;};
-			})(),
-			f = function(v){v.substr( v.length - 4 ) == '.css' ? bs.get( parser, v ) : parser(v);};
+			f = function( v, val, fn ){
+				var k;
+				if( val ) for( k in val ) VAR[k] = val[k];
+				if( fn ) for( k in fn ) FUNC[k] = fn[k];
+				v.substr( v.length - 4 ) == '.css' ? bs.get( parser, v ) : parser(v);
+			};
 			return f.fn = (function(){
 				var t = {mixin:MIX, 'var':VAR, 'function':FUNC};
 				return function( type ){
@@ -1075,9 +1149,12 @@ fn( 'router', (function(){
 					if( t0 = t[type] ) while( i < j ) t0[arguments[i++]] = arguments[i++];
 				};
 			})(), f;
-		})(trim) ),
+		})( trim, (function(){
+			var s = bs.Style(), c = bs.Css('.BSCSS000').style;
+			return function(v){return c.cssText = '', s.S( c, v, 0 ), c.cssText;};
+		})() ) ),
 		bs.cls( 'Dom', function( fn, clsfn, bs ){
-			var ev = bs.ev, del, dom, domData, first = {};
+			var ev = bs.ev, del, dom, domData, first = {}, childS;
 			clsfn.data = domData = (function(){
 				var id = 1, data = {}, t0 = doc.createElement('div');
 				t0.innerHTML = '<div data-test-aaa="3"></div>';
@@ -1152,42 +1229,33 @@ fn( 'router', (function(){
 				};
 			})(doc),
 			clsfn.query = (function( doc, trim ){
-				var subTokens = {},
-				subTokener = function( sels ){
+				var subTokens = {}, subTokener = function( sels ){
 					var i, j, k, m = sels.length, n, sel, token, t0, t1, v,
-						skip ={'target':1, 'active':1, 'visited':1, 'first-line':1, 'first-letter':1, 'hover':1, 'focus':1, 'after':1, 'before':1, 'selection':1,
-							'eq':1, 'gt':1, 'lt':1,
-							'valid':1, 'invalid':1, 'optional':1, 'in-range':1, 'out-of-range':1, 'read-only':1, 'read-write':1, 'required':1
-						},
-						mT0 = {'~':1, '|':1, '!':1, '^':1, '$':1, '*':1};
-					while(m--){//,
+					skip = {target:1, active:1, visited:1, 'first-line':1, 'first-letter':1, hover:1, focus:1, after:1, before:1, selection:1,
+						eq:1, gt:1, lt:1, valid:1, invalid:1, optional:1, 'in-range':1, 'out-of-range':1, 'read-only':1, 'read-write':1, required:1
+					}, mT0 = {'~':1, '|':1, '!':1, '^':1, '$':1, '*':1};
+					while(m--){
 						sel = sels[m], j = sel.length;
 						while(j--){
 							token = sel[j], k = token.charAt(0);
 							if(k == '['){
 								subTokens[token] = [];
 								if( ( i = token.indexOf('=') ) == -1 ) subTokens[token].push( token.substr(1) );
-								else
-									subTokens[token].push( token.substring( 1, i - ( mT0[t1 = token.charAt( i - 1 )] ? 1 : 0 ) ) ),
-									subTokens[token].push( t1 ),
-									subTokens[token].push( token.substr( i + 1 ) );
+								else subTokens[token].push( token.substring( 1, i - ( mT0[t1 = token.charAt( i - 1 )] ? 1 : 0 ) ), t1, token.substr( i + 1 ) );
 							}else if(k == ':'){
 								subTokens[token] = [],
 								k = token.substr(1), i = k.indexOf('('), v = i > -1 ? isNaN( t0 = k.substr( i + 1 ) ) ? t0.replace( trim, '' ) : parseFloat(t0) : null;
 								if( v ) k = k.substring( 0, i );
-								if( !skip[k] )
-									subTokens[token].push( k ), subTokens[token].push( v );
+								if( !skip[k] ) subTokens[token].push( k, v );
 							}
 						}
 					}
-				},
-				compare = {
+				}, compare = {
 					'#':function(el, token){return token.substr(1) == el.id;},
 					'.':function(el, token){
 						var t0, k;
 						return !( t0 = el.className ) ? 0 : ( k = token.substr(1), t0.indexOf(' ') > -1 ? k == t0 : t0.split(' ').indexOf(k) > -1 );
-					},
-					'[':function(el, token){
+					}, '[':function(el, token){
 						var t0, t1, t2, i, v, j, k, s;
 						t2 = subTokens[token], k = t2[0], s = t2[1], v = t2[2];
 						if( !s ) return el.getAttribute( k ) === null ? 0 : 1;
@@ -1217,12 +1285,9 @@ fn( 'router', (function(){
 						case'!':return t0 !== v;
 						default:return t0 === v;
 						}
-					},
-					':':(function( domData ){
-						var mTag = {'first-of-type':1, 'last-of-type':1, 'only-of-type':1},
-						nChild = {'first-child':'firstElementChild', 'last-child':'lastElementChild'},
-						enabled = {INPUT:1, BUTTON:1, SELECT:1, OPTION:1, TEXTAREA:1},
-						checked = {INPUT:1, radio:1, checkbox:1, OPTION:2};
+					}, ':':(function( domData ){
+						var mTag = {'first-of-type':1, 'last-of-type':1, 'only-of-type':1}, nChild = {'first-child':'firstElementChild', 'last-child':'lastElementChild'},
+						enabled = {INPUT:1, BUTTON:1, SELECT:1, OPTION:1, TEXTAREA:1}, checked = {INPUT:1, radio:1, checkbox:1, OPTION:2};
 						return function filters(el, token){
 							var parent, childs, tag, dir, t0, t1, t2, k, v, i, j, m, dd, tname, ename, lname;
 							t0 = subTokens[token], k = t0[0], v = t0[1];
@@ -1240,9 +1305,7 @@ fn( 'router', (function(){
 								switch( v.charAt(0) ){
 								case'#':return v.substr(1) != el.id;
 								case'.':return !( !( t0 = el.className ) ? 0 : ( t1 = v.substr(1), t0.indexOf(' ') < 0 ? t1 == t0 : t0.split(' ').indexOf(t1) > -1 ) );
-								default:return v != el.tagName && v != '*';
-								}
-								return 0;
+								default:return v != el.tagName && v != '*';}
 							case'first-child':case'first-of-type':dir = 1;case'last-child':case'last-of-type':
 								if( isElCld && ( t1 = nChild[k] ) ) return el.parentNode[t1] == el;
 								dd = domData( parent = el.parentNode ), tag = el.tagName;
@@ -1254,8 +1317,7 @@ fn( 'router', (function(){
 										while( i-- ){
 											t0 = childs[dir ? j - i - 1 : i];
 											if( ( isElCld ? 1 : t0.nodeType == 1 ) && ( t1 ? tag == t0.tagName : 1 ) && !m++ ){
-												dd[tname] = ( t1 ? tag : '' ) + bsRseq,
-												dd[ename] = t0;break;
+												dd[tname] = ( t1 ? tag : '' ) + bsRseq, dd[ename] = t0; break;
 											}
 										}
 									}
@@ -1263,8 +1325,7 @@ fn( 'router', (function(){
 								return dd[ename] == el;
 							case'only-of-type':case'only-child':
 								if( isElCld && k == 'only-child' ) return el.parentNode.children.length == 1;
-								dd = domData( parent = el.parentNode ),
-								t1 = mTag[k], tag = el.tagName;
+								dd = domData( parent = el.parentNode ), t1 = mTag[k], tag = el.tagName,
 								k == 'only-of-type' ? ( tname = 'DQseqOT', lname = 'DQTChElLen' ) : ( tname = 'DQseqOCH', lname = 'DQChElLen' );
 								if( !dd[tname] || dd[tname] != ( t1 ? tag : '' ) + bsRseq ){
 									if( ( childs = isElCld ? parent.children : parent.childNodes ) && ( i = childs.length ) ){
@@ -1273,8 +1334,7 @@ fn( 'router', (function(){
 											t0 = childs[i];
 											if( ( isElCld ? 1 : t0.nodeType == 1 ) && ( t1 ? tag == t0.tagName : 1 ) && !m++ );
 										}
-										dd[tname] = ( t1 ? tag : '' ) + bsRseq,
-										dd[lname] = m;
+										dd[tname] = ( t1 ? tag : '' ) + bsRseq, dd[lname] = m;
 									}
 								}
 								return dd[lname] == 1;
@@ -1286,10 +1346,7 @@ fn( 'router', (function(){
 								case'nth-child':
 									if( !dd.DQseq || dd.DQseq != bsRseq ) for( i = 0; i < j; i++ ){
 										t0 = childs[i];
-										if( isElCld ? 1 : t0.nodeType == 1 ){
-											( t2 = domData(t0) ).DQseq = bsRseq,
-											t2.DQindex = t1++;
-										}
+										if( isElCld ? 1 : t0.nodeType == 1 )( t2 = domData(t0) ).DQseq = bsRseq, t2.DQindex = t1++;
 									}
 									return t0 = dd.DQindex, v == 'even' || v == '2n' ? t0 % 2 == 0 :
 									v == 'odd' || v == '2n+1' ? t0 % 2 == 1 :
@@ -1297,10 +1354,7 @@ fn( 'router', (function(){
 								case'nth-last-child':
 									if( !dd.DQseqL || dd.DQseqL != bsRseq ) while( i-- ){
 										t0 = childs[i];
-										if( isElCld ? 1 : t0.nodeType == 1 ){
-											( t2 = domData(t0) ).DQseqL = bsRseq,
-											t2.DQindexL = t1++;
-										}
+										if( isElCld ? 1 : t0.nodeType == 1 ) ( t2 = domData(t0) ).DQseqL = bsRseq, t2.DQindexL = t1++;
 									}
 									return t0 = dd.DQindexL, v == 'even' || v == '2n' ? t0 % 2 == 0 :
 									v == 'odd' || v == '2n+1' ? t0 % 2 == 1 :
@@ -1309,10 +1363,7 @@ fn( 'router', (function(){
 									tag = el.tagName;
 									if( !dd.DQseqT || dd.DQseqT != tag + bsRseq ) for( i = 0 ; i < j ; i++ ){
 										t0 = childs[i];
-										if( ( isElCld ? 1 : t0.nodeType == 1 ) && t0.tagName == tag ){
-											( t2 = domData(t0) ).DQseqT = tag + bsRseq,
-											t2.DQindexT = t1++;
-										}
+										if( ( isElCld ? 1 : t0.nodeType == 1 ) && t0.tagName == tag ) ( t2 = domData(t0) ).DQseqT = tag + bsRseq, t2.DQindexT = t1++;
 									}
 									return t0 = dd.DQindexT, v == 'even' || v == '2n' ? t0 % 2 == 0 :
 									v == 'odd' || v == '2n+1' ? t0 % 2 == 1 :
@@ -1321,10 +1372,7 @@ fn( 'router', (function(){
 									tag = el.tagName;
 									if( !dd.DQseqTL || dd.DQseqTL != tag + bsRseq ) while( i-- ){
 										t0 = childs[i];
-										if( ( isElCld ? 1 : t0.nodeType == 1 ) && t0.tagName == tag ){
-											( t2 = domData(t0) ).DQseqTL = tag + bsRseq,
-											t2.DQindexTL = t1++;
-										}
+										if( ( isElCld ? 1 : t0.nodeType == 1 ) && t0.tagName == tag ) ( t2 = domData(t0) ).DQseqTL = tag + bsRseq, t2.DQindexTL = t1++;
 									}
 									return t0 = dd.DQindexTL, v == 'even' || v == '2n' ? t0 % 2 == 0 :
 									v == 'odd' || v == '2n+1' ? t0 % 2 == 1 :
@@ -1348,14 +1396,12 @@ fn( 'router', (function(){
 				})( tagName, clsName ),
 				bsRseq = 0, navi, aPsibl = ['previousSibling', 'previousElementSibling'], tEl = DOC.createElement('ul'), isElCld, isQSA,
 				chrome = ( navi = window['navigator'].userAgent.toLowerCase() ).indexOf('chrome') > -1 || navi.indexOf('crios') ? 1 : 0,
-				mQSA = {' ':1,'+':1,'~':1,':':1,'[':1},
-				mParent = {' ':1, '>':1}, mBracket = {'[':1, '(':1, ']':2, ')':2},
+				mQSA = {' ':1,'+':1,'~':1,':':1,'[':1}, mParent = {' ':1, '>':1}, mBracket = {'[':1, '(':1, ']':2, ')':2},
 				mEx = {' ':1, '*':1, ']':1, '>':1, '+':1, '~':1, '^':1, '$':1},
 				mT0 = {' ':1, '*':2, '>':2, '+':2, '~':2, '#':3, '.':3, ':':3, '[':3}, mT1 = {'>':1, '+':1, '~':1},
 				R = [], arrs = {_l:0};
 				tEl.innerHTML = '<li>1</li>',
-				isElCld = tEl['firstElementChild'] && tEl['lastElementChild'] && tEl['children'] ? 1 : 0,
-				isQSA = isElCld && DOC['querySelectorAll'] ? 1 : 0;
+				isElCld = tEl['firstElementChild'] && tEl['lastElementChild'] && tEl['children'] ? 1 : 0, isQSA = isElCld && DOC['querySelectorAll'] ? 1 : 0;
 				return function selector( query, doc, r ){
 					var sels, sel, hasParent, hasQSAErr, hasQS, el, els, hit, token, tokens, t0, t1, t2, t3, i, j, k, l, m, n;
 					if( !r ) r = R;
@@ -1429,9 +1475,7 @@ fn( 'router', (function(){
 					}
 					if( !els ) els = tagName['*'] || ( tagName['*'] = doc.getElementsByTagName('*') );
 					if( !sels[0].length ) return arrs[arrs._l++] = sels[0], sels.length = 0, arrs[arrs._l++] = sels, els;
-					subTokener(sels);
-					bsRseq++;
-					for( i = 0, j = els.length; i < j; i++ ){
+					for( subTokener(sels), bsRseq++, i = 0, j = els.length; i < j; i++ ){
 						l = sels.length;
 						while( l-- ){
 							el = els[i];
@@ -1439,11 +1483,8 @@ fn( 'router', (function(){
 								token = tokens[m], hit = 0;
 								if( ( k = token.charAt(0) ) == ' ' ){
 									m++;
-									while( el = el.parentNode )
-										if( hit = ( ( t0 = compare[tokens[m].charAt(0)] ) ? t0( el, tokens[m] ) : ( tokens[m] == el.tagName || tokens[m] == '*' ) ) ) break;
-								}else if( k == '>' )
-									hit = ( ( t0 = compare[tokens[++m].charAt(0)] ) ? t0( el = el.parentNode, tokens[m] ) :
-									( tokens[m] == ( el = el.parentNode ).tagName || tokens[m] == '*' ) );
+									while( el = el.parentNode ) if( hit = ( ( t0 = compare[tokens[m].charAt(0)] ) ? t0( el, tokens[m] ) : ( tokens[m] == el.tagName || tokens[m] == '*' ) ) ) break;
+								}else if( k == '>' ) hit = ( ( t0 = compare[tokens[++m].charAt(0)] ) ? t0( el = el.parentNode, tokens[m] ) : ( tokens[m] == ( el = el.parentNode ).tagName || tokens[m] == '*' ) );
 								else if( k == '+' ){
 									while( el = el[ aPsibl[isElCld] ] ) if( ( isElCld ? 1 : el.nodeType == 1 ) ) break;
 									hit = el && ( ( t0 = compare[tokens[++m].charAt(0)] ) ? t0( el, tokens[m] ) : ( tokens[m] == el.tagName || tokens[m] == '*' ) );
@@ -1473,16 +1514,62 @@ fn( 'router', (function(){
 						sel['instanceOf'] == bs.Dom || sel.length ? sel : null;
 				};
 				return dom;
-			})( clsfn.query, clsfn.html );
+			})( clsfn.query, clsfn.html ),
+			clsfn.tagNodes = (function(){
+				var nodes = [];
+				return function(n){
+					var i, j;
+					for( nodes.length = i = 0, j = n.length ; i < j ; i++ ) if( n[i].nodeType == 1 ) nodes[nodes.length] = n[i];
+					return nodes;
+				}
+			})(),
 			fn.NEW = function(key){
 				var t0 = dom(key), i = this.length = t0.length;
 				if( t0['instanceOf'] == bs.Dom ) return t0;
 				while( i-- ) this[i] = t0[i];
 			},
+			childS = (function(){
+				var r = /^[-]?[0-9.]+$/, d, slice = Array.prototype.slice;
+				return function( target, arg ){
+					var v = arg[0], t, t0, t1, i, j, k = 0;
+					if(!d) d = bs.Dom('<div></div>');
+					v = v.substring( 1, v.lastIndexOf('}') );
+					if( r.test(v) ) return arg[0] = parseFloat(v), target.S.apply( target, arg );
+					arg = slice.call( arg, 1 );
+					if( v.charAt(0) == '>' ){
+						i = target.length, t = r.test(v = v.substr(1)) ? 1 : v.charAt(0) == '.' ? ( v = v.substr(1), 2 ) : ( v = v.toLowerCase(), 3 );
+						while( i-- ){
+							t0 = clsfn.tagNodes(target[i].childNodes);
+							if( t == 1 ) d[k++] = t0[v];
+							else{
+								j = t0.length;
+								while( j-- ) if(
+									( t == 2 && ( t1 = t0[j].className ) && ( v == t1 || t1.indexOf( v + ' ' ) > -1 || t1.indexOf( ' ' + v ) > -1 ) ) ||
+									( t == 3 && t0[j].tagName.toLowerCase() == v ) 
+								) d[k++] = t0[j];
+							}
+						}
+						if( k ) return d.length = k, arg.length ? d.S.apply( d, arg ) : d;
+					}else{
+						i = target.length, t = r.test(v) ? 1 : v.charAt(0) == '.' ? ( v = v.substr(1), 2 ) : ( v = v.toLowerCase(), 3 );
+						if( t == 1 ) d[k++] = target[v];
+						else{
+							while( i-- ) if(
+								( t == 2 && ( t1 = target[i].className ) && ( v == t1 || t1.indexOf( v + ' ' ) > -1 || t1.indexOf( ' ' + v ) > -1 ) ) ||
+								( t == 3 && target[i].tagName.toLowerCase() == v ) 
+							) d[k++] = target[i];
+						}
+						if( k ) return d.length = k, arg.length ? d.S.apply( d, arg ) : d;
+					}
+					return null;
+				};
+			})(),
 			fn.S = comp( function(){
 				var ktype = ktypes._l ? ktypes[--ktypes._l] : [], d, data, target, type, t0, t1, t2, l, i0, i, j, k, v, k0, v0, m, a, g;
-				if( arguments[0] === null ) return del(this);
-				typeof ( i = arguments[0] ) == 'number' ? ( i0 = l = 1, target = d = this[i], data = this[i + 'data'] || ( this[i + 'data'] = domData(target) ) ) : ( l = this.length, i0 = 0 ),
+				if( ( i = arguments[0] ) === null ) return del(this);
+				if( typeof i == 'number' ) i0 = l = 1, target = d = this[i], data = this[i + 'data'] || ( this[i + 'data'] = domData(target) );
+				else if( i.charAt(0) == '{' ) return childS( this, arguments );
+				else l = this.length, i0 = 0;
 				j = arguments.length, ktype.length = 0;
 				while( l-- ){
 					if( !target ) d = this[l], data = this[l + 'data'] || ( this[l + 'data'] = domData(d) );
@@ -1516,7 +1603,7 @@ fn( 'router', (function(){
 				sGet:'( data.BSdomS || ( data.BSdomS = bs.Style() ) ).g( d.style, k )', tGet:'type( d, k )',
 				sSet:'arg.length ? ( data.BSdomS || ( data.BSdomS = bs.Style() ) ).S( d.style, arg, 0 ) : 0',
 				pool:'ktypes[ktypes._l++] = ktype'
-			}, {ev:bs.ev.dom, domData:domData, style:bs.Style.keys, attrs:attrs, first:first, ktypes:{_l:0}, arg:{length:0}, del:del, exop:{'+':1,'-':1,'*':1,'/':1,'=':1} } );
+			}, {childS:childS, ev:bs.ev.dom, domData:domData, style:bs.Style.keys, attrs:attrs, first:first, ktypes:{_l:0}, arg:{length:0}, del:del, exop:{'+':1,'-':1,'*':1,'/':1,'=':1} } );
 		} ),
 		(function(){
 			var downed = bs.KEY.downed, code2name = bs.KEY.code2name;
@@ -1526,7 +1613,7 @@ fn( 'router', (function(){
 	},
 	ANIMATE = function(){
 		var start, end, ltype, loop, ease, ex, tweenS, tweenANI, isLive, isPause, tween, ANI, mk0, mk1, i, 
-			ani = [], time = 0, timer = 'equestAnimationFrame', pool = {length:0};
+			ani = [], time = 0, timer = 'equestAnimationFrame', pool = {length:0}, fprev = 0;
 		if( timer = W['r' + timer] || W[bs.DETECT.stylePrefix + 'R' + timer] )
 			start = function(){if( !isLive ) isPause = 0, isLive = 1, loop();},
 			end = function(){ani.length = isLive = 0;},
@@ -1539,14 +1626,17 @@ fn( 'router', (function(){
 			if( isPause ) return;
 			if( isLive ){
 				t = ltype ? time ? T + time : ( time = Date.now() - T, time + T ) : +new Date, 
-				j = ( k = i = ani.length ) % 8;
-				while( j-- ) if( ani[--k].ANI(t) ) ani.splice( k, 1 );
-				j = ( i * 0.125 ) ^ 0;
-				while(j--){
-					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
-					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
-					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
-					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+				i = parseInt( 1000 / ( ( t - fprev ) || 1 ) ), fprev = t;
+				if( i > 30 ){
+					j = ( k = i = ani.length ) % 8;
+					while( j-- ) if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+					j = ( i * 0.125 ) ^ 0;
+					while(j--){
+						if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+						if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+						if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+						if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+					}
 				}
 				ani.length ? ltype ? timer(loop) : 0 : end();
 			}
@@ -1721,79 +1811,42 @@ fn( 'router', (function(){
 		pque.length ? ( i = pque, pque = null, plugin( start, i ) ) : start();
 	}, 1 ),
 	EXT = function(){
-		var fn;
+		var fn, t0;
 		NETWORK:
 		fn = bs.header,
 		fn( 'Cache-Control', 'no-cache' ),
 		fn( 'Content-Type', function(type){return ( type == 'GET' ? 'text/plain' : 'application/x-www-form-urlencoded' ) + '; charset=UTF-8';} );
 		css:
 		bs.css.fn( 'function',
-			'_num', function(v){
-				var i;
-				if( v.splice ){
-					i = v.length;
-					while( i-- ) typeof v[i] == 'string' ? ( v[i] = ( v[i] = v[i].replace( trim, '' ) ) ? v[i].charAt( v[i].length - 1 ) == '%' ? parseFloat( v[i].substring(0, v[i].length - 1 ) ) * .01 : v[i].substr( 0, 2 ) == '0x' ? parseInt( v[i], 16 ) : parseFloat(v[i]) : 0 ) : 0;
-					return v;
-				}
-				return typeof v == 'string' ? ( v = v.replace( trim, '' ) ) ? v.charAt( v.length - 1 ) == '%' ? parseFloat( v.substring(0, v.length - 1 ) ) * .01 : v.substr( 0, 2 ) == '0x' ? parseInt( v, 16 ) : parseFloat(v) : 0 : v;
+			'rgb', function( r, g, b ){
+				return new Value( 'r', r, 'g', g, 'b', b, 'string', 'rgb(' + r + ',' + g + ',' + b + ')' );
 			},
-			'rgb', function(v){
-				var c, i, k;
-				for( c = '#', i = 0 ; i < 3 ; i++ ) k = ( v[i] = this._num(v[i]) ), c += k ? ( k > 255 ? 255 : k ).toString(16) : '00';
-				return c;
+			'rgba', function( r, g, b, a ){
+				return new Value( 'r', r = +r, 'g', g = +g, 'b', b = +b, 'a', a = +a, 'string', 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')' );
 			},
-			'rgba', function(v){
-				var c, i, k;
-				for( this._num(v), c = 'rgba(', i = 0 ; i < 3 ; i++ ) c += ( v[i] ? ( v[i] > 255 ? 255 : v[i] ) : '00' ) + ',';
-				return c + ( v[3] > 1 ? 1 : v[3] < 0 ? 0 : v[3] ) + ')';
-			},
-			'hsl', (function(){
+			'hsl', t0 = (function(){
 				var f = function( p, q, t ){
 					if(t < 0) t += 1; else if(t > 1) t -= 1;
 					return t < 1 / 6 ? p + (q - p) * 6 * t : t < 1 / 2 ? q : t < 2 / 3 ? p + (q - p) * ( 2 / 3 - t ) * 6 : p;
 				}
-				return function(v){
-					var h, s, l, p, q;
-					v = this._num(v), s = v[1], l = v[2];
-					if( ( h = v[0] ) > 360 ) h -= parseInt( h / 360 ) * 360;
+				return function( h, s, l ){
+					var r, g, b, p, q;
+					if( h > 360 ) h -= parseInt( h / 360 ) * 360;
 					h /= 360;
-					if(s == 0) v[0] = v[1] = v[2] = l;
-					else p = 2 * l - ( q = l < .5 ? l * ( 1 + s ) : l + s - l * s ), v[0] = f( p, q, h + 1 / 3 ), v[1] = f( p, q, h ), v[2] = f( p, q, h - 1 / 3 );
-					p = 3;
-					while( p-- ) v[p] = Math.round( v[p] * 255 );
-					return this.rgb(v);
+					if( s == 0 ) r = g = b = l;
+					else p = 2 * l - ( q = l < .5 ? l * ( 1 + s ) : l + s - l * s ), r = f( p, q, h + 1 / 3 ), g = f( p, q, h ), b = f( p, q, h - 1 / 3 );
+					return this[arguments.length > 3 ? 'rgba' : 'rgb']( Math.round( r * 255 ), Math.round( g * 255 ), Math.round( b * 255 ), arguments[3] );
 				};
 			})(),
-			'hsla', function(v){return this.hsl(v), this.rgba(v);},
-			'mix', function(v){
-				var f, l, w, i, r;
-				i = 2;
-				while( i-- ){
-					if( !v[i].indexOf('rgb') );// TODO : rgb(...)
-					else while( v[i].length < 8 ) v[i] += '0';
-					v[i] = this._num(v[i]);
-				}
-				f = v[0], l = v[1], w = this._num(v[2]),
-				r = ( ( w ? f * w + l * ( 1 - w ) : f + l ) / 2 ).toString(16);
-				while( r.length < 6 ) r = '0' + r;
-				return '0x' + r;
-			},
-			'lighten', function(v){
-				var c, a, i, r, g, b;
-				if( !v[0].indexOf('hsl') );// TODO : hsl(...)
-				else while( v[0].length < 8 ) v[0] += '0';
-				c = v[0], a = v[1], r = c.substr( 2, 2 ), g = c.substr( 4, 2 ), b = c.substr( 6, 2 );
-				return '0x' + 
-					( ( 0 | ( 1 << 8 ) + r + ( 256 - r ) * a ).toString(16)).substr(1) +
-					( ( 0 | ( 1 << 8 ) + g + ( 256 - g ) * a ).toString(16)).substr(1) +
-					( ( 0 | ( 1 << 8 ) + b + ( 256 - b ) * a ).toString(16)).substr(1);
-			},
-			'darken', function(v){},
-			'saturate', function(v){},
-			'desaturate', function(v){},
-			'grascale', function(v){},
-			'invert', function(v){},
-			'complement', function(v){}
+			'hsla', t0,
+			'mix', function( c0, c1 ){
+				var w0 = 1, w1 = 1, r, g, b;
+				if( arguments.length > 2 ) w0 = arguments[2], w1 = 1 - w0;
+				r = parseInt( ( c0.r * w0 + c1.r * w1 ) * .5 ),
+				g = parseInt( ( c0.g * w0 + c1.g * w1 ) * .5 ),
+				b = parseInt( ( c0.b * w0 + c1.b * w1 ) * .5 );
+				return c0.a !== undefined && c1.a !== undefined ? this.rgba( r, g, b, ( c0.a * w0 + c1.a * w1 ) * .5 ) : this.rgb( r, g, b );
+			}
 		);
 		STYLE:
 		fn = bs.Style.fn;
@@ -1831,12 +1884,7 @@ fn( 'router', (function(){
 		DOM:
 		fn = bs.Dom.fn;
 		(function(trim){
-			var k, x, y, t = detect.text, nodes = [], ds0 = {}, del = bs.Dom.del, html = bs.Dom.html, dom = bs.Dom.dom, childNodes, ev = bs.ev.dom, t0, t1, t2;
-			childNodes = function(n){
-				var i, j;
-				for( nodes.length = i = 0, j = n.length ; i < j ; i++ ) if( n[i].nodeType == 1 ) nodes[nodes.length] = n[i];
-				return nodes;
-			};
+			var k, x, y, t = detect.text, ds0 = {}, del = bs.Dom.del, html = bs.Dom.html, dom = bs.Dom.dom, tagNodes = bs.Dom.tagNodes, ev = bs.ev.dom, t0, t1, t2;
 			for( k in t0 = {
 				'event':2,
 				'this':3,
@@ -1938,20 +1986,21 @@ fn( 'router', (function(){
 					}else return d.parentNode;
 				},
 				'>':(function(){
+					var nodes = [];
 					return function( d, k, v ){
 						var data, r, i, j, m, n;
-						k = k.substr(1);
+						k = k.substr(1), i = tagNodes(d.childNodes);
 						if( v ){
-							if( k ) return bs.Dom(childNodes(d.childNodes)[k]).S(v);
+							if( k ) return bs.Dom(i[k]).S(v);
 							else if( d.nodeName.toLowerCase() == 'table' && typeof v == 'string' ) return html( v, d, '>' );
 							else{
 								for( t0 = dom(v), i = 0, j = t0.length ; i < j ; i++ ) d.appendChild(t0[i]);
 								return t0;
 							}
 						}else if( v === null ){
-							if( k ) nodes[0] = childNodes(d.childNodes)[k], nodes.length = 1, del(nodes);
-							else if( d.childNodes && childNodes(d.childNodes).length ) del(nodes);
-						}else return childNodes(d.childNodes), k ? ( nodes[0] = nodes[k], nodes.length = 1, nodes ) : nodes;
+							if( k ) nodes[0] = i[k], nodes.length = 1, del(nodes);
+							else if( d.childNodes && i.length ) del(i);
+						}else return k ? ( nodes[0] = i[k], nodes.length = 1, nodes ) : i;
 					}
 				})()
 			} )if( t0.hasOwnProperty(k) ) fn( 'first', k, t0[k] );
