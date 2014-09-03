@@ -1,11 +1,11 @@
-/* bsJS v0.6.0
+/* bsJS v0.6.1
  * Copyright (c) 2013 by ProjectBS Committe and contributors. 
  * http://www.bsplugin.com All rights reserved.
  * Licensed under the BSD license. See http://opensource.org/licenses/BSD-3-Clause
  */
 ( function( W, N ){
 'use strict';
-var VERSION = 0.5, REPOSITORY = 'http://projectbs.github.io/bsPlugin/js/',
+var VERSION = 0.6, REPOSITORY = 'http://projectbs.github.io/bsPlugin/js/',
 	CROSSPROXYKEY = 'CROSSPROXY_DEMO_ACCESS_KEY',
 	CROSSPROXY = 'http://api.bsplugin.com/bsNet/php/crossProxy.0.2.php',
 	NETWORKERKEY = 'BSNETWORKER_20140707',
@@ -83,12 +83,7 @@ detectDOM = function( W, detect ){
 	case'opera': cssPrefix = '-o-', stylePrefix = 'O';break;
 	default: cssPrefix = '-webkit-', stylePrefix = 'webkit';
 	}
-	for( k in t0 = {
-		root:b.scrollHeight ? b : doc.documentElement,
-		scroll:doc.documentElement && typeof doc.documentElement.scrollLeft == 'number' ? 'scroll' : 'page',
-		cstyle:( doc.defaultView && doc.defaultView.getComputedStyle ) ? 1 : 0,
-		docMode:docMode, cssPrefix:cssPrefix, stylePrefix:stylePrefix
-	} ) if( t0.hasOwnProperty(k) ) detect[k] = t0[k];
+	for( k in t0 = {docMode:docMode, cssPrefix:cssPrefix, stylePrefix:stylePrefix} ) if( t0.hasOwnProperty(k) ) detect[k] = t0[k];
 	(function(){
 		var c = doc.createElement('canvas'), a = doc.createElement('audio'), v = doc.createElement('video'), r, re, gl, keys, t0, t1, i, j, k,
 		c1 = c && c['getContext'] && c.getContext('2d') ? 1 : 0, a1 = a && a['canPlayType'] ? 1 : 0, v1 = v && v['canPlayType'] ? 1 : 0;
@@ -155,7 +150,7 @@ fn( 'log', log = (function(){
 		var i, j, k, l;
 		if( !doc.getElementById('BSCSE') ){
 			prev = base = Date.now();
-			bs.Css('.BSCSE0').S( 'border-bottom', '1px solid #ddd', 'padding', '10px 0' ),
+			bs.Css('.BSCSE0').S( 'style', 'border-bottom:1px solid #ddd;padding:10px 0' ),
 			bs.Css('.BSCSE1').S( 'font-size', 8, 'color', '#777', 'margin-left', 10),
 			bs.Css('.BSCSE2').S( 'float', 'left', 'margin', 5, 'border', '1px dashed #aaa', 'padding', 2 ),
 			bs.Css('#BSCSE').S( 'position', 'fixed', 'z-index', 999999, 'width', '100%', 'background', '#fdfdfd', 'bottom', 0, 'left', 0 ),
@@ -180,23 +175,30 @@ CORE:
 (function(trim){
 	var rc = 0, rand, template,	js, head = doc.getElementsByTagName('head')[0], e = W['addEventListener'], id = 0, c = bs.__callback = {}, slice = [].slice;
 	fn( 'obj', function( key, v ){var t0 = key.replace( trim, '' ).toUpperCase();( !arguments[2] && t0 != key ) ? err( 1002, key ) : bs[t0] ? err( 2002, t0 ) : bs[t0] = v;} ),
-	fn( 'cls', function( key, v ){
-		var t0 = key.replace( trim, '' ).toLowerCase(), t1, t2, cls, fn, k, f;
-		t0 = t0.charAt(0).toUpperCase() + t0.substr(1), ( !arguments[2] && t0 != key ) ? err( 1003, key ) : bs[t0] ? err( 2003, t0 ) : (
-			( fn = ( cls = function(arg){return this.__bsKey = arg[0], this.NEW.apply( this, arg );} ).prototype ).NEW = none,
-			v( t1 = {}, t2 = {}, bs ), f = bs[t0] = function(key){
-				var t0;
-				if( typeof key == 'string' && key ){
-					if( ( t0 = key.charAt(0) ) == '@' ) return cls[arguments[0] = key.substr(1)] = new cls(arguments);
-					else if( t0 != '<' ) return cls[key] || ( cls[key] = new cls(arguments) );
-				}
-				return new cls(arguments);
-			}
-		);
-		for( k in t1 ) if( t1.hasOwnProperty(k) ) fn[k] = t1[k];
-		for( k in t2 ) if( t2.hasOwnProperty(k) ) f[k] = t2[k];
-		fn.END = function(){delete cls[this.__bsKey];}, fn.instanceOf = f;
-	} ),
+	fn( 'cls', (function(){
+		var S = function(){
+			var i = 0, j = arguments.length;
+			while( i < j ){k = arguments[i++];if( i == j ) return this[k];( ( v = arguments[i++] ) === null ) ? delete this[k] : ( this[k] = v );}
+			return v;
+		};
+		return function( key, v ){
+			var t0 = key.replace( trim, '' ).toLowerCase(), t1, t2, cls, fn, k, f;
+			t0 = t0.charAt(0).toUpperCase() + t0.substr(1),
+			( !arguments[2] && t0 != key ) ? err( 1003, key ) : bs[t0] ? err( 2003, t0 ) : (
+				fn = ( cls = function(arg){return this.__bsKey = arg[0], this.NEW.apply( this, arg );} ).prototype,
+				v( t1 = {S:S, NEW:none, END:function(){delete cls[this.__bsKey];}, instanceOf:bs[t0] = f = function(key){
+					var t0;
+					if( typeof key == 'string' && key ){
+						if( ( t0 = key.charAt(0) ) == '@' ) return cls[arguments[0] = key.substr(1)] = new cls(arguments);
+						else if( t0 != '<' ) return cls[key] || ( cls[key] = new cls(arguments) );
+					}
+					return new cls(arguments);
+				}}, t2 = {}, bs )
+			);
+			for( k in t1 ) if( t1.hasOwnProperty(k) ) fn[k] = t1[k];
+			for( k in t2 ) if( t2.hasOwnProperty(k) ) f[k] = t2[k];
+		};
+	})() ),
 	fn( 'compress', (function(){
 		var own = Object.prototype.hasOwnProperty, _f = String.fromCharCode;
 		fn( 'decompress', function(e){if(e==null)return"";if(e=="")return null;var t=[],n,r=4,i=4,s=3,o="",u="",a,f,l,c,h,p,d,v=_f,m={string:e,val:e.charCodeAt(0),position:32768,index:1};for(a=0;a<3;a++){t[a]=a}l=0;h=Math.pow(2,2);p=1;while(p!=h){c=m.val&m.position;m.position>>=1;if(m.position==0){m.position=32768;m.val=m.string.charCodeAt(m.index++)}l|=(c>0?1:0)*p;p<<=1}switch(n=l){case 0:l=0;h=Math.pow(2,8);p=1;while(p!=h){c=m.val&m.position;m.position>>=1;if(m.position==0){m.position=32768;m.val=m.string.charCodeAt(m.index++)}l|=(c>0?1:0)*p;p<<=1}d=v(l);break;case 1:l=0;h=Math.pow(2,16);p=1;while(p!=h){c=m.val&m.position;m.position>>=1;if(m.position==0){m.position=32768;m.val=m.string.charCodeAt(m.index++)}l|=(c>0?1:0)*p;p<<=1}d=v(l);break;case 2:return""}t[3]=d;f=u=d;while(true){if(m.index>m.string.length){return""}l=0;h=Math.pow(2,s);p=1;while(p!=h){c=m.val&m.position;m.position>>=1;if(m.position==0){m.position=32768;m.val=m.string.charCodeAt(m.index++)}l|=(c>0?1:0)*p;p<<=1}switch(d=l){case 0:l=0;h=Math.pow(2,8);p=1;while(p!=h){c=m.val&m.position;m.position>>=1;if(m.position==0){m.position=32768;m.val=m.string.charCodeAt(m.index++)}l|=(c>0?1:0)*p;p<<=1}t[i++]=v(l);d=i-1;r--;break;case 1:l=0;h=Math.pow(2,16);p=1;while(p!=h){c=m.val&m.position;m.position>>=1;if(m.position==0){m.position=32768;m.val=m.string.charCodeAt(m.index++)}l|=(c>0?1:0)*p;p<<=1}t[i++]=v(l);d=i-1;r--;break;case 2:return u}if(r==0){r=Math.pow(2,s);s++}if(t[d]){o=t[d]}else{if(d===i){o=f+f.charAt(0)}else{return null}}u+=o;t[i++]=f+o.charAt(0);r--;f=o;if(r==0){r=Math.pow(2,s);s++}}} );
@@ -608,9 +610,8 @@ PLUGIN:
 })();
 EVENT:
 fn( 'ev', (function(){
-	var pool = {}, ev, on, fn, f
-	on = function(){this.a = [];}, on._l = 0,
-	ev = function(){}, fn = ev.prototype,
+	var pool = {}, f, on = function(){this.a = [];}, ev = function(){}, fn = ev.prototype;
+	on._l = 0,  fn.NEW = fn.END = none,
 	fn['+'] = function( channel, type, group, context, method, arg, i ){
 		var t0 = this.o[channel] || ( this.o[channel] = {_l:0} ), t1 = on._l ? on[--on._l] : new on, j;
 		if( !t0[type] ) t0[type] = t0._l++;
@@ -638,19 +639,19 @@ fn( 'ev', (function(){
 		var t0 = this.o[channel], i = 0, j, k;
 		t0 = t0[t0[type]], j = t0.length;
 		if( group ) while( i < j ){if( ( k = t0[i++] ).g == group && k.m.apply( k.c, k.a ) ) return;} else while( i < j ){if( ( k = t0[i++] ).m.apply( k.c, k.a ) ) return;}
-	}, fn.NEW = fn.END = none;
-	f = function( k, v ){
+	}, f = function( k, v ){
 		var cls, fn, t0, t1, i;
 		if( f[k] ) err( 0, k );
 		pool[k] = {_l:0}, cls = function(){this.o = {_l:0};}, fn = cls.prototype = new ev,
 		f[k] = function(v){
+			var t0, t1, i, m, n;
 			if( v instanceof ev ){
-				for( k in v.o ){
-					t0 = v.o[k], i = t0._l;
-					while( i-- ){
-						j = t0[i].length;
-						while( j-- ) on[on._l++] = ( t1 = t0[i][j] ).c = t1.m = t1.g = null, t1.a.length = 0, t1;
-						t0[i].length = 0;
+				for( i in v.o ){
+					t0 = v.o[i], m = t0._l;
+					while( m-- ){
+						n = t0[m].length;
+						while( n-- ) on[on._l++] = ( t1 = t0[m][n] ).c = t1.m = t1.g = null, t1.a.length = 0, t1;
+						t0[m].length = 0;
 					}
 				}
 				pool[k][pool[k]._l++] = ( v.END(), v );
@@ -815,7 +816,7 @@ fn( 'router', (function(){
 			win = {
 				ev:function( k, v ){ev[k] ? err( 2401, k ) : ev[k] = v;},
 				on:function( k, v, isDoc ){
-					var data, t0, t1, k, k0, g, c, m, a, d;
+					var data, t0, t1, k0, g, c, m, a, d;
 					( isDoc || k.substr(0,3) == 'key' ) ? ( data = ddata, d = doc ) : ( data = wdata, d = W );
 					if( 'on' + k in d || k.indexOf(':') > -1 ) attrs[k] = 2;
 					else return err( 4001, k );
@@ -828,7 +829,7 @@ fn( 'router', (function(){
 					}
 					v ? t0.on( k, g, c, m, a ) : t0.off( k, g );
 				},
-				scroll:(function( W, doc, root, docEl ){
+				scroll:(function( W, root, docEl ){
 					return function scroll(){
 						switch( arguments[0] ){
 						case'w':case'width':return Math.max( root.scrollWidth, root.clientWidth );
@@ -838,7 +839,7 @@ fn( 'router', (function(){
 						}
 						W.scrollTo( arguments[0], arguments[1] );
 					};
-				})( W, doc, detect.root, doc.documentElement )
+				})( W, 'scrollHeight' in doc.body ? doc.body : doc.documentElement, doc.documentElement )
 			},
 			win.sizer = (function( W, doc ){
 				var t0 = {w:0, h:0}, t1, size, docEl, docBody;
@@ -1915,14 +1916,10 @@ fn( 'router', (function(){
 						return v;
 					}, detect.customData ? {
 						k:'k.substr(1).toLowerCase().replace( r, re )', 
-						get:'d.dataset[k]',
-						del:'d.dataset[k]',
-						set:'d.dataset[k] = v'
+						get:'d.dataset[k]', del:'d.dataset[k]', set:'d.dataset[k] = v'
 					} : {
 						k:"'data-' + k.substr(1).toLowerCase()", 
-						get:'d.getAttribute(k)',
-						del:'d.removeAttribute(k)',
-						set:'d.setAttribute( k, v )'
+						get:'d.getAttribute(k)', del:'d.removeAttribute(k)', set:'d.setAttribute( k, v )'
 					}, {
 						r:/-[a-zA-Z]/g,
 						re:function(_0){return _0.charAt(1).toUpperCase();},
@@ -1930,7 +1927,7 @@ fn( 'router', (function(){
 					} );
 				})(),
 				'_':( function( view, key ){
-					return detect.cstyle ? function( d, k ){return view.getComputedStyle( d, '' ).getPropertyValue(k.substr(1));} :
+					return doc.defaultView && doc.defaultView.getComputedStyle ? function( d, k ){return view.getComputedStyle( d, '' ).getPropertyValue(k.substr(1));} :
 						function( d, k ){return d.currentStyle[key(k.substr(1))];};
 				} )( doc.defaultView, bs.Style.key ),
 				'<':function( d, k, v ){
