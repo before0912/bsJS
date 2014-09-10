@@ -1,4 +1,4 @@
-/* bsJS v0.6.2
+/* bsJS v0.6.3
  * Copyright (c) 2013 by ProjectBS Committe and contributors. 
  * http://www.bsplugin.com All rights reserved.
  * Licensed under the BSD license. See http://opensource.org/licenses/BSD-3-Clause
@@ -403,7 +403,7 @@ CORE:
 		var t0, t1, t2, i, v;
 		t0 = document.cookie.split(';'), i = t0.length;
 		if( arguments.length == 1 ){
-			while( i-- ) if( ( t1 = bs.trim(t0[i].split('=')), t1[0] ) == key ) return decodeURIComponent(t1[1]);
+			while( i-- ) if( bs.trim(t0[i].split('=')[0]) == key ) return decodeURIComponent(t1[1]);
 			return null;
 		}else{
 			v = arguments[1], t1 = key + '=' + encodeURIComponent(v) + ';domain='+document.domain+';path='+ (arguments[3] || '/');
@@ -515,7 +515,7 @@ NET:
 			end( text, status );
 		};
 	},
-	head = [], paramBody = [], paramHeader = function(v){return typeof v == 'function' ? v(httpMethod) : v;},
+	head = [], paramBody = [], ck, paramHeader = function(v){return typeof v == 'function' ? v(httpMethod) : v;},
 	param = function( arg, i ){
 		var t0, j, k, v, m;
 		if( !arg || ( j = arg.length ) < i + 1 ) return '';
@@ -526,6 +526,7 @@ NET:
 				v = arg[i++],
 				k.charAt(0) === '@' ? head.push( k.substr(1), paramHeader(v) ) :
 				k == 'crossAccessKey' ? head.crossKey = v :
+				k == 'crossCookie' ? ( ck = document.cookie ) :
 					paramBody[paramBody.length] = encodeURIComponent(k) + '=' + encodeURIComponent(( v && typeof v == 'object' ? JSON.stringify(v) : v + '' ).replace( trim, '' ));
 			}else m = encodeURIComponent(k);
 		}
@@ -537,7 +538,7 @@ NET:
 		if( ( httpMethod = method ) === 'GET' ){
 			if( ( U = url( U, arg ) ).length > 512 ) err( 5004, U );
 			arg = '';
-		}else U = url(U), arg = param( arg, 2 );
+		}else U = url(U), ck = '', arg = param( arg, 2 );
 		if( ( i = U.indexOf( '://' ) ) > -1 && U.substr( i + 3, ( j = location.hostname).length ) != j ){
 			if( !end || !cross ) return err(5001);
 			for( key = head.crossKey || CROSSPROXYKEY, httpCross.length = httpH.length = i = 0, j = head.length ; i < j ; i += 2 )
@@ -545,7 +546,7 @@ NET:
 			k = i;
 			for( i in baseHeader ) if( httpH.indexOf(i) == -1 ) httpCross[k++] = i, httpCross[k++] = paramHeader(baseHeader[i]);
 			k = param( httpCross, 0 ), httpCross.length = 0,
-			httpCross.push( 'url', U, 'method', method, 'key', key, 'data', arg, 'header', k );
+			httpCross.push( 'url', U, 'cookie', ck, 'method', method, 'key', key, 'data', arg, 'header', k );
 			cross( param(httpCross, 0), end );
 		}else{
 			x = xhr();
@@ -778,8 +779,9 @@ fn( 'router', (function(){
 			fn.preventDefault = bs.DETECT.event ? function(){this.event.preventDefault();} : function(){this.event.returnValue = false;};
 			fn.stop = bs.DETECT.event ? function(){this.event.stopPropagation();} : function(){this.event.cancelBubble = true;};
 			fn.prevent = function(){this.preventDefault(), this.stop();},
-			fn.isRollover = function(){return !isChild( this, e.event.fromElement || e.event.relatedTarget );},
-			fn.isRollout = function(){return !isChild( this, e.event.toElement || e.event.explicitOriginalTarget );},
+			fn.domPoint = function(){return bs.WIN.domPoint( this.x, this.y );},
+			fn.isRollover = function(){return !isChild( this, this.event.fromElement || this.event.relatedTarget );},
+			fn.isRollout = function(){return !isChild( this, this.event.toElement || this.event.explicitOriginalTarget );},
 			fn.on = function( type, group, context, method, arg ){
 				type = eName[type] || ( eName[type] = type );
 				this['+']( false, type, group, context, method, arg, 2 ), this._on(type);},
@@ -850,7 +852,8 @@ fn( 'router', (function(){
 						}
 						W.scrollTo( arguments[0], arguments[1] );
 					};
-				})( W, 'scrollHeight' in doc.body ? doc.body : doc.documentElement, doc.documentElement )
+				})( W, 'scrollHeight' in doc.body ? doc.body : doc.documentElement, doc.documentElement ),
+				domPoint:function( x, y ){return doc.elementFromPoint( x, y);}
 			},
 			win.sizer = (function( W, doc ){
 				var t0 = {w:0, h:0}, t1, size, docEl, docBody;
