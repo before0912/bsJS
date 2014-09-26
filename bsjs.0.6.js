@@ -474,6 +474,14 @@ CORE:
 			}
 			bs.err( 11001, arguments );
 		};
+	})() ),
+	fn( 'byte2str', (function(){
+		var fr = new FileReader();
+		return function( end, d ){
+			fr.onloadend = function(ev){
+				end(ev.target.result);
+			}, fr.readAsBinaryString(d);
+		};
 	})() );
 })(trim);
 NET:
