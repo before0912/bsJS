@@ -1,4 +1,4 @@
-/* bsJS v0.6.3
+/* bsJS v0.6.4
  * Copyright (c) 2013 by ProjectBS Committe and contributors. 
  * http://www.bsplugin.com All rights reserved.
  * Licensed under the BSD license. See http://opensource.org/licenses/BSD-3-Clause
@@ -400,10 +400,10 @@ CORE:
 	fn( 'go', function(url){location.href = url;} ), fn( 'open', function(url){W.open(url);} ),
 	fn( 'back', function(){history.back();} ), fn( 'reload', function(){location.reload();} ),
 	fn( 'ck', function ck( key/*, val, expire, path*/ ){
-		var t0, t1, t2, i, v;
+		var t0, t1, t2, i, j, v;
 		t0 = document.cookie.split(';'), i = t0.length;
 		if( arguments.length == 1 ){
-			while( i-- ) if( bs.trim(t0[i].split('=')[0]) == key ) return decodeURIComponent(t1[1]);
+			while( i-- ) if( t0[i].substring( 0, j = t0[i].indexOf('=') ).replace( trim, '' ) == key ) return decodeURIComponent(t0[i].substr( j + 1 ).replace( trim, '' ));
 			return null;
 		}else{
 			v = arguments[1], t1 = key + '=' + encodeURIComponent(v) + ';domain='+document.domain+';path='+ (arguments[3] || '/');
@@ -526,7 +526,7 @@ NET:
 				v = arg[i++],
 				k.charAt(0) === '@' ? head.push( k.substr(1), paramHeader(v) ) :
 				k == 'crossAccessKey' ? head.crossKey = v :
-				k == 'crossCookie' ? ( ck = document.cookie ) :
+				k == 'crossCookie' ? ( ck = encodeURIComponent(v) ) :
 					paramBody[paramBody.length] = encodeURIComponent(k) + '=' + encodeURIComponent(( v && typeof v == 'object' ? JSON.stringify(v) : v + '' ).replace( trim, '' ));
 			}else m = encodeURIComponent(k);
 		}
@@ -779,7 +779,7 @@ fn( 'router', (function(){
 			fn.preventDefault = bs.DETECT.event ? function(){this.event.preventDefault();} : function(){this.event.returnValue = false;};
 			fn.stop = bs.DETECT.event ? function(){this.event.stopPropagation();} : function(){this.event.cancelBubble = true;};
 			fn.prevent = function(){this.preventDefault(), this.stop();},
-			fn.domPoint = function(){return bs.WIN.domPoint( this.x, this.y );},
+			fn.domPoint = function(){return bs.WIN.domPoint( this.x - bs.WIN.scroll('l'), this.y - bs.WIN.scroll('t') );},
 			fn.isRollover = function(){return !isChild( this, this.event.fromElement || this.event.relatedTarget );},
 			fn.isRollout = function(){return !isChild( this, this.event.toElement || this.event.explicitOriginalTarget );},
 			fn.on = function( type, group, context, method, arg ){
@@ -1385,10 +1385,11 @@ fn( 'router', (function(){
 					if( r.test(v) ) return arg[0] = parseFloat(v), target.S.apply( target, arg );
 					arg = slice.call( arg, 1 );
 					if( v.charAt(0) == '>' ){
-						i = target.length, t = r.test(v = v.substr(1)) ? 1 : v.charAt(0) == '.' ? ( v = v.substr(1), 2 ) : ( v = v.toLowerCase(), 3 );
+						i = target.length, v = v.substr(1), t = v == '$' ? 0 : r.test(v) ? 1 : v.charAt(0) == '.' ? ( v = v.substr(1), 2 ) : ( v = v.toLowerCase(), 3 );
 						while( i-- ){
 							t0 = clsfn.tagNodes(target[i].childNodes);
-							if( t == 1 ) d[k++] = t0[v];
+							if( t == 0 ) d[k++] = t0[t0.length - 1];
+							else if( t == 1 ) d[k++] = t0[v];
 							else{
 								j = t0.length;
 								while( j-- ) if(
@@ -1800,6 +1801,7 @@ fn( 'router', (function(){
 					return function( d, k, v ){
 						var data, r, i, j, m, n;
 						k = k.substr(1), i = tagNodes(d.childNodes);
+						if( k == '$' ) k = i.length - 1;
 						if( v ){
 							if( k ) return bs.Dom(i[k]).S(v);
 							else if( d.nodeName.toLowerCase() == 'table' && typeof v == 'string' ) return html( v, d, '>' );
