@@ -482,7 +482,13 @@ CORE:
 				end(ev.target.result);
 			}, fr.readAsBinaryString(d);
 		};
-	})() );
+	})() ),
+	fn( 'str2byte', function( str, end ){
+		var ints, i;
+		ints = new Uint8Array(str.length), i = ints.length;
+		while(i--) ints[i] = parseInt( str.charCodeAt(i).toString(16), 16 );
+		return new Blob([ints.buffer], {type : end || ''});
+	} );
 })(trim);
 NET:
 (function( trim ){
