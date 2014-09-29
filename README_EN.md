@@ -46,7 +46,7 @@ all work.
 
 1. Include bsJs throught a `<script>` tag in an HTML document.
 
-        <script src="http://projectbs.github.io/bsJS/bsjs.0.4.js"></script>
+        <script src="http://projectbs.github.io/bsJS/bsjs.0.6.js"></script>
 
 2. You can use bsJS in the following format:
 
@@ -80,7 +80,7 @@ Now it's bsJS' time to sprout.
 
 Don't just have fun locally, upload your demos directly.
 
-bsJSTest web page is <a href='http://projectbs.github.io/bsJSTest/0.3/' target='_blank'><b>here</b></a>. Isn't it cool? ^^
+bsJSTest web page is <a href='http://projectbs.github.io/bsJSTest/0.6/' target='_blank'><b>here</b></a>. Isn't it cool? ^^
 
 In order to get Push permission: <a href='https://www.facebook.com/photo.php?fbid=828142343867893' target='_blank'><b>ask 'bsJSTest Push 권한 주세요' here with your Github ID</b></a>.
 
