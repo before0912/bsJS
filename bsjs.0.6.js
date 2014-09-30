@@ -573,10 +573,16 @@ HTML5:
 	fn( 'byte2str', (function(){
 		var fr;
 		if( W['FileReader'] ){
-			return fr = new FileReader(), function( end, d ){
+			return fr = new FileReader(), fr.readAsBinaryString ? function( end, d ){
 				fr.onloadend = function(ev){
 					end(ev.target.result);
 				}, fr.readAsBinaryString(d);
+			} : function(end, d){
+				fr.onloadend = function(ev){
+					var bytes = new Uint8Array( ev.target.result ), binStr = '', i, j;
+					for( i = 0, j = bytes.byteLength; i < j; i++ ) binStr += String.fromCharCode( bytes[i] );
+					end(binStr);
+				}, fr.readAsArrayBuffer(d);
 			};
 		}
 		return function(){return none;};
