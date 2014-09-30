@@ -184,7 +184,7 @@ fn( 'log', log = (function(){
 if( !W['console'] ) W['console'] = {log:log};
 CORE:
 (function(trim){
-	var rc = 0, rand, template,	js, head = doc.getElementsByTagName('head')[0], e = W['addEventListener'], id = 0, c = bs.__callback = {}, slice = [].slice;
+	var rc = 0, rand, template,	js, head = doc.getElementsByTagName('head')[0], e = W['addEventListener'], id = 0, c = bs.__callback = {};
 	fn( 'obj', function( key, v ){var t0 = key.replace( trim, '' ).toUpperCase();( !arguments[2] && t0 != key ) ? err( 1002, key ) : bs[t0] ? err( 2002, t0 ) : bs[t0] = v;} ),
 	fn( 'cls', (function(){
 		var S = function(){
@@ -427,68 +427,7 @@ CORE:
 		var arg = arguments, load, i = 1, j = arg.length;
 		if( end ) ( load = function(){i < j ? js( arg[i++], load, end ) : end();} )();
 		else while( i < j ) js( bs.get( null, arg[i++] ) );
-	}),
-	fn( 'worker', (function(){
-		var worker, body, type, blob, builder, url, toURL;
-		if( W['Worker'] && ( blob = W['Blob'] ? function(){return new Blob( body, type );} :
-			( builder = W['BlobBuilder'] || W['WebKitBlobBuilder'] || W['MozBlobBuilder'] ) ? function(){
-				var blob = new BlobBuilder();
-				return blob.append(body), blob.getBlob();
-			} : 0 ) ){
-			worker = {}, body = [], type = {type:'application/javascript'}, url = W['URL'] || W['webkitURL'],
-			toURL = function(f){return body[0] = 'onmessage=function(e){postMessage((' + f.toString() + ').apply(null,e.data));}', url.createObjectURL(blob());}
-			return function(){
-				var i = arguments.length, j = arguments[0];
-				if( i == 1 && ( i = worker[j] ) ) return i;
-				if( i == 2 && typeof (i = arguments[1] ) == 'function' ){
-					var u = toURL(i);
-					return worker[j] = function(end){
-						var worker = new Worker(u), isEnd = 0;
-						worker.onmessage = function(e){
-							if( isEnd++ ) return;
-							end(e.data);
-						},
-						worker.onerror = function(e){
-							if( isEnd++ ) return;
-							end( null, e );
-						},
-						worker.postMessage(slice.call( arguments, 1 ));
-					};
-				}
-				bs.err( 10001, arguments );
-			};
-		}
-		return function(){return none;};
-	})() ),
-	fn( 'networker', (function(){
-		var worker = {};
-		return function(){
-			var i = arguments.length, j = arguments[0];
-			if( i == 1 && ( i = worker[j] ) ) return i;
-			if( i == 2 && typeof (i = arguments[1] ) == 'function' ){
-				return worker[j] = function(end){
-					bs.post( function( v, e ){end( v ? JSON.parse(v) : null, e || 'server error' );},
-						NETWORKER, 'BS', NETWORKERKEY, 'c', '(' + i.toString() + ').apply(null,' + JSON.stringify(slice.call( arguments, 1 )) + ')'
-					);
-				};
-			}
-			bs.err( 11001, arguments );
-		};
-	})() ),
-	fn( 'byte2str', (function(){
-		var fr = new FileReader();
-		return function( end, d ){
-			fr.onloadend = function(ev){
-				end(ev.target.result);
-			}, fr.readAsBinaryString(d);
-		};
-	})() ),
-	fn( 'str2byte', function( str, end ){
-		var ints, i;
-		ints = new Uint8Array(str.length), i = ints.length;
-		while(i--) ints[i] = parseInt( str.charCodeAt(i).toString(16), 16 );
-		return new Blob([ints.buffer], {type : end || ''});
-	} );
+	});
 })(trim);
 NET:
 (function( trim ){
@@ -580,6 +519,80 @@ NET:
 	mk = function(m){return function( end, url ){return http( m, end, url, arguments );};},
 	fn( 'post', mk('POST') ), fn( 'put', mk('PUT') ), fn( 'delete', mk('DELETE') ), fn( 'get', mk('GET') );
 })(trim);
+HTML5:
+(function(){
+	var body, type, blob, builder, slice;
+	blob = W['Blob'] ? function(){return new Blob( body, type );} :
+		( builder = W['BlobBuilder'] || W['WebKitBlobBuilder'] || W['MozBlobBuilder'] ) ? function(){
+			var blob = new BlobBuilder();
+			return blob.append(body), blob.getBlob();
+		} : 0, slice = [].slice, type = {type:''};
+	fn( 'worker', (function(blob){
+		var worker, url, toURL;
+		if( W['Worker'] && blob ){
+			worker = {}, body = [], type.type = 'application/javascript', url = W['URL'] || W['webkitURL'],
+			toURL = function(f){return body[0] = 'onmessage=function(e){postMessage((' + f.toString() + ').apply(null,e.data));}', url.createObjectURL(blob());};
+			return function(){
+				var i = arguments.length, j = arguments[0];
+				if( i == 1 && ( i = worker[j] ) ) return i;
+				if( i == 2 && typeof (i = arguments[1] ) == 'function' ){
+					var u = toURL(i);
+					return worker[j] = function(end){
+						var worker = new Worker(u), isEnd = 0;
+						worker.onmessage = function(e){
+							if( isEnd++ ) return;
+							end(e.data);
+						},
+						worker.onerror = function(e){
+							if( isEnd++ ) return;
+							end( null, e );
+						},
+						worker.postMessage(slice.call( arguments, 1 ));
+					};
+				}
+				bs.err( 10001, arguments );
+			};
+		}
+		return function(){return none;};
+	})(blob) ),
+	fn( 'networker', (function(){
+		var worker = {};
+		return function(){
+			var i = arguments.length, j = arguments[0];
+			if( i == 1 && ( i = worker[j] ) ) return i;
+			if( i == 2 && typeof (i = arguments[1] ) == 'function' ){
+				return worker[j] = function(end){
+					bs.post( function( v, e ){end( v ? JSON.parse(v) : null, e || 'server error' );},
+						NETWORKER, 'BS', NETWORKERKEY, 'c', '(' + i.toString() + ').apply(null,' + JSON.stringify(slice.call( arguments, 1 )) + ')'
+					);
+				};
+			}
+			bs.err( 11001, arguments );
+		};
+	})() ),
+	fn( 'byte2str', (function(){
+		var fr;
+		if( W['FileReader'] ){
+			return fr = new FileReader(), function( end, d ){
+				fr.onloadend = function(ev){
+					end(ev.target.result);
+				}, fr.readAsBinaryString(d);
+			};
+		}
+		return function(){return none;};
+	})() ),
+	fn( 'str2byte', (function(blob){
+		if( blob ){
+			return function( str, t ){
+				var ints, i;
+				ints = new Uint8Array(str.length), i = ints.length;
+				while(i--) ints[i] = parseInt( str.charCodeAt(i).toString(16), 16 );
+				return body = [ints.buffer], type.type = t || '', blob();
+			};
+		}
+		return function(){return none;};
+	})(blob) );
+})();
 PLUGIN:
 (function(){
 	var required = {}, types ={'method':bs.fn, 'class':bs.cls, 'static':bs.obj}, require = function( key, data, type ){
