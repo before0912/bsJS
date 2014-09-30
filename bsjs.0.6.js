@@ -527,7 +527,7 @@ HTML5:
 			var blob = new BlobBuilder();
 			return blob.append(body), blob.getBlob();
 		} : 0, slice = [].slice, type = {type:''}, url = W['URL'] || W['webkitURL'];
-	fn( 'worker', (function(blob){
+	fn( 'worker', (function(blob, url){
 		var worker, toURL;
 		if( W['Worker'] && blob ){
 			worker = {}, body = [], type.type = 'application/javascript',
@@ -554,7 +554,7 @@ HTML5:
 			};
 		}
 		return function(){return none;};
-	})(blob) ),
+	})( blob, url ) ),
 	fn( 'networker', (function(){
 		var worker = {};
 		return function(){
