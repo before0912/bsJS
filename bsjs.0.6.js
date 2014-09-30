@@ -427,7 +427,7 @@ CORE:
 		var arg = arguments, load, i = 1, j = arg.length;
 		if( end ) ( load = function(){i < j ? js( arg[i++], load, end ) : end();} )();
 		else while( i < j ) js( bs.get( null, arg[i++] ) );
-	});
+	} );
 })(trim);
 NET:
 (function( trim ){
@@ -521,16 +521,16 @@ NET:
 })(trim);
 HTML5:
 (function(){
-	var body, type, blob, builder, slice;
+	var body, type, blob, builder, slice, url;
 	blob = W['Blob'] ? function(){return new Blob( body, type );} :
 		( builder = W['BlobBuilder'] || W['WebKitBlobBuilder'] || W['MozBlobBuilder'] ) ? function(){
 			var blob = new BlobBuilder();
 			return blob.append(body), blob.getBlob();
-		} : 0, slice = [].slice, type = {type:''};
+		} : 0, slice = [].slice, type = {type:''}, url = W['URL'] || W['webkitURL'];
 	fn( 'worker', (function(blob){
-		var worker, url, toURL;
+		var worker, toURL;
 		if( W['Worker'] && blob ){
-			worker = {}, body = [], type.type = 'application/javascript', url = W['URL'] || W['webkitURL'],
+			worker = {}, body = [], type.type = 'application/javascript',
 			toURL = function(f){return body[0] = 'onmessage=function(e){postMessage((' + f.toString() + ').apply(null,e.data));}', url.createObjectURL(blob());};
 			return function(){
 				var i = arguments.length, j = arguments[0];
