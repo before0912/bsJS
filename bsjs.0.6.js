@@ -1,4 +1,4 @@
-/* bsJS v0.6.4
+/* bsJS v0.6.5
  * Copyright (c) 2013 by ProjectBS Committe and contributors. 
  * http://www.bsplugin.com All rights reserved.
  * Licensed under the BSD license. See http://opensource.org/licenses/BSD-3-Clause
@@ -798,7 +798,7 @@ fn( 'router', (function(){
 			return t0;
 		})() ),
 		bs.ev( 'dom', function( fn, clsfn, bs ){
-			var r = {length:0}, keyName = bs.KEY.code2name, keycode = bs.KEY.name2code, eName = {},
+			var r = {length:0}, keyName = bs.KEY.code2name, keycode = bs.KEY.name2code, eName = {}, tInfo = {},
 			evCat = {'touchstart':2,'touchend':1,'touchmove':1,'mousedown':4,'mouseup':3,'mousemove':3,'click':3,'mouseover':3,'mouseout':3},
 			isChild = function( p, c ){
 				if( c ) do if( c == p ) return 1; while( c = c.parentNode )
@@ -828,32 +828,43 @@ fn( 'router', (function(){
 				W['attachEvent'] ? function(k){this.dom.detachEvent( 'on' + k, this.handleEvent );} : function(k){this.dom['on' + k] = null;},
 			fn.END = function(){this.dom = this.handleEvent = null;},
 			fn.NEW = function(d){
-				var self = this, t = trim;
-				this.dom = d, this.isCapture = false, this.handleEvent = function(e){
-					var e = self.event = e || event, type = self.type = e.type, typeCat = evCat[type], t0, t1, i, X, Y;
+				var sf = this, t = trim;
+				this.touches = tInfo, this.dom = d, this.isCapture = false, this.handleEvent = function(e){
+					var e = sf.event = e || event, type = sf.type = e.type, typeCat = evCat[type], t0, t1, i, X, Y;
 					if( typeCat ){ 
 						if( typeCat < 3 ){
-							t0 = e.changedTouches, self.length = i = t0.length;
-							while( i-- ) self[i] = t1 = t0[i], self['id'+i] = t1.identifier,
-								self['x'+i] = X = t1.pageX, self['y'+i] = Y = t1.pageY,
-								self['cx'+i] = t1.clientX, self['cy'+i] = t1.clientY,
-								self['lx'+i] = t1.layerX, self['ly'+i] = t1.layerY,
-								typeCat == 2 ?
-									( self['$x'+i] = self['_x'+i] = X, self['$y'+i] = self['_y'+i] = Y ) :
-									( self['dx'+i] = X - self['_x'+i], self['dy'+i] = Y - self['_y'+i] ),
-								typeCat == 1 ?( self['mx'+i] = X - self['$x'+i], self['my'+i] = Y - self['$y'+i], self['$x'+i] = X, self['$y'+i] = Y) : 0;
-							self.id = self.id0, self.mx = self.mx0, self.my = self.my0, self.x = self.x0, self.y = self.y0, self.lx = self.lx0, self.ly = self.ly0, self.dx = self.dx0, self.dy = self.dy0, self.cx = self.cx0, self.cy = self.cy0;
+							t0 = e.changedTouches, sf.length = i = t0.length;
+							while( i-- ) sf[i] = t1 = t0[i], sf['id'+i] = t1.identifier,
+								sf['x'+i] = X = t1.pageX, sf['y'+i] = Y = t1.pageY,
+								sf['cx'+i] = t1.clientX, sf['cy'+i] = t1.clientY,
+								sf['lx'+i] = t1.layerX, sf['ly'+i] = t1.layerY,
+								typeCat == 2 ? ( sf['_x'+i] = X, sf['_y'+i] = Y ) :
+								( sf['dx'+i] = X - sf['_x'+i], sf['dy'+i] = Y - sf['_y'+i], sf['mx'+i] = X - sf['$x'+i], sf['my'+i] = Y - sf['$y'+i] ),
+								sf['$x'+i] = X, sf['$y'+i] = Y;
+							sf.id = sf.id0, sf.mx = sf.mx0, sf.my = sf.my0,
+							sf.x = sf.x0, sf.y = sf.y0, sf.lx = sf.lx0, sf.ly = sf.ly0,
+							sf.dx = sf.dx0, sf.dy = sf.dy0, sf.cx = sf.cx0, sf.cy = sf.cy0,
+							t0 = e.touches, tInfo.length = i = t0.length;
+							while( i-- ) tInfo[i] = t1 = t0[i], tInfo['id'+i] = t1.identifier,
+								tInfo['x'+i] = X = t1.pageX, tInfo['y'+i] = Y = t1.pageY,
+								tInfo['cx'+i] = t1.clientX, tInfo['cy'+i] = t1.clientY,
+								tInfo['lx'+i] = t1.layerX, tInfo['ly'+i] = t1.layerY,
+								typeCat == 2 ? ( tInfo['_x'+i] = X, tInfo['_y'+i] = Y ) :
+								( tInfo['dx'+i] = X - tInfo['_x'+i], tInfo['dy'+i] = Y - tInfo['_y'+i], tInfo['mx'+i] = X - tInfo['$x'+i], tInfo['my'+i] = Y - tInfo['$y'+i] ),
+								tInfo['$x'+i] = X, tInfo['$y'+i] = Y;
+							tInfo.id = tInfo.id0, tInfo.mx = tInfo.mx0, tInfo.my = tInfo.my0,
+							tInfo.x = tInfo.x0, tInfo.y = tInfo.y0, tInfo.lx = tInfo.lx0, tInfo.ly = tInfo.ly0,
+							tInfo.dx = tInfo.dx0, tInfo.dy = tInfo.dy0, tInfo.cx = tInfo.cx0, tInfo.cy = tInfo.cy0;
 						}else{
-							self.length = 0, self.cx = e.clientX, self.cy = e.clientY,
-							self.x = X = page ? e.pageX : self.cx + docel.scrollLeft, self.y = Y = page ? e.pageY : self.cy + docel.scrollTop,
-							self.lx = e[layerX], self.ly = e[layerY],
-							typeCat == 4 ? ( self.$x = self._x = X, self.$y = self._y = Y ) : ( self.dx = X - self._x, self.dy = Y - self._y );
-							if( typeCat == 3 ) self.mx = X - self.$x, self.my = Y - self.$y, self.$x = X, self.$y = Y;
+							sf.length = 0, sf.cx = e.clientX, sf.cy = e.clientY, sf.length = 1,
+							sf.x = X = page ? e.pageX : sf.cx + docel.scrollLeft, sf.y = Y = page ? e.pageY : sf.cy + docel.scrollTop,
+							sf.lx = e[layerX], sf.ly = e[layerY],
+							typeCat == 4 ? ( sf.$x = sf._x = X, sf.$y = sf._y = Y ) : ( sf.dx = X - sf._x, sf.dy = Y - sf._y );
+							if( typeCat == 3 ) sf.mx = X - sf.$x, sf.my = Y - sf.$y, sf.$x = X, sf.$y = Y;
 						}
 					}
-					if( d.value ) self.value = d.value.replace( t, '' );	
-					self.keyName = keyName[self.keyCode = e.keyCode],
-					self['~']( false, type );
+					if( d.value ) sf.value = d.value.replace( t, '' );	
+					sf.keyName = keyName[sf.keyCode = e.keyCode], sf['~']( false, type );
 				};
 			};
 		} ),
@@ -934,18 +945,21 @@ fn( 'router', (function(){
 							continue;
 						}else k = t0;
 					}else if( !( k = key(k) ) ) continue;
-					if( v || v === 0 ){
-						if( t0 = typeof v == 'string' ) if( t1 = vals[v.substr(0,4)] ) v = t1(v);
-						if( u[k] === undefined ) u[k] = t0 ? ( t0 = v.indexOf( ':' ) ) == -1 ? '' : ( t1 = v.substr( t0 + 1 ), v = parseFloat( v.substr( 0, t0 ) ), t1 ) : nopx[k] || ( ss[k] = '11px', ss[k] == '11px' ? 0 : ( nopx[k] = 1 ) ) ? '' : 'px';
+					if( v === null ) delete this[k], delete u[k], s[k] = '';
+					else if( v === undefined ) v = this[k] === undefined ? rn.test( t0 = s[k] ) ? ( t0.replace( rn, rne ), u[k] = rno[1], this[k] = parseFloat(rno[0]) ) : ( u[k] = '', this[k] = t0 ) : this[k];
+					else{
+						if( t0 = typeof v == 'string' )
+							if( t1 = vals[v.substr(0,4)] ) v = t1(v);
+							else if( ( t1 = v.indexOf(':') ) > -1 ) u[k] = v.substr( t1 + 1 ), v = parseFloat(v.substr( 0, t1 ));
+						if( u[k] === undefined ) u[k] = t0 ? '' : nopx[k] || ( ss[k] = '11px', ss[k] == '11px' ? 0 : ( nopx[k] = 1 ) ) ? '' : 'px';
 						s[k] = ( this[k] = v ) + u[k];
-					}else if( v === null ) delete this[k], delete u[k], s[k] = '';
-					else v = this[k] === undefined ? rn.test( t0 = s[k] ) ? ( t0.replace( rn, rne ), u[k] = rno[1], this[k] = parseFloat(rno[0]) ) : ( u[k] = '', this[k] = t0 ) : this[k];
+					}
 				}
 				return v;
 			},
 			mk = function( s, k, v ){
-				var t0;
-				if( k = keys[t0 = k] ){if( typeof k == 'function' ) return k( this, s, v );}else if( !( k = key(t0) ) ) return 0;
+				var t0 = k;
+				if( k = keys[t0] ){if( typeof k == 'function' ) return k( this, s, v );}else if( !( k = key(t0) ) ) return 0;
 				return '@r@';
 			},
 			t0 = {keys:keys, key:key, rn:rn, rno:rno, rne:rne, nopx:nopx, trim:trim, ss:ss},
@@ -1611,6 +1625,7 @@ fn( 'router', (function(){
 						if( circle ) '@aniCircle@';
 						if( bezier ) for( i = 0 ; i < bl ; i += 5 ) k = bt[i], v = bt[i + 2][2], '@aniBezier@';
 					}
+					'@aniEnd@';
 					if( this.end ) this.end( this.t, 1, T );
 					pool[pool.length++] = this;
 					return 1;
@@ -1624,8 +1639,9 @@ fn( 'router', (function(){
 				t0 = this[l], i = 2, t1 = t0[0], '@aniTarget@';
 				while( i < j ) k = t0[i++], v = e( rate, t0[i++], t0[i++], term, time ), '@ani@';
 				if( circle ) '@aniCircle@';
-				if( bezier ) for( i = 0 ; i < bl ; i += 5 ) k = bt[i], t1 = bt[i + 1], v = t1[2] * bv0 + t1[1] * bv1 + t1[0] * bv2, '@aniBezier@'
+				if( bezier ) for( i = 0 ; i < bl ; i += 5 ) k = bt[i], t1 = bt[i + 1], v = t1[2] * bv0 + t1[1] * bv1 + t1[0] * bv2, '@aniBezier@';
 			}
+			'@aniEnd@';
 			if( this.update ) this.update( this.t, rate, T );
 		},
 		mk0 = function( p0, p1 ){
@@ -1912,7 +1928,19 @@ fn( 'router', (function(){
 			bezierKey:'style[i]', bezierOption:'typeof style[i] == "function" ? 1 : 0',
 			aniTarget:'s = t0[1], u = t1.u', ani:'t0[i++] ? k( t1, s, v ) : s[k] = v + u[k], t1[k] = v',
 			aniCircle:'t1[ckx] = cvx, circle.x0 ? ckx( t1, cvx ) : s[ckx] = cvx + u[ckx], t1[cky] = cvy, circle.y0 ? cky( t1, cvy ) : s[cky] = cvy + u[cky]',
-			aniBezier:'bt[i + 4] ? k( t1, s, v ) : s[k] = v + u[k], t1[k] = v'
+			aniBezier:'bt[i + 4] ? k( t1, s, v ) : s[k] = v + u[k], t1[k] = v',
+			aniEnd:'0'
+		} ),
+		bs.ANI.fn( 'scroll', {
+			target:'bs.ANI.scroll.t ? ( bs.ANI.scroll.t.l = bs.ANI.scroll.t.t = 0, bs.ANI.scroll.t ) : ( bs.ANI.scroll.t = {l:0, t:0} )',
+			targetAni0:'t0', targetAni1:'t0',
+			key:'k', from:'bs.WIN.scroll(k)', option:'0',
+			circle:'0',
+			bezierKey:'i', bezierOption:'0',
+			aniTarget:'0', ani:'t1[k]=v,i++',
+			aniCircle:'t1[ckx]=cvx,t1[cky]=cvy',
+			aniBezier:'t1[k] = v',
+			aniEnd:'t1 = this[0][0],bs.WIN.scroll(t1.l,t1.t), console.log(this)'
 		} );
 	};
 })();
