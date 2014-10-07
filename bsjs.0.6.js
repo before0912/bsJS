@@ -446,7 +446,7 @@ NET:
 		};
 	})() : W['XMLHttpRequest'] ? function( data, end ){
 		var x = xhr();
-		async( x, end ), x.open( 'POST', CROSSPROXY, true ), x.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' ), x.withCredentials = true, x.send(data);
+		async( x, end ), x.open( 'POST', CROSSPROXY, true ), x.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' ), x.withCredentials = false, x.send(data);
 	} : 0,
 	url = function( U, arg ){
 		var t0 = U.replace( trim, '' ).split('#'), p = param( arg, 2 );
@@ -804,7 +804,6 @@ fn( 'router', (function(){
 				if( c ) do if( c == p ) return 1; while( c = c.parentNode )
 				return 0;
 			}, docel=document.documentElement, page, layerX, layerY;
-
 			detect.browser == 'ie' && detect.browserVer < 9  ? ( layerX = 'offsetX', layerY = 'offsetY' ) : ( page = 1, layerX = 'layerX', layerY = 'layerY' ),
 			clsfn.fn = function( k, v ){attrs[k] = 2, eName[k] = v;},
 			fn.key = function(k){return this.keyCode == keycode[k];},
@@ -830,38 +829,24 @@ fn( 'router', (function(){
 			fn.NEW = function(d){
 				var sf = this, t = trim;
 				this.touches = tInfo, this.dom = d, this.isCapture = false, this.handleEvent = function(e){
-					var e = sf.event = e || event, type = sf.type = e.type, typeCat = evCat[type], t0, t1, i, X, Y;
+					var e = sf.event = e || event, type = sf.type = e.type, typeCat = evCat[type], X, Y, x, y, t0, t1, t2, i, j = 2;
 					if( typeCat ){ 
 						if( typeCat < 3 ){
-							t0 = e.changedTouches, sf.length = i = t0.length;
-							while( i-- ) sf[i] = t1 = t0[i], sf['id'+i] = t1.identifier,
-								sf['x'+i] = X = t1.pageX, sf['y'+i] = Y = t1.pageY,
-								sf['cx'+i] = t1.clientX, sf['cy'+i] = t1.clientY,
-								sf['lx'+i] = t1.layerX, sf['ly'+i] = t1.layerY,
-								typeCat == 2 ? ( sf['_x'+i] = X, sf['_y'+i] = Y ) :
-								( sf['dx'+i] = X - sf['_x'+i], sf['dy'+i] = Y - sf['_y'+i], sf['mx'+i] = X - sf['$x'+i], sf['my'+i] = Y - sf['$y'+i] ),
-								sf['$x'+i] = X, sf['$y'+i] = Y;
-							sf.id = sf.id0, sf.mx = sf.mx0, sf.my = sf.my0,
-							sf.x = sf.x0, sf.y = sf.y0, sf.lx = sf.lx0, sf.ly = sf.ly0,
-							sf.dx = sf.dx0, sf.dy = sf.dy0, sf.cx = sf.cx0, sf.cy = sf.cy0,
-							t0 = e.touches, tInfo.length = i = t0.length;
-							while( i-- ) tInfo[i] = t1 = t0[i], tInfo['id'+i] = t1.identifier,
-								tInfo['x'+i] = X = t1.pageX, tInfo['y'+i] = Y = t1.pageY,
-								tInfo['cx'+i] = t1.clientX, tInfo['cy'+i] = t1.clientY,
-								tInfo['lx'+i] = t1.layerX, tInfo['ly'+i] = t1.layerY,
-								typeCat == 2 ? ( tInfo['_x'+i] = X, tInfo['_y'+i] = Y ) :
-								( tInfo['dx'+i] = X - tInfo['_x'+i], tInfo['dy'+i] = Y - tInfo['_y'+i], tInfo['mx'+i] = X - tInfo['$x'+i], tInfo['my'+i] = Y - tInfo['$y'+i] ),
-								tInfo['$x'+i] = X, tInfo['$y'+i] = Y;
-							tInfo.id = tInfo.id0, tInfo.mx = tInfo.mx0, tInfo.my = tInfo.my0,
-							tInfo.x = tInfo.x0, tInfo.y = tInfo.y0, tInfo.lx = tInfo.lx0, tInfo.ly = tInfo.ly0,
-							tInfo.dx = tInfo.dx0, tInfo.dy = tInfo.dy0, tInfo.cx = tInfo.cx0, tInfo.cy = tInfo.cy0;
-						}else{
+							while( j-- ){
+								j ? ( t0 = e.changedTouches, t1 = sf ) : ( t0 = e.touches, t1 = tInfo ), t1.length = i = t0.length;
+								while( i-- ) t1[i] = t2 = t0[i], t1['id'+i] = t2.identifier, x = 'x' + i, y = 'y' + i,
+									t1[x] = X = t2.pageX, t1[x] = Y = t2.pageY, t1['c'+x] = t2.clientX, t1['c'+y] = t2.clientY, t1['l'+x] = t2.layerX, t1['l'+y] = t2.layerY,
+									typeCat == 2 ? ( t1['_'+x] = X, t1['_'+y] = Y ) : ( t1['d'+x] = X - t1['_'+x], t1['d'+y] = Y - t1['_'+y], t1['m'+x] = X - t1['$'+x], t1['m'+y] = Y - t1['$'+y] ),
+									t1['$'+x] = X, t1['$'+y] = Y;
+								t1.id = t1.id0, t1.x = t1.x0, t1.y = t1.y0, t1.lx = t1.lx0, t1.ly = t1.ly0,
+								t1.dx = t1.dx0, t1.dy = t1.dy0, t1.cx = t1.cx0, t1.cy = t1.cy0, t1.mx = t1.mx0, t1.my = t1.my0;
+							}
+						}else
 							sf.length = 0, sf.cx = e.clientX, sf.cy = e.clientY, sf.length = 1,
 							sf.x = X = page ? e.pageX : sf.cx + docel.scrollLeft, sf.y = Y = page ? e.pageY : sf.cy + docel.scrollTop,
 							sf.lx = e[layerX], sf.ly = e[layerY],
-							typeCat == 4 ? ( sf.$x = sf._x = X, sf.$y = sf._y = Y ) : ( sf.dx = X - sf._x, sf.dy = Y - sf._y );
-							if( typeCat == 3 ) sf.mx = X - sf.$x, sf.my = Y - sf.$y, sf.$x = X, sf.$y = Y;
-						}
+							typeCat == 4 ? ( sf._x = X, sf._y = Y ) : ( sf.dx = X - sf._x, sf.dy = Y - sf._y, sf.mx = X - sf.$x, sf.my = Y - sf.$y ),
+							sf.$x = X, sf.$y = Y;
 					}
 					if( d.value ) sf.value = d.value.replace( t, '' );	
 					sf.keyName = keyName[sf.keyCode = e.keyCode], sf['~']( false, type );
