@@ -835,7 +835,7 @@ fn( 'router', (function(){
 							while( j-- ){
 								j ? ( t0 = e.changedTouches, t1 = sf ) : ( t0 = e.touches, t1 = tInfo ), t1.length = i = t0.length;
 								while( i-- ) t1[i] = t2 = t0[i], t1['id'+i] = t2.identifier, x = 'x' + i, y = 'y' + i,
-									t1[x] = X = t2.pageX, t1[x] = Y = t2.pageY, t1['c'+x] = t2.clientX, t1['c'+y] = t2.clientY, t1['l'+x] = t2.layerX, t1['l'+y] = t2.layerY,
+									t1[x] = X = t2.pageX, t1[y] = Y = t2.pageY, t1['c'+x] = t2.clientX, t1['c'+y] = t2.clientY, t1['l'+x] = t2.layerX, t1['l'+y] = t2.layerY,
 									typeCat == 2 ? ( t1['_'+x] = X, t1['_'+y] = Y ) : ( t1['d'+x] = X - t1['_'+x], t1['d'+y] = Y - t1['_'+y], t1['m'+x] = X - t1['$'+x], t1['m'+y] = Y - t1['$'+y] ),
 									t1['$'+x] = X, t1['$'+y] = Y;
 								t1.id = t1.id0, t1.x = t1.x0, t1.y = t1.y0, t1.lx = t1.lx0, t1.ly = t1.ly0,
