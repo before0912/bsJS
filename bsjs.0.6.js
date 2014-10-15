@@ -957,7 +957,7 @@ fn( 'router', (function(){
 							( this.u[k] = '', this[k] = v ) : 
 						( nopx[k] || ( ss[k] = '11px', ss[k] == '11px' ? 0 : ( nopx[k] = 1 ) ) ? ( this.u[k] = '', this[k] = '' ) : ( this.u[k] = 'px', this[k] = 0 ) ) : 
 					this[k]
-			}).toString() ).substring( t1.indexOf('this'), t1.length - 1 )}, t0 ), 
+			}).toString() ).substring( t1.indexOf('this'), t1.lastIndexOf('}') )}, t0 ), 
 			fn.s = comp( mk, {r:'s[k] = ( this[k] = v ) + u[k], v'}, t0 );
 		} ),
 		bs.cls( 'Css', function( fn, clsfn, bs ){
