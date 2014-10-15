@@ -1,4 +1,4 @@
-/* bsJS v0.6.5
+/* bsJS v0.6.6
  * Copyright (c) 2013 by ProjectBS Committe and contributors. 
  * http://www.bsplugin.com All rights reserved.
  * Licensed under the BSD license. See http://opensource.org/licenses/BSD-3-Clause
@@ -7,7 +7,7 @@
 'use strict';
 var VERSION = 0.6, REPOSITORY = 'http://projectbs.github.io/bsPlugin/js/',
 	CROSSPROXYKEY = 'CROSSPROXY_DEMO_ACCESS_KEY',
-	CROSSPROXY = 'http://api.bsplugin.com/bsNet/php/crossProxy.0.2.php',
+	CROSSPROXY = 'http://api.bsplugin.com/bsNet/php/crossProxy.0.2.php',//'http://www.bsidesoft.com/bs/bsNet/php/crossProxy.0.2.php'
 	NETWORKERKEY = 'BSNETWORKER_20140707',
 	NETWORKER = 'http://www.bsidesoft.com/bs/bsPHP/index.php/networker',
 	log, none = function(){}, trim = /^\s*|\s*$/g, doc = W['document'], que = [], pque = [], plugin, timeout = 5000, mk, comp, detect, isDebug = 0,
@@ -480,6 +480,7 @@ NET:
 				k.charAt(0) === '@' ? head.push( k.substr(1), paramHeader(v) ) :
 				k == 'crossAccessKey' ? head.crossKey = v :
 				k == 'crossCookie' ? ( ck = encodeURIComponent(v) ) :
+				k == 'fullBody' ? m = v :
 					paramBody[paramBody.length] = encodeURIComponent(k) + '=' + encodeURIComponent(( v && typeof v == 'object' ? JSON.stringify(v) : v + '' ).replace( trim, '' ));
 			}else m = encodeURIComponent(k);
 		}
@@ -822,9 +823,9 @@ fn( 'router', (function(){
 				if( !this['-']( false, type, group ) ) this._off(type);
 			},
 			fn._on = W['addEventListener'] ? function(k){this.dom.addEventListener( k, this.handleEvent, this.isCapture );} :
-				W['attachEvent'] ? function(k){this.dom.attachEvent( 'on' + k, this.handleEvent );} : function(k){this.dom['on' + k] = this.handleEvent;},
+				W['attachEvent'] ? function(k){this.dom.attachEvent( 'on'+k, this.handleEvent );} : function(k){this.dom['on'+k] = this.handleEvent;},
 			fn._off = W['addEventListener'] ? function(k){this.dom.removeEventListener( k, this.handleEvent, this.isCapture );} :
-				W['attachEvent'] ? function(k){this.dom.detachEvent( 'on' + k, this.handleEvent );} : function(k){this.dom['on' + k] = null;},
+				W['attachEvent'] ? function(k){this.dom.detachEvent( 'on'+k, this.handleEvent );} : function(k){this.dom['on'+k] = null;},
 			fn.END = function(){this.dom = this.handleEvent = null;},
 			fn.NEW = function(d){
 				var sf = this, t = trim;
@@ -1925,7 +1926,7 @@ fn( 'router', (function(){
 			aniTarget:'0', ani:'t1[k]=v,i++',
 			aniCircle:'t1[ckx]=cvx,t1[cky]=cvy',
 			aniBezier:'t1[k] = v',
-			aniEnd:'t1 = this[0][0],bs.WIN.scroll(t1.l,t1.t), console.log(this)'
+			aniEnd:'t1 = this[0][0],bs.WIN.scroll(t1.l,t1.t)'
 		} );
 	};
 })();
