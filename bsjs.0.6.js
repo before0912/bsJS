@@ -488,6 +488,12 @@ NET:
 		return m || paramBody.join('&');
 	},
 	httpCross = cross ? [] : 0, httpH = [], httpMethod,
+	makePostBoundary = function(){
+		var chars, res, rand, i, t0;
+		chars = [[48,57], [97,122]], res = '', rand = bs.rand, i = 12;
+		while(i--) t0 = chars[rand( 0, 1 )], res += String.fromCharCode( rand( t0[0], t0[1] ) );
+		return '------------' + res;
+	},
 	http = function( method, end, U, arg ){
 		var x, key, i, j, k;
 		if( ( httpMethod = method ) === 'GET' ){
