@@ -495,7 +495,24 @@ NET:
 		return '------------' + res;
 	},
 	http = function( method, end, U, arg ){
-		var x, key, i, j, k;
+		var x, key, i, j, k, v, isBodyPost, postBoundary, reqBody;
+		i = arg.length;
+		if( detect.xhr2 ){
+			while(i--) if( isBodyPost = ( arg[i] instanceof File || arg[i] instanceof Blob ) ) break;
+			if( isBodyPost ){
+				postBoundary = makePostBoundary();
+				reqBody = '';
+				i = 2, j = arg.length;
+				while(i < j){
+					k = arg[i++], v = arg[i++];
+					if( v instanceof File || v instanceof Blob ){
+						
+					}else{
+						
+					}
+				}
+			}
+		}
 		if( ( httpMethod = method ) === 'GET' ){
 			if( ( U = url( U, arg ) ).length > 512 ) err( 5004, U );
 			arg = '';
