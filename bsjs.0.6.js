@@ -495,25 +495,26 @@ NET:
 		return '------------' + res;
 	},
 	http = function( method, end, U, arg ){
-		var x, key, i, j, k, v, isBodyPost, postBoundary, reqBody;
-		i = arg.length;
-		if( detect.xhr2 ){
-			while(i--) if( isBodyPost = ( arg[i] instanceof File || arg[i] instanceof Blob ) ) break;
-			if( isBodyPost ){
-				postBoundary = makePostBoundary();
-				reqBody = '';
-				i = 2, j = arg.length;
+		var x, key, i, j, k, v, postBoundary, postBody;
+		if( ( httpMethod = method ) === 'POST' && detect.xhr2 ){
+			i = arg.length;
+			while(i--) if( arg[i] instanceof File || arg[i] instanceof Blob ){ postBody = []; break; }
+			if( postBody ){
+				postBoundary = makePostBoundary(), i = 2, j = arg.length;
 				while(i < j){
-					k = arg[i++], v = arg[i++];
+					k = arg[i++], v = arg[i++],
+					postBody.push( '--' + postBoundary + '\r\n' );
 					if( v instanceof File || v instanceof Blob ){
-						
-					}else{
-						
-					}
+						postBody.push( 'Content-Disposition: form-data; name="' + k + '"; filename="' + ( v.name || 'bsPost' + (i/2) + '.bin' ) + '"\r\n' ),
+						postBody.push( 'Content-Type: application/octet-stream\r\n\r\n' );
+					}else postBody.push( 'Content-Disposition: form-data; name="' + k + '"\r\n\r\n' );
+					postBody.push( v ),
+					postBody.push( '\r\n' );
 				}
+				postBody.push( '--' + postBoundary );
 			}
-		}
-		if( ( httpMethod = method ) === 'GET' ){
+		}else postBody = null;
+		if( httpMethod === 'GET' ){
 			if( ( U = url( U, arg ) ).length > 512 ) err( 5004, U );
 			arg = '';
 		}else U = url(U), ck = '', arg = param( arg, 2 );
@@ -531,12 +532,17 @@ NET:
 			if( end ) async( x, end );
 			x.open( method, U, end ? true : false ),
 			httpH.length = i = 0, j = head.length;
-			while( i < j ){
-				x.setRequestHeader( k = head[i++], head[i++] );
-				if( baseHeader[k] ) httpH[httpH.length] = k;
+			if( postBody ){
+				x.setRequestHeader( "Content-Type","multipart/form-data; boundary=" + postBoundary ),
+				x.send( new Blob( postBody ) );
+			}else{
+				while( i < j ){
+					x.setRequestHeader( k = head[i++], head[i++] );
+					if( baseHeader[k] ) httpH[httpH.length] = k;
+				}
+				for( i in baseHeader ) if( httpH.indexOf(i) == -1 ) x.setRequestHeader( i, paramHeader(baseHeader[i]) );
+				x.send(arg);
 			}
-			for( i in baseHeader ) if( httpH.indexOf(i) == -1 ) x.setRequestHeader( i, paramHeader(baseHeader[i]) );
-			x.send(arg);
 			if( !end ) return ( i = x.responseText ), xhrType ? delete x.onreadystatechange : x.onreadystatechange = null, i;
 		}
 	}, baseHeader = {};
