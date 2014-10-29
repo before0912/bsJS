@@ -502,14 +502,14 @@ NET:
 			if( postBody ){
 				postBoundary = makePostBoundary(), i = 2, j = arg.length;
 				while(i < j){
-					k = arg[i++], v = arg[i++],
+					k = arg[i++].replace( trim, '' ), v = arg[i++];
+					if( k.charAt(0) === '@' ) continue;
 					postBody.push( '--' + postBoundary + '\r\n' );
-					if( v instanceof File || v instanceof Blob ){
+					if( v instanceof File || v instanceof Blob )
 						postBody.push( 'Content-Disposition: form-data; name="' + k + '"; filename="' + ( v.name || 'bsPost' + (i/2) + '.bin' ) + '"\r\n' ),
 						postBody.push( 'Content-Type: application/octet-stream\r\n\r\n' );
-					}else postBody.push( 'Content-Disposition: form-data; name="' + k + '"\r\n\r\n' );
-					postBody.push( v ),
-					postBody.push( '\r\n' );
+					else postBody.push( 'Content-Disposition: form-data; name="' + k + '"\r\n\r\n' );
+					postBody.push( v ), postBody.push( '\r\n' );
 				}
 				postBody.push( '--' + postBoundary );
 			}
@@ -532,17 +532,14 @@ NET:
 			if( end ) async( x, end );
 			x.open( method, U, end ? true : false ),
 			httpH.length = i = 0, j = head.length;
-			if( postBody ){
-				x.setRequestHeader( "Content-Type","multipart/form-data; boundary=" + postBoundary ),
-				x.send( new Blob( postBody ) );
-			}else{
-				while( i < j ){
-					x.setRequestHeader( k = head[i++], head[i++] );
-					if( baseHeader[k] ) httpH[httpH.length] = k;
-				}
-				for( i in baseHeader ) if( httpH.indexOf(i) == -1 ) x.setRequestHeader( i, paramHeader(baseHeader[i]) );
-				x.send(arg);
+			if( postBody ) x.setRequestHeader( "Content-Type", "multipart/form-data; boundary=" + postBoundary );
+			while( i < j ){
+				x.setRequestHeader( k = head[i++], head[i++] );
+				if( baseHeader[k] ) httpH[httpH.length] = k;
 			}
+			for( i in baseHeader ) if( httpH.indexOf(i) == -1 ) x.setRequestHeader( i, paramHeader(baseHeader[i]) );
+			if( postBody ) x.send( new Blob(postBody) );
+			else x.send(arg);
 			if( !end ) return ( i = x.responseText ), xhrType ? delete x.onreadystatechange : x.onreadystatechange = null, i;
 		}
 	}, baseHeader = {};
