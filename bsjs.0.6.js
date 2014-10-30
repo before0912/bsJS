@@ -496,7 +496,7 @@ NET:
 	},
 	http = function( method, end, U, arg ){
 		var x, key, i, j, k, v, postBoundary, postBody;
-		if( ( httpMethod = method ) === 'POST' && detect.xhr2 ){
+		if( ( httpMethod = method ) !== 'GET' && detect.xhr2 ){
 			i = arg.length;
 			while(i--) if( arg[i] instanceof File || arg[i] instanceof Blob ){ postBody = []; break; }
 			if( postBody ){
