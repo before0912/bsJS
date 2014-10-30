@@ -530,9 +530,9 @@ NET:
 		}else{
 			x = xhr();
 			if( end ) async( x, end );
-			x.open( method, U, end ? true : false ),
+			x.open( method, U, end ? true : false );
+			if( postBody ) httpH.push("Content-Type", "multipart/form-data; boundary=" + postBoundary);
 			httpH.length = i = 0, j = head.length;
-			if( postBody ) x.setRequestHeader( "Content-Type", "multipart/form-data; boundary=" + postBoundary );
 			while( i < j ){
 				x.setRequestHeader( k = head[i++], head[i++] );
 				if( baseHeader[k] ) httpH[httpH.length] = k;
@@ -1726,7 +1726,7 @@ fn( 'router', (function(){
 		NETWORK:
 		fn = bs.header,
 		fn( 'Cache-Control', 'no-cache' ),
-		fn( 'Content-Type', function(type){return ( type == 'GET' ? 'text/plain' : 'application/x-www-form-urlencoded' ) + '; charset=UTF-8';} );
+		fn( 'Content-Type', function(method){return ( method == 'GET' ? 'text/plain' : 'application/x-www-form-urlencoded' ) + '; charset=UTF-8';} );
 		STYLE:
 		fn = bs.Style.fn;
 		(function(trim){
