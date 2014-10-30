@@ -530,8 +530,8 @@ NET:
 		}else{
 			x = xhr();
 			if( end ) async( x, end );
-			x.open( method, U, end ? true : false );
-			if( postBody ) httpH.push("Content-Type", "multipart/form-data; boundary=" + postBoundary);
+			if( postBody ) head.push("Content-Type", "multipart/form-data; boundary=" + postBoundary);
+			x.open( method, U, end ? true : false ),
 			httpH.length = i = 0, j = head.length;
 			while( i < j ){
 				x.setRequestHeader( k = head[i++], head[i++] );
