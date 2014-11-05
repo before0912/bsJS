@@ -1,4 +1,4 @@
-/* bsJS v0.6.6
+/* bsJS v0.6.7
  * Copyright (c) 2013 by ProjectBS Committe and contributors. 
  * http://www.bsplugin.com All rights reserved.
  * Licensed under the BSD license. See http://opensource.org/licenses/BSD-3-Clause
@@ -627,6 +627,43 @@ HTML5:
 		return function(){return none;};
 	})(blob) );
 })();
+MVC:
+bs.obj( 'MVC', (function(){
+	var modelView = {}, view = {};
+	return {
+		M:(function(){
+			var M = {}, model = function(){
+				var i = 0, j = arguments.length, k, v;
+				while( i < j ){
+					k = arguments[i++];
+					if( i == j ) return M[k];
+					M[k] = v = arguments[i++];
+					if( k in modelView && ( modelView[k] == model.all || modelView[k] === v ) ) view[k](v);
+				}
+				return v;
+			};
+			model.all = {};
+			return model;
+		})(),
+		V:function( k ){
+			var i = arguments.length;
+			if( i == 1 ) return view[k];
+			view[k] = arguments[1];
+			if( i == 3 ) modelView[k] = arguments[2];
+		},
+		C:(function(){
+			var d, C = {}, controller = function( v, arg ){
+				if( this.nodeType ){
+					if( !d ) d = bs.Dom('body');
+					d[0] = this, v = d.S('*route'), arg = d.S('*arg');
+				}
+				C[v](arg);
+			};
+			controller.route = function( k, v ){C[k] = v};
+			return controller;
+		})()
+	};
+})() );
 PLUGIN:
 (function(){
 	var required = {}, types ={'method':bs.fn, 'class':bs.cls, 'static':bs.obj}, require = function( key, data, type ){
