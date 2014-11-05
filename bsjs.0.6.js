@@ -629,7 +629,7 @@ HTML5:
 })();
 MVC:
 bs.obj( 'MVC', (function(){
-	var d, modelView = {}, view = {}, C = {}, M = {};
+	var d, modelView = {}, view = {}, C = {}, M = {}, _all = {};
 	return {
 		m:function(){
 			var i = 0, j = arguments.length, k, v;
@@ -637,11 +637,11 @@ bs.obj( 'MVC', (function(){
 				k = arguments[i++];
 				if( i == j ) return M[k];
 				M[k] = v = arguments[i++];
-				if( k in modelView && ( modelView[k] == model.all || modelView[k] === v ) ) view[k](v);
+				if( k in modelView && ( modelView[k] == _all || modelView[k] === v ) ) view[k](v);
 			}
 			return v;
 		},
-		all:{},
+		all:function(){return _all},
 		v:function( k ){
 			var i = arguments.length;
 			if( i == 1 ) return view[k];
@@ -651,7 +651,7 @@ bs.obj( 'MVC', (function(){
 		c:function( v, arg ){
 			if( this.nodeType ){
 				if( !d ) d = bs.Dom('body');
-				d[0] = this, v = d.S('*bsMVC:route'), arg = d.S('*bsMVC:route:param');
+				d[0] = this, v = d.S('*bsMVC:route'), arg = d.S('*bsMVC:param');
 			}
 			C[v](arg);
 		},
