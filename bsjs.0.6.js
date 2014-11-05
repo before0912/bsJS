@@ -1317,14 +1317,7 @@ fn( 'router', (function(){
 								}
 							}//
 						};
-					})( domData || (function(){
-							var id = 1, data = {};
-							return function domData( el, k, v ){
-								var t0;
-								if( !( t0 = el['data-bs'] ) ) el['data-bs'] = t0 = id++, data[t0] = {};
-								return k == undefined ? data[t0] : v == undefined ? data[t0][k] : v === null ? delete data[t0][k] : ( data[t0][k] = v );
-							};
-						})() )
+					})( domData )
 				},
 				rTag = /^[a-z]+[0-9]*$/i, rAlpha = /[a-z]/i, rClsTagId = /^[.#]?[a-z0-9]+$/i,
 				DOC = document, tagName = {}, clsName = {},
@@ -1365,11 +1358,6 @@ fn( 'router', (function(){
 				R = [], arrs = {_l:0},
 				aPsibl = ['previousSibling', 'previousElementSibling'],
 				tEl = DOC.createElement('ul'), isElCld, isQSA;
-				if( !Array.prototype.indexOf ) Array.prototype.indexOf = function( v, I ){
-					var i, j, k, l;
-					if( j = this.length ) for( I = I || 0, i = I, k = parseInt( ( j - i ) * .5 ) + i + 1, j--; i < k; i++ ) if( this[l = i] === v || this[l = j - i + I] === v ) return l;
-					return -1;
-				};
 				tEl.innerHTML = '<li>1</li>',
 				isElCld = tEl['firstElementChild'] && tEl['lastElementChild'] && tEl['children'] ? 1 : 0,
 				isQSA = isElCld && DOC['querySelectorAll'] ? 1 : 0;
@@ -1454,9 +1442,7 @@ fn( 'router', (function(){
 					}
 					if( !els ) els = tagName['*'] || ( tagName['*'] = doc.getElementsByTagName('*') );
 					if( !sels[0].length ) return arrs[arrs._l++] = sels[0], sels.length = 0, arrs[arrs._l++] = sels, els;
-					subTokener(sels);
-					//return;
-					bsRseq++, r.length = 0;
+					subTokener(sels), bsRseq++, r.length = 0;
 					for( i = 0, j = els.length; i < j; i++ ){
 						l = sels.length;
 						while( l-- ){
