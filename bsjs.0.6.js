@@ -629,39 +629,33 @@ HTML5:
 })();
 MVC:
 bs.obj( 'MVC', (function(){
-	var modelView = {}, view = {};
+	var d, modelView = {}, view = {}, C = {}, M = {};
 	return {
-		M:(function(){
-			var M = {}, model = function(){
-				var i = 0, j = arguments.length, k, v;
-				while( i < j ){
-					k = arguments[i++];
-					if( i == j ) return M[k];
-					M[k] = v = arguments[i++];
-					if( k in modelView && ( modelView[k] == model.all || modelView[k] === v ) ) view[k](v);
-				}
-				return v;
-			};
-			model.all = {};
-			return model;
-		})(),
-		V:function( k ){
+		m:function(){
+			var i = 0, j = arguments.length, k, v;
+			while( i < j ){
+				k = arguments[i++];
+				if( i == j ) return M[k];
+				M[k] = v = arguments[i++];
+				if( k in modelView && ( modelView[k] == model.all || modelView[k] === v ) ) view[k](v);
+			}
+			return v;
+		},
+		all:{},
+		v:function( k ){
 			var i = arguments.length;
 			if( i == 1 ) return view[k];
 			view[k] = arguments[1];
 			if( i == 3 ) modelView[k] = arguments[2];
 		},
-		C:(function(){
-			var d, C = {}, controller = function( v, arg ){
-				if( this.nodeType ){
-					if( !d ) d = bs.Dom('body');
-					d[0] = this, v = d.S('*route'), arg = d.S('*arg');
-				}
-				C[v](arg);
-			};
-			controller.route = function( k, v ){C[k] = v};
-			return controller;
-		})()
+		c:function( v, arg ){
+			if( this.nodeType ){
+				if( !d ) d = bs.Dom('body');
+				d[0] = this, v = d.S('*bsMVC:route'), arg = d.S('*bsMVC:route:param');
+			}
+			C[v](arg);
+		},
+		route:function( k, v ){C[k] = v}
 	};
 })() );
 PLUGIN:
