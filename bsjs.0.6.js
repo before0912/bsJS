@@ -629,7 +629,7 @@ HTML5:
 })();
 MVC:
 bs.obj( 'MVC', (function(){
-	var d, modelView = {}, view = {}, C = {}, M = {}, _all = {};
+	var modelView = {}, view = {}, C = {}, M = {}, _all = {};
 	return {
 		m:function(){
 			var i = 0, j = arguments.length, k, v;
@@ -641,7 +641,6 @@ bs.obj( 'MVC', (function(){
 			}
 			return v;
 		},
-		all:function(){return _all},
 		v:function( k ){
 			var i = arguments.length;
 			if( i == 1 ) return view[k];
@@ -649,12 +648,14 @@ bs.obj( 'MVC', (function(){
 			if( i == 3 ) modelView[k] = arguments[2];
 		},
 		c:function( v, arg ){
+			var t0;
 			if( this.nodeType ){
-				if( !d ) d = bs.Dom('body');
-				d[0] = this, v = d.S('*bsMVC:route'), arg = d.S('*bsMVC:param');
+				t0 = bs.Dom.pool('@BSMVC', this );
+				v = t0.S('*bsMVC:route'), arg = t0.S('*bsMVC:param');
 			}
 			C[v](arg);
 		},
+		all:function(){return _all},
 		route:function( k, v ){C[k] = v}
 	};
 })() );
@@ -1126,6 +1127,15 @@ fn( 'router', (function(){
 					if( target.END ) target.END();
 				};
 			})( domData, ev ),
+			clsfn.pool = (function(){
+				var pool = {};
+				return function(k){
+					var t0 = pool[k] || ( pool[k] = bs.Dom(doc.body) ), i, j;
+					for( i = 1, j = arguments.length ; i < j ; i++ ) t0[i-1] = arguments[i];
+					t0.length = j - 1;
+					return t0;
+				};
+			})(),
 			clsfn.html = (function(doc){
 				var div = doc.createElement('div'), tbody = doc.createElement('tbody'), tags = {
 					tr:[1, '<table><tbody>', '</tbody></table>'], th:[2, '<table><tbody><tr>', '</tr></tbody></table>'],
