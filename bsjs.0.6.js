@@ -1407,21 +1407,21 @@ fn( 'router', (function(){
 					var sels, sel,
 						hasParent, hasQSAErr, hasQS,
 						t0, t1, t2, t3, i, j, k, l, m, n,
-						el, els, hit, token, tokens;
+						el, els, hit, token, tokens, isFilter;
 
 					if( !r ) r = R;
-					doc ? ( DOC = doc ) : ( doc = DOC );
-					if( rClsTagId.test(query) ) switch( query.charAt(0) ){
-						case'#':return getById(query.substr(1));
-						case'.':return className(query.substr(1));
-						default:return tagName[query] || ( tagName[query] = doc.getElementsByTagName(query) );
-					}
-					if( chrome && isQSA ){
-						if( ( t0 = query.toLowerCase() ).indexOf(':contains') < 0 && t0.indexOf('!') < 0 ){
-							return doc.querySelectorAll(query);
+					i = query.indexOf(',');
+					if( doc && 'length' in doc ) isFilter = 1;
+					else{
+						isFilter = 0, doc ? ( DOC = doc ) : ( doc = DOC );
+						if( rClsTagId.test(query) ) switch( query.charAt(0) ){
+							case'#':return getById(query.substr(1));
+							case'.':return className(query.substr(1));
+							default:return tagName[query] || ( tagName[query] = doc.getElementsByTagName(query) );
 						}
+						if( chrome && isQSA && query.indexOf(':contains') < 0 && query.indexOf('!') < 0 ) return doc.querySelectorAll(query);
+						if( isQSA && i > -1 && query.indexOf('!') < 0 ) return doc.querySelectorAll(query);
 					}
-					if( isQSA && ( i = query.indexOf(',') ) > -1 && query.indexOf('!') < 0 ) return doc.querySelectorAll(query);
 					if( i == -1 ) sels = arrs._l ? arrs[--arrs._l] : [], sels[0] = query, i = 1;
 					else sels = query.split(','), i = sels.length;
 					while( i-- ){
@@ -1449,7 +1449,7 @@ fn( 'router', (function(){
 						while( j-- ){
 							if( rTag.test(t0[j]) ) t0[j] = t0[j].toUpperCase();
 							else if( t0[j].charAt(0) == ':' ){
-								if( !( t1 = t0[j] ).toLowerCase().indexOf( ':contains(' ) ){
+								if( !( t1 = t0[j] ).indexOf( ':contains(' ) ){
 									hasQSAErr = 1; continue;
 								}else{
 									t0[j] = t1;
@@ -1462,29 +1462,32 @@ fn( 'router', (function(){
 						}
 						sels[i] = t0;
 					}
-					if( hasQSAErr ) hasQS = 0;
-					if( sels.length == 1 ){
-						t0 = sels[0][0];
-						if( ( k = t0.charAt(0) ) == '#' ) els = getById(t0.substr(1)), sels[0].shift();
-						else if( k == '.' ){
-							els = className(t0.substr(1)), sels[0].shift();
-							if( hasQS && els.length > 100 ) return doc.querySelectorAll(query);
-						}else if( k == '[' || k == ':' ){
-							if( hasQS ) return doc.querySelectorAll(query);
-							if( !hasParent ){
-								t0 = sels[0][sels[0].length - 1], k = t0.charAt(0);
-								if( k == '#' ) sels[0].pop(), els = getById( t0.substr(1) );
-								else if( k == '.' ) sels[0].pop(), els = className( t0.substr(1) );
-								else if( rTag.test(t0) ) sels[0].pop(), els = tagName[t0] || ( tagName[t0] = doc.getElementsByTagName(t0) );
+					if( !isFilter ){
+						if( hasQSAErr ) hasQS = 0;
+						if( sels.length == 1 ){
+							t0 = sels[0][0];
+							if( ( k = t0.charAt(0) ) == '#' ) els = getById(t0.substr(1)), sels[0].shift();
+							else if( k == '.' ){
+								els = className(t0.substr(1)), sels[0].shift();
+								if( hasQS && els.length > 100 ) return doc.querySelectorAll(query);
+							}else if( k == '[' || k == ':' ){
+								if( hasQS ) return doc.querySelectorAll(query);
+								if( !hasParent ){
+									t0 = sels[0][sels[0].length - 1], k = t0.charAt(0);
+									if( k == '#' ) sels[0].pop(), els = getById( t0.substr(1) );
+									else if( k == '.' ) sels[0].pop(), els = className( t0.substr(1) );
+									else if( rTag.test(t0) ) sels[0].pop(), els = tagName[t0] || ( tagName[t0] = doc.getElementsByTagName(t0) );
+								}
+							}else if( rTag.test(t0) ){
+								sels[0].shift(), els = tagName[t0] || ( tagName[t0] = doc.getElementsByTagName(t0) );
+								if( hasQS && els.length > 100 ) return doc.querySelectorAll(query);
 							}
-						}else if( rTag.test(t0) ){
-							sels[0].shift(), els = tagName[t0] || ( tagName[t0] = doc.getElementsByTagName(t0) );
-							if( hasQS && els.length > 100 ) return doc.querySelectorAll(query);
 						}
-					}
-					if( !els ) els = tagName['*'] || ( tagName['*'] = doc.getElementsByTagName('*') );
-					if( !sels[0].length ) return arrs[arrs._l++] = sels[0], sels.length = 0, arrs[arrs._l++] = sels, els;
-					subTokener(sels), bsRseq++, r.length = 0;
+						if( !els ) els = tagName['*'] || ( tagName['*'] = doc.getElementsByTagName('*') );
+						if( !sels[0].length ) return arrs[arrs._l++] = sels[0], sels.length = 0, arrs[arrs._l++] = sels, els;
+						r.length = 0;
+					}else els = doc, doc = DOC, r = [];
+					bsRseq++, subTokener(sels);
 					for( i = 0, j = els.length; i < j; i++ ){
 						l = sels.length;
 						while( l-- ){
@@ -1521,8 +1524,8 @@ fn( 'router', (function(){
 				};
 			})( doc, trim ),
 			clsfn.dom = dom = (function( query, html ){
-				var n = {length:0}, dom = function( sel ){
-					return typeof sel == 'string' ? sel.charAt(0) == '<' ? html(sel) : query(sel) : 
+				var n = {length:0}, dom = function( sel, doc ){
+					return typeof sel == 'string' ? sel.charAt(0) == '<' ? html(sel) : query(sel, doc) : 
 						sel['nodeType'] == 1 ? ( n[0] = sel, n.length = 1, n ) : 
 						sel['instanceOf'] == bs.Dom || sel.length ? sel : null;
 				};
@@ -1536,8 +1539,8 @@ fn( 'router', (function(){
 					return nodes;
 				}
 			})(),
-			fn.NEW = function(key){
-				var t0 = dom(key), i = this.length = t0.length;
+			fn.NEW = function(key, doc){
+				var t0 = dom( key, doc ), i = this.length = t0.length;
 				if( t0['instanceOf'] == bs.Dom ) return t0;
 				while( i-- ) this[i] = t0[i];
 			},
