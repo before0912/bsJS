@@ -1,4 +1,4 @@
-/* bsJS v0.6.7
+/* bsJS v0.7.0
  * Copyright (c) 2013 by ProjectBS Committe and contributors. 
  * http://www.bsplugin.com All rights reserved.
  * Licensed under the BSD license. See http://opensource.org/licenses/BSD-3-Clause
@@ -6,10 +6,8 @@
 ( function( W, N ){
 'use strict';
 var VERSION = 0.6, REPOSITORY = 'http://projectbs.github.io/bsPlugin/js/',
-	CROSSPROXYKEY = 'CROSSPROXY_DEMO_ACCESS_KEY',
-	CROSSPROXY = 'http://api.bsplugin.com/bsNet/php/crossProxy.0.2.php',//'http://www.bsidesoft.com/bs/bsNet/php/crossProxy.0.2.php'
-	NETWORKERKEY = 'BSNETWORKER_20140707',
-	NETWORKER = 'http://www.bsidesoft.com/bs/bsPHP/index.php/networker',
+	CROSSPROXYKEY = 'CROSSPROXY_DEMO_ACCESS_KEY', CROSSPROXY = 'http://api.bsplugin.com/bsNet/php/crossProxy.0.2.php',//'http://www.bsidesoft.com/bs/bsNet/php/crossProxy.0.2.php'
+	NETWORKERKEY = 'BSNETWORKER_20140707', NETWORKER = 'http://www.bsidesoft.com/?networker',
 	log, none = function(){}, trim = /^\s*|\s*$/g, doc = W['document'], que = [], pque = [], plugin, timeout = 5000, mk, comp, detect, isDebug = 0,
 	bs = W[N = N || 'bs'] = function(f){que ? ( que[que.length] = f ) : f();},
 	err = function( num, msg ){console.log( num, msg ); if( isDebug ) throw new Error( num, msg );},
@@ -119,7 +117,7 @@ if( !Array.prototype.indexOf ) Array.prototype.indexOf = function( v, I ){
 	if( j = this.length ) for( I = I || 0, i = I, k = parseInt( ( j - i ) * .5 ) + i + 1, j-- ; i < k ; i++ ) if( this[l = i] === v || this[l = j - i + I] === v ) return l; 
 	return -1;
 };
-if( !W['JSON'] ) W['JSON'] = {
+bs.JSON = {
 	parse:function(v){return ( new Function( '', 'return ' + v ) )();},
 	stringify:(function(){
 		var r = /["]/g, f;
@@ -143,18 +141,17 @@ if( !W['JSON'] ) W['JSON'] = {
 		};
 	})()
 };
+if( !W['JSON'] ) W['JSON'] = bs.JSON;
 fn( 'log', log = (function(){
 	var t0 = [], mode = 1, base, prev, mobile = detect.device == 'mobile' ? 1 : 0, r = /[<]/g;
 	return function(){
 		var i, j, k, l;
 		if( !doc.getElementById('BSCSE') ){
 			prev = base = Date.now();
-			bs.Css('.BSCSE0').S( 'style', 'border-bottom:1px solid #ddd;padding:10px 0' ),
-			bs.Css('.BSCSE1').S( 'style', 'font-size:8;color:#777;margin-left:10' ),
-			bs.Css('.BSCSE2').S( 'style', 'float:left;margin:5;border:1px dashed #aaa;padding:2' ),
-			bs.Css('#BSCSE').S( 'style', 'position:fixed;z-index:999999;width:100%;background:#fdfdfd;bottom:0;left:0' ),
+			bs.css( '.BSCSE0{border-bottom:1px solid #ddd;padding:10px 0}.BSCSE1{font-size:8;color:#777;margin-left:10}.BSCSE2{float:left;margin:5;border:1px dashed #aaa;padding:2}'+
+				'#BSCSE{position:fixed;z-index:999999;width:100%;background:#fdfdfd;bottom:0;left:0}'+
+				'#BSCCctab,#BSCCetab{font-size:11;cursor:pointer;margin:2;padding:0 10px;border-radius:30;float:left;border:1px solid #666}' );
 			bs.Css('#BSCC').S( 'font-size', mobile ? 10 : 11, 'font-family', 'DotumChe,Courier', 'overflow-y', 'scroll', 'height', mobile ? 180 : 280 ),
-			bs.Css('#BSCCctab,#BSCCetab').S( 'style', 'font-size:11;cursor:pointer;margin:2;padding:0 10px;border-radius:30;float:left;border:1px solid #666' ),
 			bs.Dom('<div id="BSCSE"></div>').S(
 				'height', mobile ? 200 : 300, '<','body',
 				'>', bs.Dom('<div style="width:100%;background:#ccc;cursor:pointer;height:20px"></div>').S( 
@@ -649,8 +646,12 @@ bs.obj( 'MVC', (function(){
 		all:function(){return _all},
 		router:function( k, arg ){
 			var t0;
-			if( this.nodeType ) t0 = bs.Dom.pool('@BSMVC', this ), k = t0.S('*bsMVC:route'), arg = t0.S('*bsMVC:param');
+			if( this.nodeType ) k.prevent(), t0 = bs.Dom.pool('@BSMVC', this ), k = t0.S('*bsMVC:route'), arg = t0.S('*bsMVC:param');
 			C[k]( m, arg );
+		},
+		routerPoint:function(e){
+			var t0 = bs.Dom.pool( '@BSMVC', e.domPoint() ), k;
+			if( k = t0.S('*bsMVC:route') ) bs.MVC.router( k, t0.S('*bsMVC:param') );
 		},
 		toggle:function(k){return ( M[k] = M[k] ? 0 : 1 ) ? 0 : 1;},
 		c:function(){
@@ -1136,15 +1137,6 @@ fn( 'router', (function(){
 					if( target.END ) target.END();
 				};
 			})( domData, ev ),
-			clsfn.pool = (function(){
-				var pool = {};
-				return function(k){
-					var t0 = pool[k] || ( pool[k] = bs.Dom(doc.body) ), i, j;
-					for( i = 1, j = arguments.length ; i < j ; i++ ) t0[i-1] = arguments[i];
-					t0.length = j - 1;
-					return t0;
-				};
-			})(),
 			clsfn.html = (function(doc){
 				var div = doc.createElement('div'), tbody = doc.createElement('tbody'), tags = {
 					tr:[1, '<table><tbody>', '</tbody></table>'], th:[2, '<table><tbody><tr>', '</tr></tbody></table>'],
@@ -1549,53 +1541,66 @@ fn( 'router', (function(){
 				if( t0['instanceOf'] == bs.Dom ) return t0;
 				while( i-- ) this[i] = t0[i];
 			},
-			childS = (function(){
-				var r = /^[-]?[0-9.]+$/, d, slice = Array.prototype.slice;
-				return function( target, arg ){
-					var v = arg[0], t, t0, t1, i, j, k = 0;
-					if(!d) d = bs.Dom('<div></div>');
-					v = v.substring( 1, v.lastIndexOf('}') );
-					if( r.test(v) ) return arg[0] = parseFloat(v), target.S.apply( target, arg );
-					arg = slice.call( arg, 1 );
-					if( v.charAt(0) == '>' ){
-						i = target.length, v = v.substr(1), t = v == '$' ? 0 : r.test(v) ? 1 : v.charAt(0) == '.' ? ( v = v.substr(1), 2 ) : ( v = v.toLowerCase(), 3 );
-						while( i-- ){
-							t0 = clsfn.tagNodes(target[i].childNodes);
-							if( t == 0 ) d[k++] = t0[t0.length - 1];
-							else if( t == 1 ) d[k++] = t0[v];
-							else{
-								j = t0.length;
-								while( j-- ) if(
-									( t == 2 && ( t1 = t0[j].className ) && ( v == t1 || t1.indexOf( v + ' ' ) > -1 || t1.indexOf( ' ' + v ) > -1 ) ) ||
-									( t == 3 && t0[j].tagName.toLowerCase() == v ) 
-								) d[k++] = t0[j];
-							}
-						}
-						if( k ) return d.length = k, arg.length ? d.S.apply( d, arg ) : d;
-					}else{
-						i = target.length, t = r.test(v) ? 1 : v.charAt(0) == '.' ? ( v = v.substr(1), 2 ) : ( v = v.toLowerCase(), 3 );
-						if( t == 1 ) d[k++] = target[v];
-						else{
-							while( i-- ) if(
-								( t == 2 && ( t1 = target[i].className ) && ( v == t1 || t1.indexOf( v + ' ' ) > -1 || t1.indexOf( ' ' + v ) > -1 ) ) ||
-								( t == 3 && target[i].tagName.toLowerCase() == v ) 
-							) d[k++] = target[i];
-						}
-						if( k ) return d.length = k, arg.length ? d.S.apply( d, arg ) : d;
+			clsfn.pool = (function(){
+				var pool = {}, node = function( t0, v ){
+					var i, j;
+					if( v.nodeType ) t0[t0.length++] = v;
+					else if( typeof v == 'string' ){
+						for( v = clsfn.query(v), i = 0, j = v.length ; i < j ; i++ ) t0[t0.length++] = v[i];
+					}else if( typeof v == 'object' && ( n = v.length ) ){
+						for( i = 0, j = v.length ; i < j ; i++ ) node( t0, v[m++] );
 					}
-					return null;
+				};
+				return function(k){
+					var t0 = pool[k] || ( pool[k] = bs.Dom(doc.body) ), i, j;
+					t0.length = t0.filter_ = t0.child_ = 0;
+					if( ( j = arguments.length ) > 1 ) for( i = 1 ; i < j ; i++ ) node( t0, arguments[i] );
+					return t0;
 				};
 			})(),
+			fn.filter = function( v, noCache ){
+				var V, d, t, t0, i, j, k;
+				if( !this.filter_ ) this.filter_ = {};
+				if( !( d = this.filter_[V = v] ) || noCache ){
+					if( typeof v == 'number' ) d = {length:1, 0:this[v]};
+					else{
+						for( d = {}, k = i = 0, j = this.length, t = v.charAt(0) == '.' ? ( v = v.substr(1), 0 ) : v.indexOf('=') > -1 ? ( v = v.split('='), 1 ) : ( v = v.toLowerCase(), 2 ) ; i < j ; i++ )
+							if(
+								( t == 0 && ( t0 = this[i].className ) && ( v == t0 || t0.indexOf( v + ' ' ) > -1 || t0.indexOf( ' ' + v ) > -1 ) ) ||
+								( t == 1 && bs.Dom.pool( '@DomFilter', this[i] ).S(v[0]) == v[1] ) || ( t == 2 && this[i].tagName.toLowerCase() == v )
+							) d[k++] = target[i];
+						d.length = k, this.filter_[V] = d;
+					}
+				}
+				return bs.Dom.pool( '@DomFilter', d );
+			},
+			fn.child = function( v, noCache ){
+				var V, d, s, t, t0, t1, i, j, k, m, n;
+				if( !this.child_ ) this.child_ = {};
+				if( !( d = this.child_[V = v] ) || noCache ){
+					for( d = {}, k = i = 0, j = this.length, t = typeof v == 'number' ? 0 : v == '$' ? 1 : v.charAt(0) == '.' ? ( v = v.substr(1), 2 ) : v.indexOf('=') > -1 ? ( v = v.split('='), 3 ) : ( v = v.toLowerCase(), 4 ) ; i < j ; i++ ){
+						t0 = clsfn.tagNodes(this[i].childNodes);
+						if( t == 0 ) d[k++] = t0[v];
+						else if( t == 1 ) d[k++] = t0[t0.length - 1];
+						else for( m = 0, n = t0.length ; m < n ; m++ ){
+							if(
+								( t == 2 && ( t1 = t0[m].className ) && ( v == t1 || t1.indexOf( v + ' ' ) > -1 || t1.indexOf( ' ' + v ) > -1 ) ) ||
+								( t == 3 && bs.Dom.pool( '@DomFilter', t0[m] ).S(v[0]) == v[1] ) ||
+								( t == 4 && t0[m].tagName.toLowerCase() == v ) 
+							) d[k++] = t0[m];
+						}
+					}
+					d.length = k, this.child_[V] = d;
+				}
+				return bs.Dom.pool( '@DomFilter', d );
+			},
 			fn.S = comp( function(){
 				var ktype = ktypes._l ? ktypes[--ktypes._l] : [], d, data, target, type, t0, t1, t2, l, i0, i, j, k, v, k0, v0, m, a, g;
 				if( ( i = arguments[0] ) === null ) return del(this);
-				if( typeof i == 'number' ) i0 = l = 1, target = d = this[i], data = this[i + 'data'] || ( this[i + 'data'] = domData(target) );
-				else if( i.charAt(0) == '{' ) return childS( this, arguments );
-				else l = this.length, i0 = 0;
+				l = this.length, i0 = 0;
 				j = arguments.length, ktype.length = 0;
 				while( l-- ){
-					if( !target ) d = this[l], data = this[l + 'data'] || ( this[l + 'data'] = domData(d) );
-					i = i0, arg.length = 0;
+					d = this[l], data = this[l + 'data'] || ( this[l + 'data'] = domData(d) ), i = i0, arg.length = 0;
 					while( i < j ){
 						k = arguments[i];
 						if( !( type = ktype[i] ) ) type = ktype[i] = attrs[k] || first[k.charAt(0)] || ( 'on' + k in d ? attrs[k] = 2 : k.indexOf(':') > -1 ? 2 : 1 );
