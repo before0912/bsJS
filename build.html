@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>bsJS online build</title>
+<meta charset="utf-8"/>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target-densitydpi=medium-dpi" />
+</head>
+<body>
+<div>
+	<input type="text" id="entry" value="src/bsjs.js"/>
+	<input type="button" id="build" value="build"/>
+</div>
+<textarea id="progress" style="width:100%;height:100px;display:block"></textarea>
+<textarea id="result" style="width:100%;height:500px;display:block"></textarea>
+<div id="savep" style="display:none"><input type="text" id="buildname"/><input type="button" id="save" value="save"/></div>
+<div id="complete"></div>
+<script src="bsjs.0.7.js"></script>
+<script>
+var wrapper, url, path, count, total, loaded = [], msg, result,
+regex = {
+	load:[/["]@bsLOAD[:](.+)["]/g, function(v, v0){
+		var key = total;
+		bs.get(function(data){
+			loaded[key] = data;
+			log( 'Loaded ' + key + ' [' + path + '/' + v0 + ']' );
+			if( ++count == total ) complete(wrapper.replace(regex.loaded[0], regex.loaded[1]));
+		}, path + '/' + v0 );
+		log( 'Load ' + total + ' [' + path + '/' + v0 + ']' );
+		total++;
+		return '@@'+key+'@@';
+	}],
+	loaded:[/@@([0-9]+)@@/g, function(v, v0){
+		return loaded[v0];
+	}]
+},
+log = function(v){
+	msg += v +'\n';
+	bs.Dom('#progress').S('@value', msg, '@scrollTop', 10000);
+},
+complete = function(v){
+	log( 'completed!' );
+	result = v;
+	bs.Dom('#result').S('@value', result);
+	bs.Dom('#buildname').S('@value','bs.1.0.' + bs.datepart('YmdHis') + '.js' );
+	bs.Dom('#savep').S('display', 'block' );
+}
+
+bs( function(){
+	bs.Dom('#build').S('down', function(e){
+		bs.Dom('#complete').S('>', null);
+		url = bs.Dom('#entry').S('@value');
+		path = url.substring(0, url.lastIndexOf('/'));
+		loaded.length = total = count = 0;
+		result = msg = '';
+		bs.get(function(v){
+			wrapper = v.replace(regex.load[0], regex.load[1]);
+		}, url);
+	});
+	bs.Dom('#save').S('down', function(e){
+		var file = bs.Dom('#buildname').S('@value');
+		log( 'start save :' + file );
+		bs.post( function(v){
+			log( 'complete save :' + file );
+			bs.Dom('#savep').S('display', 'none' );
+			bs.Dom('#complete').S('html','<a href="http://www.bsidesoft.com/bs/bsJS/build/'+file+'" target="_blank">'+file+'</a>');
+		}, 'http://www.bsidesoft.com/?bsjsSave', 'bsjs', result, 'file', file );
+	});
+} );
+</script>
+</body>
+</html>
