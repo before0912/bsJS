@@ -38,7 +38,28 @@ bs.detect = bs.require(null, function detect(){
 bs.net = bs.require(null, function net(){
 "@bsLOAD:network.js"
 });
+bs.math = bs.require(null, function net(){
+"@bsLOAD:math.js"
+});
+bs.str = bs.require(null, function net(){
+"@bsLOAD:str.js"
+});
 
-
+t0 = setInterval( function(){
+	var start, i;
+	switch( doc.readyState ){
+	case'complete':case'loaded':break;
+	case'interactive':if( doc.documentElement.doScroll ) try{doc.documentElement.doScroll('left');}catch(e){return;}
+	default:return;
+	}
+	clearInterval(t0),
+	start = function(){
+		var t0 = que, i = 0, j = t0.length;
+		que = null;
+		while( i < j ) t0[i++]();
+	},
+	bs.obj( 'DETECT', detectDOM( W, detect ) ), DOM(), bs.obj( 'ANI', ANIMATE() ), EXT(), 
+	pque.length ? ( i = pque, pque = null, plugin( start, i ) ) : start();
+}, 1 ),
 
 })();

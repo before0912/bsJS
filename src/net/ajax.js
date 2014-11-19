@@ -118,3 +118,7 @@ module.exports = {
 	del:mk('DELETE'),
 	get:mk('GET')
 };
+
+fn = bs.header,
+	fn( 'Cache-Control', 'no-cache' ),
+	fn( 'Content-Type', function(method){return ( method == 'GET' ? 'text/plain' : 'application/x-www-form-urlencoded' ) + '; charset=UTF-8';} );
