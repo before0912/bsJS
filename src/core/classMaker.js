@@ -33,7 +33,7 @@ result = function(name, func){
 			if( arguments[0] != FACTORY ) this.NEW(arguments);
 		}else return FACTORY( cls, cache, arguments);
 	},
-	func( protos, statics, bs );
+	func(protos, statics, bs);
 	
 	if( protos.PARENT ) cls.prototype = fn = new protos.PARENT();
 	else fn = cls.prototype;
