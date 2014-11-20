@@ -29,20 +29,20 @@ result = function(name, func){
 	var cls, protos = {PARENT:null, S:S, NEW:NEW, DELETE:DELETE, POOL:null}, statics = {}, fn, cache = {}, pool, k;
 	
 	cls = function(){
-		if( this instanceof cls ){
-			if( arguments[0] != FACTORY ) this.NEW(arguments);
-		}else return FACTORY( cls, cache, arguments);
+		if(this instanceof cls){
+			if(arguments[0] != FACTORY) this.NEW(arguments);
+		}else return FACTORY(cls, cache, arguments);
 	},
 	func(protos, statics, bs);
 	
-	if( protos.PARENT ) cls.prototype = fn = new protos.PARENT();
+	if(protos.PARENT) cls.prototype = fn = new protos.PARENT();
 	else fn = cls.prototype;
 	fn[prefix + 'cache'] = cache;
 
-	for( k in protos ) if( protos.hasOwnProperty(k) ) fn[k] = protos[k];
-	for( k in statics ) if( statics.hasOwnProperty(k) ) f[k] = t2[k];
+	for(k in protos) if(protos.hasOwnProperty(k)) fn[k] = protos[k];
+	for(k in statics) if(statics.hasOwnProperty(k)) f[k] = t2[k];
 	
-	if( protos.POOL ){
+	if(protos.POOL){
 		fn[prefix + 'pool'] = pool = {};
 		cls.pool = POOL;
 	}
