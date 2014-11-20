@@ -1,22 +1,23 @@
 var trim = /^\s*|\s*$/g,
 _xml = function(N){
-	var node = N.childNodes, r = {}, n, t0, t1, i, j;
-	for( i = 0, j = node.length ; i < j ; i++ ){
-		t0 = type ? node[i] : node.nextNode();
-		if( t0.nodeType == 3 ) r.value = ( type ? t0.textContent : t0.text ).replace( trim, '' );
+	var result = {}, nodes = N.childNodes, node, nodeName, attr, t1, i, j;
+	for(i = 0, j = nodes.length ; i < j ; i++){
+		node = type ? nodes[i] : nodes.nextNode();
+		if(node.nodeType == 3) result.value = (type ? node.textContent : node.text).replace(trim, '');
 		else{
-			n = t0.nodeName, t0 = _xml(t0);
-			if( t1 = r[n] ){
-				if( t1.length === undefined ) r[n] = {length:2,0:t1,1:t0};
-				else r[n][t1.length++] = t0;
-			}else r[n] = t0;
+			nodeName = node.nodeName,
+			node = _xml(node);
+			if(nodes = result[nodeName]){
+				if(nodes.length === undefined) result[n] = {length:2, 0:nodes, 1:node};
+				else result[nodeName][nodes.length++] = node;
+			}else result[n] = node;
 		}
 	}
-	if( t0 = N.attributes ) for( i = 0, j = t0.length ; i < j ; i++ ) r['$'+t0[i].name] = t0[i].value;
-	return r;
+	if(attr = N.attributes) for(i = 0, j = attr.length ; i < j ; i++) result['@' + attr[i].name] = attr[i].value;
+	return result;
 },
-xml0 = function( v, end ){
-	var r = {}, t0 = v.childNodes, t1, nn, i = 0, j = t0.length;
+xml0 = function(N, end){
+	var r = {}, t0 = N.childNodes, t1, nn, i = 0, j = t0.length;
 	if( end )( nn = function(){
 			var k, t1;
 			for( var k = 0 ; i < j && k < 5000 ; i++, k++ ) t1 = type ? t0[i] : t0.nextNode(), r[t1.nodeName] = _xml(t1);
@@ -37,8 +38,8 @@ filter = function(v){
 type, parser, result;
 
 if( this['DOMParser'] ){
-	type = 1, 
-	parser = new DOMParser, 
+	type = 1,
+	parser = new DOMParser(),
 	result = function( end, v ){
 		return xml0( parser.parseFromString( filter(v), "text/xml" ), end );
 	};
