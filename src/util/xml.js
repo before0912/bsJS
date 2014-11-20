@@ -18,11 +18,11 @@ _xml = function(N){
 },
 xml0 = function(N, end){
 	var r = {}, t0 = N.childNodes, t1, nn, i = 0, j = t0.length;
-	if( end )( nn = function(){
+	if(end)(nn = function(){
 			var k, t1;
 			for( var k = 0 ; i < j && k < 5000 ; i++, k++ ) t1 = type ? t0[i] : t0.nextNode(), r[t1.nodeName] = _xml(t1);
 			i < j ? setTimeout( nn, 16 ) : end(r);
-		} )();
+		})();
 	else{
 		for( ; i < j ; i++ ) t1 = type ? t0[i] : t0.nextNode(), r[t1.nodeName] = _xml(t1);
 		return r;
