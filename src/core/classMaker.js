@@ -45,8 +45,7 @@ result = function(name, func){
 	if(protos.POOL){
 		fn[prefix + 'pool'] = pool = {};
 		cls.pool = POOL;
-	}
-	
+	}	
 	return cls;
 };
 
