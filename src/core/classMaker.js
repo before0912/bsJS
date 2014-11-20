@@ -24,8 +24,8 @@ POOL = function(id){
 	if(!(result = pool[id])) result = new cls(FACTORY);
 	result.POOL(arguments);
 	return result;
-};
-module.exports = function(name, func){
+},
+result = function(name, func){
 	var cls, protos = {PARENT:null, S:S, NEW:NEW, DELETE:DELETE, POOL:null}, statics = {}, fn, cache = {}, pool, k;
 	
 	cls = function(){
@@ -49,3 +49,5 @@ module.exports = function(name, func){
 	
 	return cls;
 };
+
+module.exports = result;
