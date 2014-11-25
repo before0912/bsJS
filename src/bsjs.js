@@ -43,23 +43,24 @@ domloader = function(){
 (function(){
 	var module = {};
 	(function(module){
-	"@bsLOAD:require.js"
+	"@bsLOAD:core/require.js"
 	})(module);
 	bs.require = module.exports;
 })();
 (function(){
 	var f = function(){
-		"@bsLOAD:str.js"
+		"@bsLOAD:net/ajax.js"
 	};
 	f.__bsRequireID = "ajax";
-	bs.str = bs.require(null, f);
+	bs.ajax = bs.require(null, f);
 })();
 
-bs.JSON = bs.require(null, function classMaker(){
-"@bsLOAD:json.js"
-});
+bs.JSON = (function(){
+"@bsLOAD:core/json.js"
+return bs_core_JSON;
+})();
 bs.log = bs.require(null, function classMaker(){
-"@bsLOAD:log.js"
+"@bsLOAD:core/log.js"
 });
 
 bs.classMaker = bs.require(null, function classMaker(){

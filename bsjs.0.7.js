@@ -930,15 +930,25 @@ bs.obj( 'VALI', (function(trim){
 		case'function':return key(k());
 		case'number':return k;
 		case'string':return k.indexOf('|') > -1 ? ( k = k.split('|'), bs.Dom(k[0]).S(k[1]||'@value') ) : k;
-		case'object':return  k.instanceOf == bs.Dom ? k.S('@value') : k.value;
+		case'object':return  k.instanceOf == bs.Dom ? k.S( k.S('*bsVALIattribute') || '@value') : k.value;
 		}
 	}, parse = function(v){
-		var t0, t1, t2, i;
-		t0 = v.split('|'), t0.arg = t1 = {}, i = t0.length;
-		while( i-- ){
-			t2 = t0[i].split('['), t0[i] = rules[t2[0]];
-			if( t2 = t2[1] ) t1[i] = t2.substr( 0, t2.length - 1 ).split(',');
+		var t0, t1, t2, t3, i, j, k, l;
+		if( v.splice && v.arg ) return v;
+		t0 = [0], t0.arg = t1 = {};
+		for( k = i = 0, j = v.length ; i < j ; i++ ){
+			t2 = v.charAt(i);
+			if( t2 == '|' || t2 == '&' ){
+				t3 = v.substring( k, i ).split('['),
+				t0[l = t0.length] = rules[t3[0]];
+				if( t3 = t3[1] ) t1[l] = t3.substr( 0, t3.length - 1 ).split(',');
+				k = i + 1;
+				t0[t0.length] = t2 == '|' ? 1 : 0;
+			}
 		}
+		t3 = v.substring(k).split('[');
+		t0[l = t0.length] = rules[t3[0]];
+		if( t3 = t3[1] ) t1[l] = t3.substr( 0, t3.length - 1 ).split(',');
 		return t0;
 	}, rule = function(k, v){
 		var t0 = typeof v == 'function' ? v :
@@ -950,36 +960,43 @@ bs.obj( 'VALI', (function(trim){
 	}, vali = {
 		error:0,
 		run:function( t, v, arg ){
-			var err = vali.error = {length:0}, type, r, rule, i, j, k;
-			if( typeof v == 'function' ) r = v;
-			else v = v.replace( trim, '' ), type = ( r = rules[v] ) ? 0 : ( r = set[v] ) ? 1 : ( r = parse(v), 2 );
-			for( k in t )
-				if( type ){
-					for( rule = type == 2 ? r : r[k], i = 0, j = rule.length ; i < j ; i++ )
-						if( !rule[i]( key(t[k]), rule.arg[i] ) ) err[k] = rule[i].id, err.length++;
-				}else if( !r( key(t[k]), arg ) ) err[k] = v.id, err.length++;
-			return err.length;
+			var err = [], type, t0, r, i, j, k;
+			switch( typeof v ){
+			case'function':r = v; break;
+			case'string':v = v.replace( trim, '' ), type = ( r = set[v] ) ? 1 : ( r = rules[v] || parse(v), 0 ); break;
+			case'object':r = v, type = 1; break;
+			default:return 1;
+			}
+			for( k in t ) if( t0 = this.single( t[k], type ? r[k] : r, arg ) ) t0.push(k), err[err.length] = t0;
+			return err.length ? err : 0;
 		},
 		single:function( t, v, arg ){
-			var err = vali.error = {length:0}, r, i, j;
-			if( r = typeof v == 'function' ? v : rules[v] || 0 ){
-				if( !r( key(t), arg ) ) err[t] = v.id, err.length++;
-			}else for( r = parse(v), i = 0, j = r.length ; i < j ; i++ )
-				if( !r[i]( key(t), r.arg[i] ) ) err[t] = r[i].id, err.length++;
-			return err.length;
+			var mode, err = 0, r, i, j, k;
+			t = key(t);
+			if( r = typeof v == 'function' ? v : rules[v] ){
+				if( !r( t, arg ) ) err = [v.id, t, arg];
+			}else{
+				r = parse(v), i = 0, j = r.length;
+				while( i < j ){
+					mode = r[i++], k = r[i]( t, r.arg[i] );
+					if( mode && k ) break;
+					else if( !mode && !k ){
+						err = [r[i].id, t, r.arg[i]];
+						break;
+					}
+					i++;
+				}
+			}
+			return err;
 		},
 		set:function(){
 			var t0, t1, t2, i = 0, j = arguments.length, k, v, m, n, o, p;
 			while( i < j ){
 				k = arguments[i++], v = arguments[i++];
 				if( v === null ) delete set[k];
-				else for( m in v ){
-					t0 = v[m].split('|'), t0.arg = t1 = {}, n = t0.length;
-					while( n-- ){
-						t2 = t0[n].split('['), t0[n] = rules[t2[0]];
-						if( t2 = t2[1] ) t1[n] = t2.substr( 0, t2.length - 1 );
-					}
-					v[m] = t0, set[k] = v;
+				else{
+					for( m in v ) v[m] = parse(v[m]);
+					set[k] = v
 				}
 			}
 		},
@@ -990,7 +1007,25 @@ bs.obj( 'VALI', (function(trim){
 				if( v ) rules[k] = rule(k,v);
 			}
 			return rules[k];
-		}
+		},
+		generate:(function(){
+			var child = function( v, t, s, id ){
+				var t0, i, j, k, v;
+				v = bs.Dom.pool( '@vali0', v ).S('>');
+				for( i = 0, j = v.length ; i < j ; i++ ){
+					if( k = bs.Dom.pool('@vali0',v[i]).S('*bsVALI') ){
+						t0 = bs.Dom.pool('@vali0',v[i]).S('*bsVALIid') || id.id++;
+						t[t0] = bs.Dom(v[i]), s[t0] = parse(k);
+					}
+					if( ( t0 = bs.Dom.pool('@vali0',v[i]).S('>') ) && t0.length ) child( v[i], t, s, id );
+				}
+			};
+			return function(v){
+				var target = {}, set = {};
+				child( v, target, set, {id:0} );
+				return function(){return bs.VALI.run( target, set );}
+			};
+		})()
 	};
 	return vali;
 })(trim) );
@@ -1714,14 +1749,11 @@ var DOM = function(){
 			};
 			return dom;
 		})( clsfn.query, clsfn.html ),
-		clsfn.tagNodes = (function(){
-			var nodes = [];
-			return function(n){
-				var i, j;
-				for( nodes.length = i = 0, j = n.length ; i < j ; i++ ) if( n[i].nodeType == 1 ) nodes[nodes.length] = n[i];
-				return nodes;
-			}
-		})(),
+		clsfn.tagNodes = function(n){
+			var nodes = {length:0}, i, j;
+			for( i = 0, j = n.length ; i < j ; i++ ) if( n[i].nodeType == 1 ) nodes[nodes.length++] = n[i];
+			return nodes;
+		},
 		fn.NEW = function(key){
 			var t0 = dom(key), i = this.length = t0.length;
 			if( t0['instanceOf'] == bs.Dom ) return t0;

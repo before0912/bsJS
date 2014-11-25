@@ -97,8 +97,13 @@ var bs_net_ajax = (function(){
 	httpMethod,
 	baseHeader = [],
 	httpCross = [],
-	boundary = '--------------bsboundrybsboundry---',
+	boundary = '------------bsboundry-----',
 	async = function( x, end ){
+		if( "ontimeout" in x ){
+		}else{
+		
+		}
+		
 		var timeId = setTimeout(function(){
 			if(timeId == -1) return;
 			if(x.readyState !== 4) x.abort();
@@ -114,7 +119,7 @@ var bs_net_ajax = (function(){
 			status = x.status;
 			if(status == 0) status = 200;
 			xhrType ? delete x.onreadystatechange : x.onreadystatechange = null;
-			end( text, status );
+			end.call( x, text, status );
 		};
 	},
 	http = function(method, end, U, arg){
@@ -134,14 +139,14 @@ var bs_net_ajax = (function(){
 						k = 'Content-Disposition: form-data; name="' + arg[i++].replace(trim, "") + '"';
 						v = arg[i++];
 						if(k.charAt(0) == "@") continue;
-						postBody.push(boundary + "\r\n");
+						postBody.push("--" + boundary + "\r\n");
 						if( v instanceof File || v instanceof Blob )
 							postBody.push(k + '; filename="' + ( v.name || 'bsPost' + (i/2) + '.bin') + '"\r\n',
 								"Content-Type: application/octet-stream\r\n\r\n");
 						else postBody.push(k + "\r\n\r\n");
 						postBody.push(v, "\r\n");
 					}
-					postBody.push(boundary);
+					postBody.push("--" + boundary);
 					break;
 				}
 			}
@@ -200,8 +205,8 @@ var bs_net_ajax = (function(){
 		del:mk('DELETE'),
 		get:mk('GET')
 	};
-	result("Cache-Control", "no-cache"),
-	result("Content-Type", function(method){
+	result.baseHeader("Cache-Control", "no-cache"),
+	result.baseHeader("Content-Type", function(method){
 		return (method == "GET" ? "text/plain" : "application/x-www-form-urlencoded") + "; charset=UTF-8";
 	});
 	return result;

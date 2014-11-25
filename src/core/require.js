@@ -7,7 +7,7 @@ var bs_core_require = (function(){
 		}catch(e){
 			return console.log(7001, e + "::" + data);
 		}
-		return  module.exports;
+		return module.exports;
 	},
 	result = function(onload){
 		var result = [], targets = arguments, i = 1, j = targets.length, 

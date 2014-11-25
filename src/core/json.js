@@ -14,7 +14,7 @@ var bs_core_JSON = {
 			case"number":case"boolean":return v.toString();
 			case'object':
 				result = "";
-				if( v.splice ){
+				if(v.splice){
 					for(i = 0, j = v.length ; i < j ; i++) result += ',' + func(v[i]);
 					result = "[" + result.substr(1) + "]";
 				}else{
