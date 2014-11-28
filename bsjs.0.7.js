@@ -1,4 +1,4 @@
-/* bsJS v0.7.2
+/* bsJS v0.7.3
  * Copyright (c) 2013 by ProjectBS Committe and contributors. 
  * http://www.bsplugin.com All rights reserved.
  * Licensed under the BSD license. See http://opensource.org/licenses/BSD-3-Clause
@@ -6,7 +6,7 @@
 ( function( W, N ){
 'use strict';
 var VERSION = 0.7, REPOSITORY = 'http://projectbs.github.io/bsPlugin/js/',
-	CROSSPROXYKEY = 'CROSSPROXY_DEMO_ACCESS_KEY', CROSSPROXY = 'http://api.bsplugin.com/bsNet/php/crossProxy.0.2.php',//'http://www.bsidesoft.com/bs/bsNet/php/crossProxy.0.2.php'
+	CROSSPROXYKEY = 'CROSSPROXY_DEMO_ACCESS_KEY', CROSSPROXY = 'http://api.bsplugin.com/bsNet/',//'http://www.bsidesoft.com/bs/bsNet/',
 	NETWORKERKEY = 'BSNETWORKER_20140707', NETWORKER = 'http://api.bsplugin.com/netWorker/',//'http://www.bsidesoft.com/?networker',
 	log, none = function(){}, trim = /^\s*|\s*$/g, doc = W['document'], que = [], pque = [], plugin, timeout = 5000, mk, comp, detect, isDebug = 0,
 	bs = W[N = N || 'bs'] = function(f){que ? ( que[que.length] = f ) : f();},
@@ -214,16 +214,14 @@ CORE:
 		return function(e){if(e==null)return"";var t,n,r={},i={},s="",o="",u="",a=2,f=3,l=2,c="",h=0,p=0,d,v=_f;for(d=0;d<e.length;d+=1){s=e.charAt(d);if(!own.call(r,s)){r[s]=f++;i[s]=true}o=u+s;if(own.call(r,o)){u=o}else{if(own.call(i,u)){if(u.charCodeAt(0)<256){for(t=0;t<l;t++){h=h<<1;if(p==15){p=0;c+=v(h);h=0}else{p++}}n=u.charCodeAt(0);for(t=0;t<8;t++){h=h<<1|n&1;if(p==15){p=0;c+=v(h);h=0}else{p++}n=n>>1}}else{n=1;for(t=0;t<l;t++){h=h<<1|n;if(p==15){p=0;c+=v(h);h=0}else{p++}n=0}n=u.charCodeAt(0);for(t=0;t<16;t++){h=h<<1|n&1;if(p==15){p=0;c+=v(h);h=0}else{p++}n=n>>1}}a--;if(a==0){a=Math.pow(2,l);l++}delete i[u]}else{n=r[u];for(t=0;t<l;t++){h=h<<1|n&1;if(p==15){p=0;c+=v(h);h=0}else{p++}n=n>>1}}a--;if(a==0){a=Math.pow(2,l);l++}r[o]=f++;u=String(s)}}if(u!==""){if(own.call(i,u)){if(u.charCodeAt(0)<256){for(t=0;t<l;t++){h=h<<1;if(p==15){p=0;c+=v(h);h=0}else{p++}}n=u.charCodeAt(0);for(t=0;t<8;t++){h=h<<1|n&1;if(p==15){p=0;c+=v(h);h=0}else{p++}n=n>>1}}else{n=1;for(t=0;t<l;t++){h=h<<1|n;if(p==15){p=0;c+=v(h);h=0}else{p++}n=0}n=u.charCodeAt(0);for(t=0;t<16;t++){h=h<<1|n&1;if(p==15){p=0;c+=v(h);h=0}else{p++}n=n>>1}}a--;if(a==0){a=Math.pow(2,l);l++}delete i[u]}else{n=r[u];for(t=0;t<l;t++){h=h<<1|n&1;if(p==15){p=0;c+=v(h);h=0}else{p++}n=n>>1}}a--;if(a==0){a=Math.pow(2,l);l++}}n=2;for(t=0;t<l;t++){h=h<<1|n&1;if(p==15){p=0;c+=v(h);h=0}else{p++}n=n>>1}while(true){h=h<<1;if(p==15){c+=v(h);break}else p++}return c};
 	})() ),
 	fn( 'local', detect.local ? function(){
-		var t0, k = arguments[0], v = arguments[1];
-		return v === undefined ? ( ( t0 = localStorage.getItem(k) || '' ) && t0.charAt(0) == '@' ? JSON.parse(bs.decompress(t0.substr(1))) : t0 ) :
-			v === null ? localStorage.removeItem(k) :
-			( localStorage.setItem( k, typeof v == 'object' ? '@' + bs.compress(JSON.stringify(v)) : v ), v );
-	} : function(){
-		var t0, k = arguments[0], v = arguments[1];
-		return v === undefined ? (t0 = bs.ck(k) || '').charAt(0) == '@' ? JSON.parse(bs.decompress(t0.substr(1))) : t0 :
-			v === null ? bs.ck( k, null ) :
-			( bs.ck( k, v && typeof v == 'object' ? '@' + bs.compress(JSON.stringify(v)) : v, 365 ), v );
-	} ),
+		var t0, i = 0, j = arguments.length, k, v;
+		while( i < j ){
+			k = arguments[i++];
+			if( i == j ) return ( ( t0 = localStorage.getItem(k) ) && t0.charAt(0) == '@' ? JSON.parse(bs.decompress(t0.substr(1))) : t0 );
+			( v = arguments[i++] ) === null ? localStorage.removeItem(k) : localStorage.setItem( k, typeof v == 'object' ? '@' + bs.compress(JSON.stringify(v)) : v );
+		}
+		return v;
+	} : none ),
 	fn( 'debug', function(v){return v === undefined ? isDebug : ( isDebug = v );} );
 	rand = function(){return rc = ( ++rc ) % 1000, rand[rc] || ( rand[rc] = Math.random() );},
 	fn( 'rand', function( a, b ){return parseInt( rand() * ( b - a + 1 ) ) + a;} ), fn( 'randf', function( a, b ){return rand() * ( b - a ) + a;} ),
@@ -249,6 +247,7 @@ CORE:
 		r = /@[^@]+@/g,
 		re = function(_0){
 			var t0, t1, t2, i, j, k, l, cnt;
+			if( arg.kname ) console.log('aaa');
 			_0 = _0.substring( 1, _0.length - 1 ), t0 = _0.split('.'), i = 1, j = arg.length, l = t0.length, cnt = 0;
 			while( i < j ){
 				t1 = arg[i++], k = 0;
@@ -325,24 +324,60 @@ CORE:
 			return ( new Function( param.length ? param.join(',') : '', 'return ' + template( f.toString().replace( r0, re0 ), tmpl ) ) ).apply( null, arg );
 		};
 	})( /'@[^@]+@'/g, function(_0){return _0.substring( 1, _0.length - 1 );}, /^[^{]*\{|\}$/g, [], [] ) ),
-	fn( 'img', (function(c){
-		return function(end){
-			var progress, arg, t0, f, i, j;
-			t0 = [], arg = arguments, i = 1, j = arg.length;
-			if( end.progress ) progress = end.progress;
-			f = function(){
-				var img, id;
-				if( i == j ) return end(t0);
-				if( progress ) progress(t0, i - 2, j - 1);
-				t0[t0.length] = img = new Image;
-				if( c ) img.onload = f;
-				else id = setInterval( function(){
-					if( img.complete ) clearInterval(id), f();
-				}, 10 );
-				img.src = arg[i++];
-			}, f();
-		};
-	})(window['HTMLCanvasElement']) ),
+	fn( 'func2str', function(f){
+		return f = f.toString(), f.substring( f.indexOf('/'+'*') + 3, f.lastIndexOf('*'+'/') ).replace(trim,'');
+	});
+	bs.obj('IMG',{
+		cover:(function(){
+			var covers = {}, id = 1, isSet, resize = function(){
+				var img, r, w, h, t0, i, k;
+				for( k in covers ) if( covers.hasOwnProperty(k) ){
+					t0 = covers[k], img = t0.img;
+					r = img.S('*bsImgCover');
+					if( !r ){
+						if( ( w = img.S('@width') ) && ( h = img.S('@height') ) ) img.S( '*bsImgCover', r = w / h );
+						else continue;
+					}
+					w = t0.wrapper.S('w'), h = t0.wrapper.S('h')
+					if( w / h < r ) img.S('width', i = h*r, 'height',h, 'top', 0, 'left', t0.h == 'left' ? 0 : t0.h == 'right' ? w - i : ( w - i ) * .5 );
+					else img.S('width', w, 'height', i = w/r, 'top', t0.v == 'top' ? 0 : t0.v == 'bottom' ? h - i : ( h - i ) * .5, 'left', 0);
+				}
+			};
+			return function( img, wrapper, w, h, alignH, alignV ){
+				var t0;
+				img = bs.Dom(img);
+				if( t0 = img.S('*bsImgCoverID') ){
+					if( wrapper === null ) return delete covers[t0];
+				}else{
+					img.S( '*bsImgCoverID', t0 = id++, 'load', resize );
+					if( w && h ) img.S( '*bsImgCover', w / h );
+					covers[t0] = {img:img};
+				}
+				covers[t0].wrapper = bs.Dom(wrapper), covers[t0].h = alignH, covers[t0].v = alignV;
+				if( !isSet ) isSet = 1, bs.WIN.on('resize', resize );
+			};
+		})(),
+		loader:(function(c){
+			return function(end){
+				var progress, arg, t0, f, i, j;
+				t0 = [], arg = arguments, i = 1, j = arg.length;
+				if( end.progress ) progress = end.progress;
+				f = function(){
+					var img, id;
+					if( i == j ) return end(t0);
+					if( progress ) progress(t0, i - 2, j - 1);
+					t0[t0.length] = img = new Image;
+					if( c ) img.onload = f;
+					else id = setInterval( function(){
+						if( img.complete ) clearInterval(id), f();
+					}, 10 );
+					img.src = arg[i++];
+				}, f();
+			};
+		})(window['HTMLCanvasElement'])
+	}),
+	fn( 'encode', encodeURIComponent );
+	fn( 'decode', decodeURIComponent );
 	fn( 'go', function(url){location.href = url;} ), fn( 'open', function(url){W.open(url);} ),
 	fn( 'back', function(){history.back();} ), fn( 'reload', function(){location.reload();} ),
 	fn( 'ck', function ck( key/*, val, expire, path*/ ){
@@ -370,9 +405,9 @@ CORE:
 		}else t0.text = data;
 	},
 	fn( 'js', function(end){
-		var arg = arguments, load, i = 1, j = arg.length;
+		var arg = arguments, load, i = 1, j = arg.length, k;
 		if( end ) ( load = function(){i < j ? js( arg[i++], load, end ) : end();} )();
-		else while( i < j ) js( bs.get( null, arg[i++] ) );
+		else while( i < j ) k = arg[i++], js( k.substr(k.length - 3).toLowerCase() == '.js' ? bs.get( null, k ) : k );
 	} );
 	(function(){
 		var _dateGet = function(date){
@@ -520,7 +555,7 @@ NET:
 		var t0 = U.replace( trim, '' ).split('#'), p = param( arg, 2 );
 		return t0[0] + ( t0[0].indexOf('?') > -1 ? '&' : '?' ) + 'bsNC=' + bs.rand( 1000, 9999 ) + ( p ? '&' + p : '' ) + ( t0[1] ? '#' + t0[1] : '' );
 	},
-	async = function( x, end ){
+	async = function( x, end, arg ){
 		var timeId = setTimeout( function(){
 			if( timeId == -1 ) return;
 			if( x.readyState !== 4 ) x.abort();
@@ -530,10 +565,8 @@ NET:
 			var text, status;
 			if( x.readyState !== 4 || timeId == -1 ) return;
 			clearTimeout(timeId), timeId = -1,
-			text = x.status == 200 || x.status == 0 ? x.responseText : null,
-			status = text ? x.getAllResponseHeaders() : x.status,
 			xhrType ? delete x.onreadystatechange : x.onreadystatechange = null,
-			end( text, status );
+			end.call( xhr, x.responseText, x.status, arg );
 		};
 	},
 	head = [], paramBody = [], ck, paramHeader = function(v){return typeof v == 'function' ? v(httpMethod) : v;},
@@ -596,7 +629,7 @@ NET:
 			cross( param(httpCross, 0), end );
 		}else{
 			x = xhr();
-			if( end ) async( x, end );
+			if( end ) async( x, end, arg );
 			if( postBody ) head.push("Content-Type", "multipart/form-data; boundary=" + postBoundary);
 			x.open( method, U, end ? true : false ),
 			httpH.length = i = 0, j = head.length;
@@ -1179,26 +1212,38 @@ var DOM = function(){
 					W.scrollTo( arguments[0], arguments[1] );
 				};
 			})( W, 'scrollHeight' in doc.body ? doc.body : doc.documentElement, doc.documentElement ),
-			domPoint:function( x, y ){return doc.elementFromPoint( x, y);}
+			domPoint:function( x, y ){return doc.elementFromPoint( x, y);},
+			media:(function(){
+				var size = [], sort = function( a, b ){return a[0] - b[0];}, prev = '',
+				resize = function(){
+					var w = win.size().w, t0 = size[0][1], i, j;
+					for( i = 1, j = size.length ; i < j ; i++ ) if( w > size[i][0] ) t0 = size[i][1];
+					if( prev ) bs.Dom('body').S('class-', prev);
+					bs.Dom('body').S('class+', prev = t0);
+				};
+				return function(){
+					var i = 0, j = arguments.length;
+					size.length = 0;
+					while( i < j ) size[size.length] = [arguments[i++], arguments[i++]];
+					size.sort(sort);
+					win.on( 'resize', resize );
+					resize();
+				};
+			})()
 		},
 		win.sizer = (function( W, doc ){
-			var t0 = {w:0, h:0}, t1, size, docEl, docBody;
-			win.size = size = W['innerHeight'] === undefined ? (
-				docEl = doc.documentElement, docBody = doc.body, t1 = {w:'clientWidth', h:'clientHeight'}, t1.width = t1.w, t1.height = t1.h,
-				function(k){return k = t1[k] ? docEl[k] || docBody[k] : ( t0.w = docEl[t1.w] || docBody[t1.w], t0.h = docEl[t1.h] || docBody[t1.h], t0 );}
-			) : ( t1 = {w:'innerWidth', h:'innerHeight'}, t1.width = t1.w, t1.height = t1.h,
-				function(k){return k = t1[k] ? W[k] : ( t0.w = W[t1.w], t0.h = W[t1.h], t0 );}
-			);
+			var docEl = doc.documentElement, docBody = doc.body, S = {w:0, h:0}, size = win.size = function(k){
+				return S.w = W['innerWidth'] || docEl.clientWidth || docBody.clientWidth,
+					S.h = W['innerHeight'] || docEl.clientHeight || docBody.clientHeight, S;
+			};
 			return function(end){
-				var f = function(){size(), end( t0.w, t0.h );}, id;
-				win.on( 'resize', f );
+				var f, t0;
+				win.on( 'resize', f = function(){
+					var t0 = size();
+					if( t0.w && t0.h ) return end( t0.w, t0.h ), 1;
+				} );
 				if( 'onorientationchange' in W ) win.on( 'orientationchange', f );
-				size();
-				if( t0.w && t0.h ) end( t0.w, t0.h );
-				else id = setInterval( function(){
-					size();
-					if( t0.w && t0.h ) clearInterval(id), end( t0.w, t0.h );
-				}, 1 );
+				if( !f() ) id = setInterval( function(){if( f() ) clearInterval(id);}, 1 );
 			};
 		})( W, doc );
 		return win;
