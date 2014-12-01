@@ -354,7 +354,7 @@ CORE:
 					covers[t0] = {img:img};
 				}
 				covers[t0].wrapper = bs.Dom(wrapper), covers[t0].h = alignH, covers[t0].v = alignV;
-				if( !isSet ) isSet = 1, bs.WIN.on('resize', resize );
+				if( !isSet ) isSet = 1, bs.WIN.on( 'resize:@bsIMGcover', resize );
 			};
 		})(),
 		loader:(function(c){
@@ -833,6 +833,10 @@ fn( 'router', (function(){
 				else param[idx = param.length] = k, arg[idx] = v;
 			}
 			return v;
+		},
+		hash:function(){
+			var t0 = Array.prototype.join.call( arguments, '/' );
+			setTimeout(function(){location.href = '#'+t0;},1);
 		}};
 	})(), defaultC = 'index', defaultM = 'index', ex = '.js', table = {}, path, isHash = 'onhashchange' in W, timer, prevHash, currHash, 
 	file, arg, method,
@@ -895,7 +899,7 @@ fn( 'router', (function(){
 					}catch(ex){e = v + '::' + ex, v = 0;}
 					!v ? err( 12001, v + '::' + e ) : i < j ? router.apply( null, Array.prototype.slice.call( args, i ) ) : 0;
 				}, v );
-			case'start':isHash ? bs.WIN.on( 'hashchange', change ) : timer || ( timer = setInterval( change, 1 ) ), v && v(); break;
+			case'start':isHash ? bs.WIN.on( 'hashchange', change ) : timer || ( timer = setInterval( change, 1 ) ), v && v.call(M), change(); break;
 			case'stop':isHash ? bs.WIN.on( 'hashchange', null ) : timer && ( clearInterval(timer), timer = 0 ); break;
 			case'file':return file;
 			case'current':return currHash;
@@ -1067,10 +1071,10 @@ fn( 'ev', (function(){
 	var pool = {}, f, on = function(){this.a = [];}, ev = function(){}, fn = ev.prototype;
 	on._l = 0,  fn.NEW = fn.END = none,
 	fn['+'] = function( channel, type, group, context, method, arg, i ){
-		var t0 = this.o[channel] || ( this.o[channel] = {_l:0} ), t1 = on._l ? on[--on._l] : new on, j;
-		if( !t0[type] ) t0[type] = t0._l++;
-		if( !t0[t0[type]] ) t0[t0[type]] = [];
-		t0 = t0[t0[type]], t0[t0.length] = t1, t1.g = group, t1.c = context,
+		var t0 = this.o[channel] || ( this.o[channel] = {_l:0} ), i, j, t1 = on._l ? on[--on._l] : new on;
+		if( !t0.hasOwnProperty(type) ) t0[type] = t0._l++;
+		if( !t0[i = t0[type]] ) t0[i] = [];
+		t0 = t0[i], t0[t0.length] = t1, t1.g = group, t1.c = context;
 		t1.m = typeof method == 'function' ? method : context[method], t0 = t1.a;
 		if( arg ){
 			i = i || 2, j = arg.length;
@@ -1214,31 +1218,50 @@ var DOM = function(){
 			})( W, 'scrollHeight' in doc.body ? doc.body : doc.documentElement, doc.documentElement ),
 			domPoint:function( x, y ){return doc.elementFromPoint( x, y);},
 			media:(function(){
-				var size = [], sort = function( a, b ){return a[0] - b[0];}, prev = '',
+				var size = [], sort = function( a, b ){return a[0] - b[0];}, prev = '', listener,
 				resize = function(){
-					var w = win.size().w, t0 = size[0][1], i, j;
-					for( i = 1, j = size.length ; i < j ; i++ ) if( w > size[i][0] ) t0 = size[i][1];
-					if( prev ) bs.Dom('body').S('class-', prev);
-					bs.Dom('body').S('class+', prev = t0);
+					var w = win.size().w, t0 = size[0][1], t1 = 0, i, j;
+					for( i = 1, j = size.length ; i < j ; i++ ) if( w > size[i][0] ) t1 = size[i][0], t0 = size[i][1];
+					if( t0 != prev ){
+						if( prev ) bs.Dom('body').S('class-', prev);
+						bs.Dom('body').S('class+', prev = t0);
+						if( listener ) listener( t1, t0 );
+					}
 				};
-				return function(){
-					var i = 0, j = arguments.length;
+				return function(changed){
+					var i = 1, j = arguments.length;
+					listener = changed;
 					size.length = 0;
 					while( i < j ) size[size.length] = [arguments[i++], arguments[i++]];
 					size.sort(sort);
-					win.on( 'resize', resize );
+					win.on( 'resize:@bsMedia', resize );
 					resize();
 				};
 			})()
 		},
 		win.sizer = (function( W, doc ){
-			var docEl = doc.documentElement, docBody = doc.body, S = {w:0, h:0}, size = win.size = function(k){
-				return S.w = W['innerWidth'] || docEl.clientWidth || docBody.clientWidth,
-					S.h = W['innerHeight'] || docEl.clientHeight || docBody.clientHeight, S;
-			};
+			var docEl = doc.documentElement, docBody = doc.body, S = {w:0, h:0}, size = win.size = (function(){
+				var ow, oh, iw, ih, w, h;
+				if( W['outerWidth'] ){
+					win.outerWidth = function(){return W.outerWidth;},
+					win.outerHeight = function(){return W.outerWidth;},
+					win.innerHeight = ih = function(){return W.innerHeight;};
+					if( W.outerWidth - W.innerWidth < 40 ) iw = function(){return W.innerWidth;};
+					else iw = function(){return W.outerWidth - ( detect.device == 'pc' && docBody.scrollHeight - docBody.offsetHeight ? 17 : 0 ) + 16;};
+					win.innerWidth = iw;
+				}else{
+					ow = docEl.offsetWidth, oh = docEl.offsetHeight, W.resizeTo( 500, 500 ),
+					w = 500 - docEl.offsetWidth, h = 500 - docEl.offsetHeight, W.resizeTo( w + ow, h + oh ),
+					win.outerWidth = function(){return docEl.offsetWidth + w;},
+					win.outerHeight = function(){return docEl.offsetHeight + w;},
+					win.innerWidth = iw = function(){return docEl.clientWidth || docBody.clientWidth;},
+					win.innerHeight = ih = function(){return docEl.clientHeight || docBody.clientHeight;};
+				}
+				return function(k){return S.w = iw(), S.h = ih(), S;};
+			})();
 			return function(end){
 				var f, t0;
-				win.on( 'resize', f = function(){
+				win.on( 'resize:@bsSizer', f = function(){
 					var t0 = size();
 					if( t0.w && t0.h ) return end( t0.w, t0.h ), 1;
 				} );
@@ -1357,9 +1380,23 @@ var DOM = function(){
 		};
 	} ),
 	fn( 'css', (function(trim){
-		var r = /^[-]?[0-9.]+$/, c = bs.Css('.BSCSS000').style,
+		var r = /^[-]?[0-9.]+$/, c = bs.Css('.BSCSS000').style, VAR = {},
 		css = function(v){return c.cssText = '', bs.Style().S( c, v, 0 ), c.cssText;},
+		r0 = /[-][-][a-zA-Z][a-zA-Z0-9]+/g, rf = function(v){return VAR[v];},
 		arg = [], parser = function(v){
+			var t0, prefix, body, i, j, k, l;
+			if( v.indexOf('}}') > -1 ){
+				for( v = v.split('}}'), i = 0, j = v.length ; i < j ; i++ ){
+					t0 = v[i];
+					prefix = t0.substring( 0, k = t0.indexOf('{{') );
+					if( ( l = prefix.lastIndexOf('}') ) > -1 ) p( prefix.substring( 0, l + 1 ), '' ), prefix = prefix.substr( l + 1 );
+					prefix = prefix.replace( trim, '' );
+					body = t0.substr( k + 2 ).replace( trim, '' );
+					if( prefix.substr( 0, 2 ) == '--' ) VAR[prefix] = body;
+					else p( body.replace( r0, rf ), prefix + ( prefix ? ' ' : '' ) );
+				}
+			}else p( v, '' );
+		}, p = function( v, prefix ){
 			var w = '', s, b, t0, t1, i, j, k, l, m;
 			for( v = v.split('}'), i = 0, j = v.length ; i < j ; i++ )
 				if( t0 = v[i].replace( trim, '' ) ){
@@ -1367,7 +1404,7 @@ var DOM = function(){
 					if( s.indexOf('@') == -1 ){
 						for( t0 = b.split(';'), arg.length = k = 0, l = t0.length ; k < l ; k++ )
 							t1 = t0[k], arg[arg.length] = t1.substring( 0, m = t1.indexOf(':') ).replace( trim, '' ), arg[arg.length] = r.test( t1 = t1.substr( m + 1 ).replace( trim, '') ) ? parseFloat(t1) : t1;
-						w += s + '{' + css(arg) + '}\n';
+						w += prefix + bs.trim(s.split(',')).join(',' + prefix ) + '{' + css(arg) + '}\n';
 					}else if( s.substr( 0, 9 ) == 'font-face' ) bs.Css( s + ' ' + b.replace( trim, '' ) );
 					else w += t0 + '}\n';
 				}
@@ -1816,8 +1853,7 @@ var DOM = function(){
 			};
 			return function(k){
 				var t0 = pool[k] || ( pool[k] = bs.Dom(doc.body) ), i, j;
-				t0.length = t0.filter_ = t0.child_ = 0;
-				if( ( j = arguments.length ) > 1 ) for( i = 1 ; i < j ; i++ ) node( t0, arguments[i] );
+				if( ( j = arguments.length ) > 1 ) for( t0.length = t0.filter_ = t0.child_ = 0, i = 1 ; i < j ; i++ ) node( t0, arguments[i] );
 				return t0;
 			};
 		})(),
@@ -2151,8 +2187,8 @@ EXT = function(){
 				var t0 = bs.Dom.data(d), t1 = t0.BSdomE;
 				return arguments.length == 1 ? t1 ? t1.isCapture : 0 : ( t1 || ( t0.BSdomE = ev(d) ) ).isCapture = arguments[1];
 			},
-			x:x = function(d){var i = 0; do i += d.offsetLeft; while( d = d.offsetParent ) return i;},
-			y:y = function(d){var i = 0; do i += d.offsetTop; while( d = d.offsetParent ) return i;},
+			x:x = function(d){var i = 0; do i += d.offsetLeft; while( d = d.offsetParent ); return i;},
+			y:y = function(d){var i = 0; do i += d.offsetTop; while( d = d.offsetParent ); return i;},
 			lx:function(d){return x(d) - x(d.parentNode);},
 			ly:function(d){return y(d) - y(d.parentNode);},
 			w:function(d){return d.offsetWidth;}, 
