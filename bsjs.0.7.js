@@ -1,4 +1,4 @@
-/* bsJS v0.7.3
+/* bsJS v0.7.4
  * Copyright (c) 2013 by ProjectBS Committe and contributors. 
  * http://www.bsplugin.com All rights reserved.
  * Licensed under the BSD license. See http://opensource.org/licenses/BSD-3-Clause
@@ -325,7 +325,9 @@ CORE:
 		};
 	})( /'@[^@]+@'/g, function(_0){return _0.substring( 1, _0.length - 1 );}, /^[^{]*\{|\}$/g, [], [] ) ),
 	fn( 'func2str', function(f){
-		return f = f.toString(), f.substring( f.indexOf('/'+'*') + 3, f.lastIndexOf('*'+'/') ).replace(trim,'');
+		var i;
+		f = f.toString(), i = f.indexOf('/'+'*');
+		return i == -1 ? '' : f.substring( i + 3, f.lastIndexOf('*'+'/') ).replace(trim,'');
 	});
 	bs.obj('IMG',{
 		cover:(function(){
@@ -899,7 +901,7 @@ fn( 'router', (function(){
 					}catch(ex){e = v + '::' + ex, v = 0;}
 					!v ? err( 12001, v + '::' + e ) : i < j ? router.apply( null, Array.prototype.slice.call( args, i ) ) : 0;
 				}, v );
-			case'start':isHash ? bs.WIN.on( 'hashchange', change ) : timer || ( timer = setInterval( change, 1 ) ), v && v.call(M), change(); break;
+			case'start':isHash ? bs.WIN.on( 'hashchange', change ) : timer || ( timer = setInterval( change, 1 ) ), v && v.call(M); break;
 			case'stop':isHash ? bs.WIN.on( 'hashchange', null ) : timer && ( clearInterval(timer), timer = 0 ); break;
 			case'file':return file;
 			case'current':return currHash;
@@ -914,6 +916,7 @@ fn( 'router', (function(){
 		return v;
 	};
 	while(i--) key[t0[i]] = t0[i];
+	bs.obj( 'VIEW', M.view );
 	return router;
 })() );
 bs.obj( 'MVC', (function(){
@@ -944,6 +947,7 @@ bs.obj( 'MVC', (function(){
 			var t0 = bs.Dom.pool( '@BSMVC', e.domPoint() ), k;
 			if( k = t0.S('*bsMVC:route') ) bs.MVC.router( k, t0.S('*bsMVC:param') );
 		},
+		routerLoaded:function(c){return function(v){C[c]( m, v );};},
 		toggle:function(k){return ( M[k] = M[k] ? 0 : 1 ) ? 0 : 1;},
 		c:function(){
 			var i = 0, j = arguments.length;
@@ -1247,13 +1251,13 @@ var DOM = function(){
 					win.outerHeight = function(){return W.outerWidth;},
 					win.innerHeight = ih = function(){return W.innerHeight;};
 					if( W.outerWidth - W.innerWidth < 40 ) iw = function(){return W.innerWidth;};
-					else iw = function(){return W.outerWidth - ( detect.device == 'pc' && docBody.scrollHeight - docBody.offsetHeight ? 17 : 0 ) + 16;};
+					else iw = function(){return W.outerWidth - ( detect.device == 'pc' && docBody.scrollHeight - docBody.offsetHeight ? 17 : 0 ) - 16;};
 					win.innerWidth = iw;
 				}else{
 					ow = docEl.offsetWidth, oh = docEl.offsetHeight, W.resizeTo( 500, 500 ),
 					w = 500 - docEl.offsetWidth, h = 500 - docEl.offsetHeight, W.resizeTo( w + ow, h + oh ),
 					win.outerWidth = function(){return docEl.offsetWidth + w;},
-					win.outerHeight = function(){return docEl.offsetHeight + w;},
+					win.outerHeight = function(){return docEl.offsetHeight + h;},
 					win.innerWidth = iw = function(){return docEl.clientWidth || docBody.clientWidth;},
 					win.innerHeight = ih = function(){return docEl.clientHeight || docBody.clientHeight;};
 				}
@@ -1307,11 +1311,10 @@ var DOM = function(){
 			}
 			return v;
 		},
-		mk = function( s, k, v ){
-			var t0 = k;
-			if( k = keys[t0] ){if( typeof k == 'function' ) return k( this, s, v );}else if( !( k = key(t0) ) ) return 0;
-			return '@r@';
-		},
+		mk = "function( s, k, v ){"+
+			"var t0 = k;"+
+			"if( k = keys[t0] ){if( typeof k == 'function' ) return k( this, s, v );}else if( !( k = key(t0) ) ) return 0;"+
+			"return '@r@';}",
 		t0 = {keys:keys, key:key, rn:rn, rno:rno, rne:rne, nopx:nopx, trim:trim, ss:ss},
 		fn.g = comp( mk, {r:( t1 = ( function(){
 			this[k] === undefined ? 
@@ -1702,11 +1705,11 @@ var DOM = function(){
 			mT0 = {' ':1, '*':2, '>':2, '+':2, '~':2, '#':3, '.':3, ':':3, '[':3}, mT1 = {'>':1, '+':1, '~':1},
 			R = [], arrs = {_l:0},
 			aPsibl = ['previousSibling', 'previousElementSibling'],
-			tEl = DOC.createElement('ul'), isElCld, isQSA;
+			tEl = DOC.createElement('ul'), isElCld, isQSA, query;
 			tEl.innerHTML = '<li>1</li>',
 			isElCld = tEl['firstElementChild'] && tEl['lastElementChild'] && tEl['children'] ? 1 : 0,
-			isQSA = isElCld && DOC['querySelectorAll'] ? 1 : 0;
-			return function selector( query, doc, r ){
+			isQSA = isElCld && DOC['querySelectorAll'] ? 1 : 0,
+			query = function( query, doc, r ){
 				var sels, sel,
 					hasParent, hasQSAErr, hasQS,
 					t0, t1, t2, t3, i, j, k, l, m, n,
@@ -1822,6 +1825,8 @@ var DOM = function(){
 				}
 				return r;
 			};
+			query.nativeMode = function(v){isQSA = v;}
+			return query;
 		})( doc, trim ),
 		clsfn.dom = dom = (function( query, html ){
 			var n = {length:0}, dom = function( sel ){
@@ -1893,39 +1898,40 @@ var DOM = function(){
 			}
 			return bs.Dom.pool( '@DomChild', d );
 		},
-		fn.S = comp( function(){
-			var ktype = ktypes._l ? ktypes[--ktypes._l] : [], d, data, target, type, t0, t1, t2, l, i0, i, j, k, v, k0, v0, m, a, g;
-			if( ( i = arguments[0] ) === null ) return del(this);
-			l = this.length, i0 = 0;
-			j = arguments.length, ktype.length = 0;
-			while( l-- ){
-				d = this[l], data = this[l + 'data'] || ( this[l + 'data'] = domData(d) ), i = i0, arg.length = 0;
-				while( i < j ){
-					k = arguments[i];
-					if( !( type = ktype[i] ) ) type = ktype[i] = attrs[k] || first[k.charAt(0)] || ( 'on' + k in d ? attrs[k] = 2 : k.indexOf(':') > -1 ? 2 : 1 );
-					if( ++i == j ) return '@pool@', arg.length ? '@sSet@' : 0, type == 1 ? '@sGet@' : type == 2 ? 0 : type == 3 ? this : '@tGet@';
-					v = arguments[i++];
-					if( type == 2 ){
-						if( !( t0 = data.BSdomE ) ) data.BSdomE = t0 = ev(d);
-						if( k == 'event' ) for( i in v ) t0.on( k, '', v, v[i] );
-						else g = ( t1 = k.indexOf(':') ) > -1 ? ( k = k.substring( 0, t1 ), k.substr( t1 + 1 ) ) : '',
-							v ? t0.on( k, g, v.splice ? ( m = v[1], a = v, v[0] || d ) : v[k] ? ( m = v[k], v ) : ( m = v, d ), m, a ) : t0.off( k, g );
-					}else{
-						if( ( t0 = typeof v ) == 'function' ) v = v( type == 1 ? '@sGet@' : '@tGet@', d );
-						else if( t0 == 'string' && v.charAt(0) == '{' && exop[v.charAt(1)] && v.charAt( t1 = v.length - 1 ) == '}' ){
-							v0 = type == 1 ? '@sGet@' : '@tGet@',
-							v = ( k0 = v.charAt(1) ) == '=' ? v0 : (
-								v0 = parseFloat(v0), v = parseFloat(v.substring( 2, t1 )),
-								k0 == '+' ? v0 + v : k0 == '-' ? v0 - v : k0 == '*' ? v0 * v : k0 == '/' ? v0 / v : 0
-							);
-						}
-						v =  type == 1 ? ( arg[arg.length++] = k, arg[arg.length++] = v ) : type( d, k, v );
-					}
-				}
-				'@sSet@';
-			}
-			return '@pool@', v;
-		}, {
+		fn.S = comp( "function(){"+
+			"var ktype = ktypes._l ? ktypes[--ktypes._l] : [], d, data, target, type, t0, t1, t2, l, i0, i, j, k, v, k0, v0, m, a, g;"+
+			"if( ( i = arguments[0] ) === null ) return del(this);"+
+			"l = this.length, i0 = 0;"+
+			"j = arguments.length, ktype.length = 0;"+
+			"while( l-- ){"+
+			"	d = this[l], data = this[l + 'data'] || ( this[l + 'data'] = domData(d) ), i = i0, arg.length = 0;"+
+			"	while( i < j ){"+
+			"		k = arguments[i];"+
+			"		if( !( type = ktype[i] ) ) type = ktype[i] = attrs[k] || first[k.charAt(0)] || ( 'on' + k in d ? attrs[k] = 2 : k.indexOf(':') > -1 ? 2 : 1 );"+
+			"		if( ++i == j ) return ktypes[ktypes._l++] = ktype, arg.length ? arg.length ? ( data.BSdomS || ( data.BSdomS = bs.Style() ) ).S( d.style, arg, 0 ) : 0 : 0, type == 1 ? ( data.BSdomS || ( data.BSdomS = bs.Style() ) ).g( d.style, k ) : type == 2 ? 0 : type == 3 ? this : type( d, k );"+
+			"		v = arguments[i++];"+
+			"		if( type == 2 ){"+
+			"			if( !( t0 = data.BSdomE ) ) data.BSdomE = t0 = ev(d);"+
+			"			if( k == 'event' ) for( i in v ) t0.on( k, '', v, v[i] );"+
+			"			else g = ( t1 = k.indexOf(':') ) > -1 ? ( k = k.substring( 0, t1 ), k.substr( t1 + 1 ) ) : '',"+
+			"				v ? t0.on( k, g, v.splice ? ( m = v[1], a = v, v[0] || d ) : v[k] ? ( m = v[k], v ) : ( m = v, d ), m, a ) : t0.off( k, g );"+
+			"		}else{"+
+			"			if( ( t0 = typeof v ) == 'function' ) v = v( type == 1 ? ( data.BSdomS || ( data.BSdomS = bs.Style() ) ).g( d.style, k ) : type( d, k ), d );"+
+			"			else if( t0 == 'string' && v.charAt(0) == '{' && exop[v.charAt(1)] && v.charAt( t1 = v.length - 1 ) == '}' ){"+
+			"				v0 = type == 1 ? ( data.BSdomS || ( data.BSdomS = bs.Style() ) ).g( d.style, k ) : type( d, k ),"+
+			"				v = ( k0 = v.charAt(1) ) == '=' ? v0 : ("+
+			"					v0 = parseFloat(v0), v = parseFloat(v.substring( 2, t1 )),"+
+			"					k0 == '+' ? v0 + v : k0 == '-' ? v0 - v : k0 == '*' ? v0 * v : k0 == '/' ? v0 / v : 0"+
+			"				);"+
+			"			}"+
+			"			v =  type == 1 ? ( arg[arg.length++] = k, arg[arg.length++] = v ) : type( d, k, v );"+
+			"		}"+
+			"	}"+
+			"	arg.length ? ( data.BSdomS || ( data.BSdomS = bs.Style() ) ).S( d.style, arg, 0 ) : 0;"+
+			"}"+
+			"ktypes[ktypes._l++] = ktype;"+
+			"return v;}",
+		{
 			sGet:'( data.BSdomS || ( data.BSdomS = bs.Style() ) ).g( d.style, k )', tGet:'type( d, k )',
 			sSet:'arg.length ? ( data.BSdomS || ( data.BSdomS = bs.Style() ) ).S( d.style, arg, 0 ) : 0',
 			pool:'ktypes[ktypes._l++] = ktype'
@@ -1938,9 +1944,9 @@ var DOM = function(){
 	})();
 },
 ANIMATE = function(){
-	var start, end, ltype, loop, ease, ex, tweenS, tweenANI, isLive, isPause, tween, ANI, mk0, mk1, i, 
-		ani = [], time = 0, timer = 'equestAnimationFrame', pool = {length:0}, fprev = 0;
-	if( timer = W['r' + timer] || W[bs.DETECT.stylePrefix + 'R' + timer] )
+	var start, end, ltype, loop, ease, ex, tweenS, tweenANI, isLive, isPause, tween, ANI, mk0, mk1, i, mode,
+		ani = [], time = 0, timer = 'equestAnimationFrame', pool = {length:0}, fprev = 0, fpsLimit = -1;
+	if( detect.device == 'pc' && ( timer = W['r' + timer] || W[detect.stylePrefix + 'R' + timer] ) )
 		start = function(){if( !isLive ) isPause = 0, isLive = 1, loop();},
 		end = function(){ani.length = isLive = 0;},
 		ltype = 1;
@@ -1952,10 +1958,10 @@ ANIMATE = function(){
 		if( isPause ) return;
 		if( isLive ){
 			t = ltype ? time ? T + time : ( time = Date.now() - T, time + T ) : +new Date, 
-			i = parseInt( 1000 / ( ( t - fprev ) || 1 ) ), fprev = t;
-			if( i > 30 ){
+			ANI.fps = i = parseInt( 1000 / ( ( t - fprev ) || 1 ) ), fprev = t;
+			//if( i > fpsLimit ){
 				j = ( k = i = ani.length ) % 8;
-				while( j-- ) if( ani[--k].ANI(t) ) ani.splice( k, 1 );
+				while(j--) if( ani[--k].ANI(t) ) ani.splice( k, 1 );
 				j = ( i * 0.125 ) ^ 0;
 				while(j--){
 					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
@@ -1963,7 +1969,7 @@ ANIMATE = function(){
 					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
 					if( ani[--k].ANI(t) ) ani.splice( k, 1 ); if( ani[--k].ANI(t) ) ani.splice( k, 1 );
 				}
-			}
+			//}
 			ani.length ? ltype ? timer(loop) : 0 : end();
 		}
 	},
@@ -1981,99 +1987,98 @@ ANIMATE = function(){
 		}else if( t0 == 'function' ) return v( v0, t );
 		return v;
 	},
-	tweenS = function( tw, arg ){
-		var t0, t1, l, i, j, k, v, v0, v1;
-		tw.t = t0 = '@target@',
-		tw.bezier = tw.circle = tw.delay = tw.stop = tw.yoyo = tw.pause = 0, tw.group = tw.end = tw.update = null, tw.ease = ease.linear,
-		tw.time = 1000, tw.timeR = .001, tw.loop = tw.loopC = 1, tw.length = l = t0.length || 1;
-		while(l--) tw[l] ? tw[l].length = 0 : tw[l] = [], tw[l][0] = '@targetAni0@', tw[l][1] = '@targetAni1@';
-		i = 1, j = arg.length;
-		while( i < j ){
-			k = arg[i++], v = arg[i++];
-			if( tween[k] ){
-				k == 'time' ? ( tw.time = parseInt( v * 1000 ), tw.timeR = 1 / tw.time ) :
-				k == 'ease' ? tw.ease = ease[v] :
-				k == 'id' || k == 'end' || k == 'update' ? tw[k] = v :
-				k == 'loop' ? tw.loop = tw.loopC = v :
-				k == 'delay' ? tw.delay = parseInt( v * 1000 ) :
-				k == 'group' || k == 'yoyo' || k == 'bezier' || k == 'circle' ? tw[k] = v : 0
-			}else{
-				l = tw.length;
-				while( l-- ){
-					t0 = tw[l], t0[t0.length] = '@key@', v0 = '@from@';
-					if( typeof v == 'string' && v.indexOf(',') > -1 ) v = v.split(','), t0[t0.length] = v1 = ex( v[0], v0 ), t0[t0.length] = ex( v[1], v0 ) - v1;
-					else t0[t0.length] = v0, t0[t0.length] = ex( v, v0, tw.t[l] ) - v0;
-					t0[t0.length] = '@option@';
-				}
-			}
-		}
-		tw.keyLen = tw[0].length, tw.etime = ( tw.stime = Date.now() + tw.delay ) + tw.time;
-		if( t0 = tw.circle ){
-			if( i = t0.center ) i = i.split(','), t0.centerX = parseFloat(i[0]), t0.centerY = parseFloat(i[1]);
-			if( i = t0.offset ) i = i.split(','), t0.offsetX = parseFloat(i[0]), t0.offsetY = parseFloat(i[1]);
-			if( i = t0.angle ) i = i.split(','), t0.angle0 = parseFloat(i[0]), t0.angle1 = parseFloat(i[1]);
-			if( i = t0.radius ) i = i.split(','), t0.radius0 = parseFloat(i[0]), t0.radius1 = parseFloat(i[1]);
-			t0.angle0 *= toRadian, t0.angle1 *= toRadian, t0.angle2 = t0.angle1 - t0.angle0, t0.radius2 = t0.radius1 - t0.radius0, '@circle@';
-		}else if( t0 = tw.bezier ){
-			t1 = tw.bezier0 || ( tw.bezier0 = [] ), t1.length = 0;
-			for( i  in t0 ){//key, array, rate, val, isFunction
-				if( ( l = t0[i].length ) != 3 ) bs.err(1);
-				t1.push( '@bezierKey@', t0[i], 1 / t0[i].length, 0, '@bezierOption@' ); 
-			}
-		}
-		return tw.ANI = '@setAni@', tw;
-	},
-	tweenANI = function( T, pause ){
-		var t0, t1, term, time, rate, i, j, l, k, v, e, s, u, 
-			circle, ckx, cky, cvx, cvy, 
-			bezier, bv0, bv1, bv2, bt, bl, br;
-		if( this.stop ) return 1;
-		if( pause )
-			if( pause == 1 && this.pause == 0 ) return this.pause = T, 0;
-			else if( pause == 2 && this.pause ) t0 = T - this.pause, this.stime += t0, this.etime += t0, this.pause = 0;
-		if( this.pause || ( term = T - this.stime ) < 0 ) return;
-		l = this.length, j = this.keyLen, circle = this.circle, bezier = this.bezier, e = this.ease;
-		if( term > ( time = this.time ) ){
-			if( bezier ) bt = this.bezier0, bl = bt.length;
-			if( --this.loopC ){
-				if( this.yoyo ){
-					while( l-- ){
-						t0 = this[l], i = 2;
-						while( i < j ) t0[i + 1] +=  t0[i + 2], t0[i + 2] *= -1, i += 4;
-					}
-					if( circle ) t0 = circle.angle1, circle.angle1 = circle.angle0, circle.angle0 = t0, circle.angle2 *= -1,
-						t0 = circle.radius1, circle.radius1 = circle.radius0, circle.radius0 = t0, circle.radius2 *= -1;
-					if( bezier ) for( i = 0 ; i < bl ; i += 5 ) j = bt[i + 2][2], bt[i + 2][2] = bt[i + 2][0], bt[i + 2][0] = j;
-				}
-				return this.stime = T + this.delay, this.etime = this.stime + this.time, 0;
-			}else{
-				if( circle ) cvx = circle.centerX + circle.offsetX + cos(circle.angle1) * circle.radius1, ckx = circle.x,
-					cvy = circle.centerY + circle.offsetY + sin(circle.angle1) * circle.radius1, cky = circle.y
-				while( l-- ){
-					t0 = this[l], i = 2, t1 = t0[0], '@aniTarget@';
-					while( i < j ) k = t0[i++], v = t0[i++] + ( e.roll ? 0 : t0[i] ), i++, '@ani@';
-					if( circle ) '@aniCircle@';
-					if( bezier ) for( i = 0 ; i < bl ; i += 5 ) k = bt[i], v = bt[i + 2][2], '@aniBezier@';
-				}
-				'@aniEnd@';
-				if( this.end ) this.end( this.t, 1, T );
-				pool[pool.length++] = this;
-				return 1;
-			}
-		}
-		rate = term * this.timeR;
-		if( circle ) i = e( rate, circle.angle0, circle.angle2, term, time ), j = e( rate, circle.radius0, circle.radius2, term, time ),
-			cvx = circle.centerX + circle.offsetX + cos(i) * j, ckx = circle.x, cvy = circle.centerY + circle.offsetY + sin(i) * j, cky = circle.y;
-		if( bezier ) bv1 = 2 * ( rate - ( bv0 = rate * rate ) ), bv2 = 1 - 2 * rate + bv0, bt = this.bezier0, bl = bt.length;
-		while( l-- ){
-			t0 = this[l], i = 2, t1 = t0[0], '@aniTarget@';
-			while( i < j ) k = t0[i++], v = e( rate, t0[i++], t0[i++], term, time ), '@ani@';
-			if( circle ) '@aniCircle@';
-			if( bezier ) for( i = 0 ; i < bl ; i += 5 ) k = bt[i], t1 = bt[i + 1], v = t1[2] * bv0 + t1[1] * bv1 + t1[0] * bv2, '@aniBezier@';
-		}
-		'@aniEnd@';
-		if( this.update ) this.update( this.t, rate, T );
-	},
+	tweenS = "function( tw, arg ){"+
+		"var t0, t1, l, i, j, k, v, v0, v1;"+
+		"tw.t = t0 = '@target@',"+
+		"tw.bezier = tw.circle = tw.delay = tw.stop = tw.yoyo = tw.pause = 0, tw.group = tw.end = tw.update = null, tw.ease = ease.linear,"+
+		"tw.time = 1000, tw.timeR = .001, tw.loop = tw.loopC = 1, tw.length = l = t0.length || 1;"+
+		"while(l--) tw[l] ? tw[l].length = 0 : tw[l] = [], tw[l][0] = '@targetAni0@', tw[l][1] = '@targetAni1@';"+
+		"i = 1, j = arg.length;"+
+		"while( i < j ){"+
+		"	k = arg[i++], v = arg[i++];"+
+		"	if( tween[k] ){"+
+		"		k == 'time' ? ( tw.time = parseInt( v * 1000 ), tw.timeR = 1 / tw.time ) :"+
+		"		k == 'ease' ? tw.ease = ease[v] :"+
+		"		k == 'id' || k == 'end' || k == 'update' ? tw[k] = v :"+
+		"		k == 'loop' ? tw.loop = tw.loopC = v :"+
+		"		k == 'delay' ? tw.delay = parseInt( v * 1000 ) :"+
+		"		k == 'group' || k == 'yoyo' || k == 'bezier' || k == 'circle' ? tw[k] = v : 0;"+
+		"	}else{"+
+		"		l = tw.length;"+
+		"		while( l-- ){"+
+		"			t0 = tw[l], t0[t0.length] = '@key@', v0 = '@from@';"+
+		"			if( typeof v == 'string' && v.indexOf(',') > -1 ) v = v.split(','), t0[t0.length] = v1 = ex( v[0], v0 ), t0[t0.length] = ex( v[1], v0 ) - v1;"+
+		"			else t0[t0.length] = v0, t0[t0.length] = ex( v, v0, tw.t[l] ) - v0;"+
+		"			t0[t0.length] = '@option@';"+
+		"		}"+
+		"	}"+
+		"}"+
+		"tw.keyLen = tw[0].length, tw.etime = ( tw.stime = Date.now() + tw.delay ) + tw.time;"+
+		"if( t0 = tw.circle ){"+
+		"	if( i = t0.center ) i = i.split(','), t0.centerX = parseFloat(i[0]), t0.centerY = parseFloat(i[1]);"+
+		"	if( i = t0.offset ) i = i.split(','), t0.offsetX = parseFloat(i[0]), t0.offsetY = parseFloat(i[1]);"+
+		"	if( i = t0.angle ) i = i.split(','), t0.angle0 = parseFloat(i[0]), t0.angle1 = parseFloat(i[1]);"+
+		"	if( i = t0.radius ) i = i.split(','), t0.radius0 = parseFloat(i[0]), t0.radius1 = parseFloat(i[1]);"+
+		"	t0.angle0 *= toRadian, t0.angle1 *= toRadian, t0.angle2 = t0.angle1 - t0.angle0, t0.radius2 = t0.radius1 - t0.radius0, '@circle@';"+
+		"}else if( t0 = tw.bezier ){"+
+		"	t1 = tw.bezier0 || ( tw.bezier0 = [] ), t1.length = 0;"+
+		"	for( i  in t0 ){"+
+		"		if( ( l = t0[i].length ) != 3 ) bs.err(1);"+
+		"		t1.push( '@bezierKey@', t0[i], 1 / t0[i].length, 0, '@bezierOption@' ); "+
+		"	}"+
+		"}"+
+		"return tw.ANI = '@setAni@', tw;}",
+	tweenANI = "function( T, pause ){"+
+		"var t0, t1, term, time, rate, i, j, l, k, v, e, s, u, "+
+		"	circle, ckx, cky, cvx, cvy, "+
+		"	bezier, bv0, bv1, bv2, bt, bl, br;"+
+		"if( this.stop ) return 1;"+
+		"if( pause ){"+
+		"	if( pause == 1 && this.pause == 0 ) return this.pause = T, 0;"+
+		"	else if( pause == 2 && this.pause ) t0 = T - this.pause, this.stime += t0, this.etime += t0, this.pause = 0;"+
+		"}"+
+		"if( this.pause || ( term = T - this.stime ) < 0 ) return;"+
+		"l = this.length, j = this.keyLen, circle = this.circle, bezier = this.bezier, e = this.ease;"+
+		"if( term > ( time = this.time ) ){"+
+		"	if( bezier ) bt = this.bezier0, bl = bt.length;"+
+		"	if( --this.loopC ){"+
+		"		if( this.yoyo ){"+
+		"			while( l-- ){"+
+		"				t0 = this[l], i = 2;"+
+		"				while( i < j ) t0[i + 1] +=  t0[i + 2], t0[i + 2] *= -1, i += 4;"+
+		"			}"+
+		"			if( circle ) t0 = circle.angle1, circle.angle1 = circle.angle0, circle.angle0 = t0, circle.angle2 *= -1,"+
+		"				t0 = circle.radius1, circle.radius1 = circle.radius0, circle.radius0 = t0, circle.radius2 *= -1;"+
+		"			if( bezier ) for( i = 0 ; i < bl ; i += 5 ) j = bt[i + 2][2], bt[i + 2][2] = bt[i + 2][0], bt[i + 2][0] = j;"+
+		"		}"+
+		"		return this.stime = T + this.delay, this.etime = this.stime + this.time, 0;"+
+		"	}else{"+
+		"		if( circle ) cvx = circle.centerX + circle.offsetX + cos(circle.angle1) * circle.radius1, ckx = circle.x,"+
+		"			cvy = circle.centerY + circle.offsetY + sin(circle.angle1) * circle.radius1, cky = circle.y;"+
+		"		while( l-- ){"+
+		"			t0 = this[l], i = 2, t1 = t0[0], '@aniTarget@';"+
+		"			while( i < j ) k = t0[i++], v = t0[i++] + ( e.roll ? 0 : t0[i] ), i++, '@ani@';"+
+		"			if( circle ) '@aniCircle@';"+
+		"			if( bezier ) for( i = 0 ; i < bl ; i += 5 ) k = bt[i], v = bt[i + 2][2], '@aniBezier@';"+
+		"		}"+
+		"		'@aniEnd@';"+
+		"		if( this.end ) this.end( this.t, 1, T );"+
+		"		pool[pool.length++] = this;"+
+		"		return 1;"+
+		"	}"+
+		"}"+
+		"rate = term * this.timeR;"+
+		"if( circle ) i = e( rate, circle.angle0, circle.angle2, term, time ), j = e( rate, circle.radius0, circle.radius2, term, time ),"+
+		"	cvx = circle.centerX + circle.offsetX + cos(i) * j, ckx = circle.x, cvy = circle.centerY + circle.offsetY + sin(i) * j, cky = circle.y;"+
+		"if( bezier ) bv1 = 2 * ( rate - ( bv0 = rate * rate ) ), bv2 = 1 - 2 * rate + bv0, bt = this.bezier0, bl = bt.length;"+
+		"while( l-- ){"+
+		"	t0 = this[l], i = 2, t1 = t0[0], '@aniTarget@';"+
+		"	while( i < j ) k = t0[i++], v = e( rate, t0[i++], t0[i++], term, time ), '@ani@';"+
+		"	if( circle ) '@aniCircle@';"+
+		"	if( bezier ) for( i = 0 ; i < bl ; i += 5 ) k = bt[i], t1 = bt[i + 1], v = t1[2] * bv0 + t1[1] * bv1 + t1[0] * bv2, '@aniBezier@';"+
+		"}"+
+		"'@aniEnd@';"+
+		"if( this.update ) this.update( this.t, rate, T );}",
 	mk0 = function( p0, p1 ){
 		return function(){
 			var i = ani.length, t = Date.now();
@@ -2092,7 +2097,15 @@ ANIMATE = function(){
 					( pool[pool.length++] = t0, t0.stop = 1, ani.splice( i, 1 ) );
 			}
 		}
-	},
+	};
+	if( detect.device == 'pc' ){
+		if( detect.browser == 'ie' ) mode = detect.browserVer > 9 ? 2 : detect.browserVer > 8 ? 1 : 0;
+		else mode = 3;
+	}else{
+		mode = bs.Dom('<div></div>');
+		mode.S('transform','rotateX(0)');
+		mode = mode[0].style.cssText.indexOf('rotateX(') > -1 ? 2 : 1;
+	}
 	ANI = {
 		ani:function(v){if(v.ANI) ani[ani.length] = v, start()},
 		fn:(function(){
@@ -2100,25 +2113,64 @@ ANIMATE = function(){
 				var i = keyLen;
 				while( i-- ) if( !( keys[i] in tmpl ) ) return 0;
 				return 1;
-			}, tween = function(){}, opt = {
+			}, tween = function(){},
+			twS = {}, twA = {},
+			opt = {
 				ease:ease, tween:tween, ex:ex, tweenANI:tweenANI,
 				toRadian:Math.PI/180, cos:bs.cos, sin:bs.sin,
-				style:bs.Style.keys, pool:pool
+				style:bs.Style.keys, pool:pool, twA:twA, twS:twS
 			}, t0 = 'id,time,ease,delay,loop,end,update,yoyo,path,circle,bezier'.split(','), i = t0.length;
 			while( i-- ) tween[t0[i]] = 1;
 			return function( type, tmpl ){
 				if( !check(tmpl) ) return err(1);
-				tmpl.setAni = 'tweenANI.' + type, tweenS[type] = comp( tweenS, tmpl, opt ), tweenANI[type] = comp( tweenANI, tmpl, opt ),
+				tmpl.setAni = 'twA.' + type,
+				twS[type] = comp( tweenS, tmpl, opt ), 
+				twA[type] = comp( tweenANI, tmpl, opt ),
 				ANI[type] = function(){
 					var t0 = ani[ani.length] = pool.length ? pool[--pool.length] : new tween;
-					return tweenS[type]( t0, arguments ), start(), t0;
+					return twS[type]( t0, arguments ), start(), t0;
 				};
 			};
 		})(),
 		pause:mk0( 1, 1 ), resume:mk0( 0, 2 ), tweenStop:mk1(0), tweenPause:mk1(1), tweenResume:mk1(2), tweenToggle:mk1(3),
 		toggle:function(){return isPause ? ANI.resume() : ANI.pause(), isPause;},
 		stop:function(){end();},
-		ease:function( k, v, isRoll ){v ? ease[k] ? err( 2501, k ) : ease[k] = v : ease[k], v.roll = isRoll;}
+		ease:function( k, v, isRoll ){v ? ease[k] ? err( 2501, k ) : ease[k] = v : ease[k], v.roll = isRoll;},
+		transition:(function(){
+			var key, t0, i, ANI;
+			if( !mode ) return null;
+			key = {}, t0 = 'x,y,z,r,rx,ry,rz,sx,sy,sz,end,update,time,ease,delay'.split(','), i = t0.length;
+			while(i--) key[t0[i]] = 1;
+			ANI = function(){
+				var str = '';
+				if( 'x' in this ) str += 'translateX('+this.x+') ';
+				if( 'y' in this ) str += 'translateY('+this.y+') ';
+				if( 'z' in this ) str += 'translateZ('+this.z+') ';
+				if( 'r' in this ) str += 'rotate' + ( mode == 3 ? 'Z' : '' ) +'('+this.r+'deg) ';
+				if( 'rx' in this ) str += 'rotateX('+this.rx+'deg) ';
+				if( 'ry' in this ) str += 'rotateY('+this.ry+'deg) ';
+				if( 'rz' in this ) str += 'rotateZ('+this.rz+'deg) ';
+				if( 'sx' in this ) str += 'scaleX('+this.rx+') ';
+				if( 'sy' in this ) str += 'scaleY('+this.ry+') ';
+				if( 'sz' in this ) str += 'scaleZ('+this.rz+')';
+				this.d.S('transform', str );
+				return 1;
+			}
+			return function(d){
+				var target = {d:d,ANI:ANI}, i = 1, j = arguments.length, k, v, m;
+				while( i < j ){
+					k = arguments[i++], v = arguments[i++];
+					if( key[k] ) target[k] = v;
+				}
+				d.S( 'transition', 'transform ' + (target.time || 1 ) + 's ' + ( target.ease || 'linear' ) + ( target.deley ? ' ' + target.deley + 's' : '' ) );
+				if( target.end ) d.S( 'webkitTransitionEnd', target.end, 'transitionend', target.end );
+				bs.ANI.ani( target );
+			};
+		})(),
+		transitionStop:!mode ? null : function(d){
+			var t0 = W.getComputedStyle(d[0]), t1 = t0.getPropertyValue(bs.Style.key('transform'));
+			d.S( 'transform', t1, 'transition', '' );
+		}
 	};
 	return ANI;
 },
@@ -2135,7 +2187,7 @@ t0 = setInterval( function(){
 		que = null;
 		while( i < j ) t0[i++]();
 	},
-	bs.obj( 'DETECT', detectDOM( W, detect ) ), DOM(), bs.obj( 'ANI', ANIMATE() ), EXT(), 
+	bs.obj( 'DETECT', detectDOM( W, detect ) ),DOM(),bs.obj( 'ANI', ANIMATE() ), EXT(), 
 	pque.length ? ( i = pque, pque = null, plugin( start, i ) ) : start();
 }, 1 ),
 EXT = function(){
@@ -2223,12 +2275,12 @@ EXT = function(){
 				return function( d, k, v ){if( k = mk(v) ) k.eventName = v, fire( d, k );};
 			})()
 		} )if( t0.hasOwnProperty(k) ) fn( 'key', k, t0[k] );
-		fn( 'key', 'before', comp( t0 = function( d, k, v ){
-			var p, t0, i, j;
-			if( v === undefined ) return '@a@';
-			if( v === null ) return d.parentNode.removeChild('@a@');
-			if( ( p = d.parentNode ) && ( t0 = dom(v) ) && ( j = t0.length ) ) for( '@b@', i = 0 ; i < j ; i++ ) p.insertBefore( t0[i], d );
-		}, t1 = {a:'d.previousSibling', b:0}, t2 = {dom:dom} ) ),
+		fn( 'key', 'before', comp( t0 = "function( d, k, v ){"+
+		"	var p, t0, i, j;"+
+		"	if( v === undefined ) return '@a@';"+
+		"	if( v === null ) return d.parentNode.removeChild('@a@');"+
+		"	if( ( p = d.parentNode ) && ( t0 = dom(v) ) && ( j = t0.length ) ) for( '@b@', i = 0 ; i < j ; i++ ) p.insertBefore( t0[i], d );"+
+		"}", t1 = {a:'d.previousSibling', b:0}, t2 = {dom:dom} ) ),
 		fn( 'key', 'after', comp( t0, ( t1.a = 'd.nextSibling', t1.b = 'd = d.nextSibling', t1 ), t2 ) );
 		for( k in t0 = {
 			'@':(function(){
@@ -2244,15 +2296,15 @@ EXT = function(){
 				};
 			})(),
 			'*':(function(){
-				return comp( function( d, k, v ){
-					var t0, i;
-					k = '@k@',
-					t0 = bs.Dom.data(d).BSdataset || ( bs.Dom.data(d).BSdataset = {} );
-					if( v === undefined ) v = '@get@' || t0[k];
-					else if( v === null ) '@del@', delete t0[k];
-					else type[typeof v] ? ( t0[k] = v ) : ( '@set@' );
-					return v;
-				}, detect.customData ? {
+				return comp( "function( d, k, v ){"+
+				"	var t0, i;"+
+				"	k = '@k@',"+
+				"	t0 = bs.Dom.data(d).BSdataset || ( bs.Dom.data(d).BSdataset = {} );"+
+				"	if( v === undefined ) v = '@get@' || t0[k];"+
+				"	else if( v === null ) '@del@', delete t0[k];"+
+				"	else type[typeof v] ? ( t0[k] = v ) : ( '@set@' );"+
+				"	return v;"+
+				"}", detect.customData ? {
 					k:'k.substr(1).toLowerCase().replace( r, re )', 
 					get:'d.dataset[k]', del:'d.dataset[k]', set:'d.dataset[k] = v'
 				} : {
