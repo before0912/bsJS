@@ -6,7 +6,7 @@
 ( function( W, N ){
 'use strict';
 var VERSION = 0.7, REPOSITORY = 'http://projectbs.github.io/bsPlugin/js/',
-	CROSSPROXYKEY = 'CROSSPROXY_DEMO_ACCESS_KEY', CROSSPROXY = 'http://api.bsplugin.com/bsNet/',//'http://www.bsidesoft.com/bs/bsNet/',
+	CROSSPROXYKEY = 'CROSSPROXY_DEMO_ACCESS_KEY', CROSSPROXY = 'http://www.bsnet.io/cross/',//'http://www.bsidesoft.com/bs/bsNet/',
 	NETWORKERKEY = 'BSNETWORKER_20140707', NETWORKER = 'http://api.bsplugin.com/netWorker/',//'http://www.bsidesoft.com/?networker',
 	log, none = function(){}, trim = /^\s*|\s*$/g, doc = W['document'], que = [], pque = [], plugin, timeout = 5000, mk, comp, detect, isDebug = 0,
 	bs = W[N = N || 'bs'] = function(f){que ? ( que[que.length] = f ) : f();},
