@@ -186,7 +186,7 @@ CORE:
 	fn( 'obj', function( key, v ){var t0 = key.replace( trim, '' ).toUpperCase();( !arguments[2] && t0 != key ) ? err( 1002, key ) : bs[t0] ? err( 2002, t0 ) : bs[t0] = v;} ),
 	fn( 'cls', (function(){
 		var S = function(){
-			var i = 0, j = arguments.length;
+			var i = 0, j = arguments.length, k, v;
 			while( i < j ){k = arguments[i++];if( i == j ) return this[k];( ( v = arguments[i++] ) === null ) ? delete this[k] : ( this[k] = v );}
 			return v;
 		};
@@ -285,8 +285,8 @@ CORE:
 		}, xml0 = function( v, end ){
 			var r = {}, t0 = v.childNodes, t1, nn, i = 0, j = t0.length;
 			if( end )( nn = function(){
-					var k, t1;
-					for( var k = 0 ; i < j && k < 5000 ; i++, k++ ) t1 = type ? t0[i] : t0.nextNode(), r[t1.nodeName] = _xml(t1);
+					var k = 0, t1;
+					for( ; i < j && k < 5000 ; i++, k++ ) t1 = type ? t0[i] : t0.nextNode(), r[t1.nodeName] = _xml(t1);
 					i < j ? setTimeout( nn, 16 ) : end(r);
 				} )();
 			else{
